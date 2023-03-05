@@ -3,15 +3,15 @@ package hmoa.hmoaserver.member.domain;
 
 
 import hmoa.hmoaserver.common.BaseEntity;
+import hmoa.hmoaserver.news.domain.Post;
+import hmoa.hmoaserver.news.domain.PostComment;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -28,6 +28,12 @@ public class Member extends BaseEntity implements UserDetails {
     private String name;
     private Integer age;
     private String sex;
+
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<PostComment> comments = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
