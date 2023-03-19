@@ -1,14 +1,11 @@
-
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hmoa_server?serverTimezone=Asia/Seoul
-    username: root
-    password: 0880
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: true
+  profiles:
+    group:
+      local:
+        - local
+        - jwt
+        - oauth2
+      prod:
+        - h2
+        - app
+    active: local
