@@ -14,8 +14,13 @@ public class MemberController {
     private final JwtService jwtService;
 
     @GetMapping("/login/remembered")
-    public Map<String,String> jwtTest(){
+    public Map<String,String> rememberedLogin(){
         Map<String,String> map =new HashMap<>();
         return map;
+    }
+
+    @GetMapping("/jwt-test")
+    public String jwtTest(){
+        return "jwt-test";
     }
 }
