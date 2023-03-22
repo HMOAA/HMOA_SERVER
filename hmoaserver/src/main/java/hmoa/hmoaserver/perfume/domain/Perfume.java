@@ -16,20 +16,19 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Perfume {
     @Id
-    @Column(name = "perfume_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Photo> photo = new ArrayList<>();
 
     private String description;
     private String scent;
     private Long price;
 
-    @OneToMany(mappedBy = "perfumeComment", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeComment> perfumeComments = new ArrayList<>();
 
     @ManyToOne

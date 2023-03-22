@@ -17,17 +17,17 @@ import java.util.List;
 public class Brand {
 
     @Id
-    @Column(name = "brand_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @OneToOne(mappedBy = "brand")
-    private Photo photo;
-
-    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Perfume> perfumeList = new ArrayList<>();
+
+
+    /*@OneToOne(mappedBy = "brand")
+    private Photo photo;
 
     @Builder
     public Brand(Long id, String name, Photo photo, List<Perfume> perfumeList) {
@@ -35,5 +35,5 @@ public class Brand {
         this.name = name;
         this.photo = photo;
         this.perfumeList = perfumeList;
-    }
+    }*/
 }

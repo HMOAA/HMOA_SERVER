@@ -10,12 +10,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Getter    
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo extends BaseEntity {
 
     @Id
-    @Column(name = "photo_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,7 +23,7 @@ public class Photo extends BaseEntity {
     private String photoUrl;
 
     @ManyToOne
-    @JoinColumn(name = "perfume_id")
+    @JoinColumn(name = "perfume")
     private Perfume perfume;
 
     @Builder

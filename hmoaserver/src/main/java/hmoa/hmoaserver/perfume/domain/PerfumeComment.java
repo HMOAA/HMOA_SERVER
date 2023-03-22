@@ -14,7 +14,6 @@ import javax.persistence.*;
 public class PerfumeComment {
 
     @Id
-    @Column(name = "perfume_comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,11 +21,11 @@ public class PerfumeComment {
     private Boolean heart;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "perfume_id")
+    @JoinColumn(name = "perfume")
     private Perfume perfume;
 
     @Builder
