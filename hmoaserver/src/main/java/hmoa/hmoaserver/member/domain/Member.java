@@ -1,33 +1,53 @@
 package hmoa.hmoaserver.member.domain;
 
-
-
 import hmoa.hmoaserver.common.BaseEntity;
-import hmoa.hmoaserver.news.domain.Post;
-import hmoa.hmoaserver.news.domain.PostComment;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Table(name = "MEMBER")
+@AllArgsConstructor
 public class Member extends BaseEntity implements UserDetails {
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     private String email;
+
     private String password;
-    private String name;
-    private Integer age;
+
+
+    private String nickname;
+
+
+    private String imgUrl;
+
+    private int age;
+
     private String sex;
+
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
+
+    private String refreshToken;
+
+    private String socialId;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
@@ -35,28 +55,38 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<PostComment> comments = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
-    @Builder
-    public Member(String email,String password, String name, Integer age, String sex){
-        this.email=email;
-        this.password=password;
-        this.name=name;
+
+    public void passwordEncode(PasswordEncoder passwordEncoder){
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void authorizeUser(){
+        this.role = Role.USER;
+    }
+    public void updateRefreshToken(String updateRefreshToken){
+        this.refreshToken = updateRefreshToken;
+    }
+
+    public void updateNickname(String updateNickname){
+        this.nickname=updateNickname;
+    }
+    public void updateSex(String updateSex){
+        this.sex=updateSex;
+    }
+    public void updateAge(int age){
         this.age=age;
-        this.sex=sex;
-        this.roles.add("USER");
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
+        auth.add(new SimpleGrantedAuthority(role.getKey()));
+        return auth;
     }
 
     @Override
     public String getUsername() {
-        return getId().toString();
+        return this.email;
     }
 
     @Override
