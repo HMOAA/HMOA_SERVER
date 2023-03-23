@@ -1,8 +1,8 @@
 package hmoa.hmoaserver.oauth.jwt.service;
 
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import hmoa.hmoaserver.member.domain.Role;
+import io.jsonwebtoken.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.jwt.Token;
@@ -10,15 +10,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,35 +50,55 @@ public class JwtService {
 
     private final MemberRepository memberRepository;
 
+    private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
 
     //accessToken 생성
-    public String createAccessToken(String email){
+    public String createAccessToken(String email, Role roles){
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("roles",roles);
         Date now = new Date();
-        return JWT.create()
-                .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(EMAIL_CLAIM, email)
-                .sign(Algorithm.HMAC512(secretKey));
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + accessTokenExpirationPeriod))
+                .signWith(SignatureAlgorithm.HS256,secretKey)
+                .compact();
     }
 
     //refreshToken 생성
-    public String createRefreshToken() {
+    public String createRefreshToken(String email, Role roles) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("roles",roles);
         Date now = new Date();
-        return JWT.create()
-                .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(secretKey));
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .signWith(SignatureAlgorithm.HS256,secretKey)
+                .compact();
+        return refreshToken;
+    }
+
+    public Authentication getAuthentication(String token){
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getEmail(token));
+        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+    }
+
+    public String getEmail(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
 
     //access+refresh json 형태로 보내기
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+        log.info("sendAccessAndRefreshToken");
         Token token = new Token(accessToken,refreshToken);
+        String result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(token);
+        log.info("{}",result);
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        String result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(token);
         response.getWriter().write(result);
     }
 
@@ -96,28 +117,6 @@ public class JwtService {
     }
 
     /**
-     * AccessToken에서 Email 추출
-     * 추출 전에 JWT.require()로 검증기 생성
-     * verify로 AceessToken 검증 후
-     * 유효하다면 getClaim()으로 이메일 추출
-     * 유효하지 않다면 빈 Optional 객체 반환
-     */
-    public Optional<String> extractEmail(String accessToken) {
-        try {
-            // 토큰 유효성 검사하는 데에 사용할 알고리즘이 있는 JWT verifier builder 반환
-            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
-                    .build() // 반환된 빌더로 JWT verifier 생성
-                    .verify(accessToken) // accessToken을 검증하고 유효하지 않다면 예외 발생
-                    .getClaim(EMAIL_CLAIM) // claim(Email) 가져오기
-                    .asString());
-        } catch (Exception e) {
-            log.error("액세스 토큰이 유효하지 않습니다.");
-            return Optional.empty();
-        }
-    }
-
-
-    /**
      * RefreshToken DB 저장(업데이트)
      */
     public void updateRefreshToken(String email, String refreshToken) {
@@ -129,13 +128,16 @@ public class JwtService {
                 );
     }
 
-    public boolean isTokenValid(String token) {
+    public JwtResultType isTokenValid(String jwtToken) {
         try {
-            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            return true;
-        } catch (Exception e) {
-            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
-            return false;
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            return JwtResultType.VALID_JWT;
+        }catch (ExpiredJwtException e){
+            log.info("만료된 jwt 토큰");
+            return JwtResultType.EXPIRED_JWT;
+        }catch (Exception e){
+            log.info("잘못된 jwt 토큰");
+            return JwtResultType.INVALID_JWT;
         }
     }
 

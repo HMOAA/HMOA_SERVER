@@ -1,33 +1,43 @@
 package hmoa.hmoaserver.member.domain;
 
-
-
 import hmoa.hmoaserver.common.BaseEntity;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "MEMBER")
 @AllArgsConstructor
-public class Member extends BaseEntity {
+public class Member extends BaseEntity implements UserDetails {
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     private String email;
+
     private String password;
-    private String name;
+
 
     private String nickname;
 
+
     private String imgUrl;
+
     private int age;
+
     private String sex;
+
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -39,15 +49,57 @@ public class Member extends BaseEntity {
 
     private String socialId;
 
-    public void authorizeUser(){
-        this.role = Role.USER;
-    }
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
     }
 
+    public void authorizeUser(){
+        this.role = Role.USER;
+    }
     public void updateRefreshToken(String updateRefreshToken){
         this.refreshToken = updateRefreshToken;
+    }
+
+    public void updateNickname(String updateNickname){
+        this.nickname=updateNickname;
+    }
+    public void updateSex(String updateSex){
+        this.sex=updateSex;
+    }
+    public void updateAge(int age){
+        this.age=age;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
+        auth.add(new SimpleGrantedAuthority(role.getKey()));
+        return auth;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }

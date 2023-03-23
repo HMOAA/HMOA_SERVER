@@ -41,8 +41,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             // 첫 로그인
             if (oAuth2User.getRole() == Role.GUEST) {
-                String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-                String refreshToken = jwtService.createRefreshToken();
+                String accessToken = jwtService.createAccessToken(oAuth2User.getEmail(),Role.GUEST);
+                String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail(),Role.GUEST);
                 log.info("{}", accessToken);
                 log.info("{}", refreshToken);
                 jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
@@ -61,8 +61,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     //이후 로그인
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
         log.info("loginsuccess 호출");
-        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-        String refreshToken = jwtService.createRefreshToken();
+        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail(),oAuth2User.getRole());
+        String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail(),oAuth2User.getRole());
         jwtService.sendAccessAndRefreshToken(response, accessToken,refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
     }
