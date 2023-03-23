@@ -49,6 +49,12 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String socialId;
 
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<PostComment> comments = new ArrayList<>();
+
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
