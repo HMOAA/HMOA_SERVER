@@ -61,11 +61,11 @@ public class MemberController {
 
     }
 
-    @PatchMapping("/member/first")
-    public ResponseEntity<ResultDto<Object>> firstMember(@RequestBody UpdateFirstDto request,@RequestHeader("X-AUTH-TOKEN") String token){
+    @PatchMapping("/member/join")
+    public ResponseEntity<ResultDto<Object>> joinMember(@RequestBody UpdateFirstDto request,@RequestHeader("X-AUTH-TOKEN") String token){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        memberService.firstMember(findMember,request.getAge(),request.getSex(),request.getNickname());
+        memberService.joinMember(findMember,request.getAge(),request.getSex(),request.getNickname());
         MemberReslutDto reslutDto = new MemberReslutDto(findMember);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

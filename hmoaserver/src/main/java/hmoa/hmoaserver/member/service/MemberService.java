@@ -34,7 +34,7 @@ public class MemberService {
     @Transactional
     public Token reIssue(String rememberedToken){
         if(!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)){
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(null, WRONG_TYPE_TOKEN);
         }
         if (memberRepository.findByRefreshToken(rememberedToken).isPresent()){
             Member member=memberRepository.findByRefreshToken(rememberedToken).get();
@@ -44,7 +44,7 @@ public class MemberService {
             return new Token(accessToken,refreshToken);
         }else{
             log.info("일치하는 회원이 없습니다.");
-            throw new RuntimeException("일치하는 회원이 없습니다.");
+            throw new CustomException(null, MEMBER_NOT_FOUND);
         }
 
     }
@@ -67,7 +67,7 @@ public class MemberService {
      * 첫 로그인시 회원 업데이트
      */
     @Transactional
-    public void firstMember(Member member, int age,String sex,String nickname){
+    public void joinMember(Member member, int age,String sex,String nickname){
         try{
             member.updateAge(age);
             member.updateSex(sex);
