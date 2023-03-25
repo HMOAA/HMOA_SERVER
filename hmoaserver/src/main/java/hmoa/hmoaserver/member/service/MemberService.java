@@ -67,7 +67,7 @@ public class MemberService {
      * 첫 로그인시 회원 업데이트
      */
     @Transactional
-    public void firstMember(Member member, int age,String sex,String nickname){
+    public void joinMember(Member member, int age,String sex,String nickname){
         try{
             member.updateAge(age);
             member.updateSex(sex);

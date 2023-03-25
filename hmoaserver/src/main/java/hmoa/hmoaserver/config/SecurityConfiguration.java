@@ -43,7 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/ico/**",
                 "/images/**",
                 "/js/**",
-                "/plugins/**"
+                "/plugins/**",
+                "/favicon.ico"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
