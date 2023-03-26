@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.oauth.jwt.service;
 
 
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Role;
 import io.jsonwebtoken.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+
+import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
 @RequiredArgsConstructor
@@ -124,7 +128,7 @@ public class JwtService {
                 .ifPresentOrElse(user -> {
                     user.updateRefreshToken(refreshToken);
                     memberRepository.saveAndFlush(user);},
-                    () -> new Exception("일치하는 회원이 없습니다.")
+                    () -> new CustomException(null, MEMBER_NOT_FOUND)
                 );
     }
 
