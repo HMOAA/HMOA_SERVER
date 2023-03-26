@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UpdateFirstDto {
+public class JoinUpdateRequestDto {
     private int age;
     private String sex;
     private String nickname;
