@@ -206,7 +206,7 @@ public class MemberController {
     /**
      * 나이 업데이트
      */
-    @ApiOperation(value = "닉네임 중복 검사")
+    @ApiOperation(value = "나이 업데이트")
     @ApiResponses({
             @ApiResponse(
                     code = 200,
