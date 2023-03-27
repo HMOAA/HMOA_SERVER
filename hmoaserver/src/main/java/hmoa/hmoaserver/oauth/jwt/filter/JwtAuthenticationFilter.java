@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("필터");
         if (jwtService.extractAccessToken(request).isPresent() ) {
             String token = jwtService.extractAccessToken(request).get();
             JwtResultType jwtResultType = jwtService.isTokenValid(token);
