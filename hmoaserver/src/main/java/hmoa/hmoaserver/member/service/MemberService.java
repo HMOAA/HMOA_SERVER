@@ -100,4 +100,13 @@ public class MemberService {
         member.updateNickname(nickname);
         save(member);
     }
+
+    /**
+     * 나이 업데이트
+     */
+    @Transactional
+    public void updateAge(Member member, int age){
+        member.updateAge(age);
+        save(member);
+    }
 }

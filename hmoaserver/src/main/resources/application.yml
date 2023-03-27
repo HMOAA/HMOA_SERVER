@@ -9,7 +9,3 @@ spring:
         - h2
         - app
     active: local
-
-logging:
-  level:
-    root: debug
