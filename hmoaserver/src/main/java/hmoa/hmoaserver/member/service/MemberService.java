@@ -109,4 +109,13 @@ public class MemberService {
         member.updateAge(age);
         save(member);
     }
+
+    /**
+     * 성별 업데이트
+     */
+    @Transactional
+    public void updateSex(Member member, String sex){
+        member.updateSex(sex);
+        save(member);
+    }
 }

@@ -250,4 +250,52 @@ public class MemberController {
                         .message("나이 업데이트 완료")
                         .build());
     }
+
+    /**
+     * 나이 업데이트
+     */
+    @ApiOperation(value = "성별 업데이트")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답"
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "인증 실패",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원이 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 409,
+                    message = "이미 존재하는 닉네임입니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
+    @PatchMapping("/member/sex")
+    public ResponseEntity<ResultDto<Object>> updateSex(@RequestBody SexRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+        String email = jwtService.getEmail(token);
+        Member findMember = memberService.findByEmail(email);
+        memberService.updateSex(findMember, request.getSex());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .resultCode("AGE_UPDATE")
+                        .message("나이 업데이트 완료")
+                        .build());
+    }
 }
