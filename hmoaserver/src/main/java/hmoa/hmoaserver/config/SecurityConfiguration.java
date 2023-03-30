@@ -53,7 +53,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/swagger/**",
                 "/swagger-resources/**",
                 "/webjar/**",
-                "/v2/api-docs"
+                "/v2/api-docs",
+                "/member/testcreate"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
@@ -72,8 +73,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/login/remembered").permitAll()
-//                .antMatchers("/member/existsnickname").permitAll()
+                .antMatchers("/member/testcreate").permitAll()
                 .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
