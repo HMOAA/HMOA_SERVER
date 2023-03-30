@@ -54,7 +54,21 @@ public class MemberService {
         member.authorizeUser();
         save(member);
     }
-
+    /**
+     * 닉네임 중복 검사
+     */
+    public boolean isExistingNickname(String nickname){
+        Boolean exisitingNickname = false;
+        try{
+            exisitingNickname=memberRepository.existsByNickname(nickname);
+        }catch (RuntimeException e){
+            throw new CustomException(e,SERVER_ERROR);
+        }
+        if(exisitingNickname){
+            throw new CustomException(null, DUPLICATE_NICKNAME);
+        }
+        return exisitingNickname;
+    }
     /**
      * 회원 하나 조회
      */
@@ -75,5 +89,33 @@ public class MemberService {
         }catch (RuntimeException e){
             throw new CustomException(e, SERVER_ERROR);
         }
+    }
+
+    /**
+     * 닉네임 업데이트
+     */
+    @Transactional
+    public void updateNickname(Member member, String nickname){
+        isExistingNickname(nickname);
+        member.updateNickname(nickname);
+        save(member);
+    }
+
+    /**
+     * 나이 업데이트
+     */
+    @Transactional
+    public void updateAge(Member member, int age){
+        member.updateAge(age);
+        save(member);
+    }
+
+    /**
+     * 성별 업데이트
+     */
+    @Transactional
+    public void updateSex(Member member, String sex){
+        member.updateSex(sex);
+        save(member);
     }
 }

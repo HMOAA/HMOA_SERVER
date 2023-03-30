@@ -2,6 +2,8 @@ package hmoa.hmoaserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 //import hmoa.hmoaserver.exception.CustomAuthenticationEntryPoint;
+import hmoa.hmoaserver.exception.CustomAccessDeniedHandler;
+import hmoa.hmoaserver.exception.CustomAuthenticationEntryPoint;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.handler.OAuth2LoginFailureHandler;
 import hmoa.hmoaserver.oauth.handler.OAuth2LoginSuccessHandler;
@@ -44,7 +46,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/images/**",
                 "/js/**",
                 "/plugins/**",
-                "/favicon.ico"
+                "/favicon.ico",
+                "/member/existsnickname",
+                "/api/v2/**",
+                "/swagger-ui.html",
+                "/swagger/**",
+                "/swagger-resources/**",
+                "/webjar/**",
+                "/v2/api-docs",
+                "/member/testcreate"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
@@ -63,8 +73,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login/remembered").permitAll()
+                .antMatchers("/member/testcreate").permitAll()
                 .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
+                .and()
+                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 //== 소셜 로그인 설정 ==//
                 .oauth2Login()
