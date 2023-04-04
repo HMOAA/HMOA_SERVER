@@ -1,13 +1,14 @@
 package hmoa.hmoaserver.oauth.jwt.filter;
 
 
+import com.google.gson.JsonObject;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.jwt.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -72,9 +73,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     private void errorResult(HttpServletResponse response,int code, String message) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        JSONObject json = new JSONObject();
-        json.put("code",code);
-        json.put("message", message);
+        JsonObject json = new JsonObject();
+        json.addProperty("code",code);
+        json.addProperty("message", message);
         response.getWriter().print(json);
 
     }

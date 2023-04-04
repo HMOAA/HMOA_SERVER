@@ -2,8 +2,11 @@ package hmoa.hmoaserver.member.controller;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
+import hmoa.hmoaserver.member.domain.ProviderType;
+import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
 import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
+import hmoa.hmoaserver.oauth.AccessToken;
 import hmoa.hmoaserver.oauth.jwt.Token;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import io.swagger.annotations.Api;
@@ -13,9 +16,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -59,14 +60,22 @@ public class LoginController {
             )
     })
     @GetMapping("/login/remembered")
-    public ResponseEntity<TokenResponseDto> rememberedLogin(@RequestHeader("rememberedToken") String rememberedToken){
-        if (!rememberedToken.isEmpty()){
+    public ResponseEntity<TokenResponseDto> rememberedLogin(@RequestHeader("rememberedToken") String rememberedToken) {
+        if (!rememberedToken.isEmpty()) {
             Token token = memberService.reIssue(rememberedToken);
             TokenResponseDto responseDto = new TokenResponseDto(token);
             return ResponseEntity.ok(responseDto);
-        }else {
+        } else {
             throw new CustomException(null, UNKNOWN_ERROR);
         }
+    }
+
+    @PostMapping("/login/oauth2/{provider}")
+    public ResponseEntity<MemberLoginResponseDto> loginSocial(@RequestBody AccessToken accessToken, @PathVariable ProviderType provider) {
+        log.info("{}",accessToken.getToken());
+        log.info("{}",provider);
+        MemberLoginResponseDto responseDto = memberService.loginMember(accessToken.getToken(), provider);
+        return ResponseEntity.ok(responseDto);
     }
 
 }

@@ -1,7 +1,7 @@
 package hmoa.hmoaserver.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONObject;
+import com.google.gson.JsonObject;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -24,9 +24,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
         response.setStatus(401);
-        JSONObject json = new JSONObject();
-        json.put("code",errorResponse.getCode());
-        json.put("message", errorResponse.getMessage());
+        JsonObject json = new JsonObject();
+        json.addProperty("code",errorResponse.getCode());
+        json.addProperty("message", errorResponse.getMessage());
         response.getWriter().print(json);
     }
 }
