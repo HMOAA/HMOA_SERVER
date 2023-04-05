@@ -4,6 +4,7 @@ package hmoa.hmoaserver.oauth.service;
 import com.google.gson.Gson;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.oauth.userinfo.GoogleOAuth2UserInfo;
+import hmoa.hmoaserver.oauth.userinfo.KakaoOAuth2UserInfo;
 import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +27,30 @@ public class ProviderService {
     private final RestTemplate restTemplate;
     @Value("${spring.social.google.url.profile}")
     private String googleUrl;
+
+    @Value("${spring.social.kakao.url.profile}")
+    private String kakaoUrl;
+
     private final Gson gson;
 
     public OAuth2UserDto getProfile(String accessToken, ProviderType provider) {
         log.info("getProfile");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
+
         String profileUrl = urlMapping(provider);
+        log.info("{}",profileUrl);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.postForEntity(profileUrl, request, String.class);
+        log.info("{}",response.getHeaders());
+
 
         try {
             if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("{}",response);
                 return extractProfile(response, provider);
             }
         } catch (Exception e) {
@@ -51,6 +62,8 @@ public class ProviderService {
     private String urlMapping(ProviderType checkProvider){
         if(checkProvider.equals(ProviderType.GOOGLE)){
             return googleUrl;
+        }else if(checkProvider.equals(ProviderType.KAKAO)){
+            return kakaoUrl;
         }
         return googleUrl;
     }
@@ -58,6 +71,10 @@ public class ProviderService {
         if (provider.equals(ProviderType.GOOGLE)) {
             GoogleOAuth2UserInfo googleOAuth2UserInfo = gson.fromJson(response.getBody(), GoogleOAuth2UserInfo.class);
             return new OAuth2UserDto(googleOAuth2UserInfo.getEmail(),googleOAuth2UserInfo.getName());
+        } else if (provider.equals(ProviderType.KAKAO)) {
+            KakaoOAuth2UserInfo kakaoOAuth2UserInfo = gson.fromJson(response.getBody(), KakaoOAuth2UserInfo.class);
+            return new OAuth2UserDto(kakaoOAuth2UserInfo.getKakao_account().getEmail(),kakaoOAuth2UserInfo.getProperties().getNickname());
+
         }
         GoogleOAuth2UserInfo googleOAuth2UserInfo = gson.fromJson(response.getBody(), GoogleOAuth2UserInfo.class);
         return new OAuth2UserDto(googleOAuth2UserInfo.getEmail(),googleOAuth2UserInfo.getName());
