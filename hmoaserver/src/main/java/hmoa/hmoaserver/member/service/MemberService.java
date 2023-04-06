@@ -128,7 +128,6 @@ public class MemberService {
         member.updateSex(sex);
         save(member);
     }
-
     /**
      * 소셜 로그인
      */

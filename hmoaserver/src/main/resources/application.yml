@@ -10,7 +10,3 @@ spring:
         - app
     active: local
 
-logging:
-  level:
-    root: debug
-    project: debug
