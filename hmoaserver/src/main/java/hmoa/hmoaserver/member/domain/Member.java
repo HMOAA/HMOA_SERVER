@@ -47,7 +47,6 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String refreshToken;
 
-    private String socialId;
 
 
 

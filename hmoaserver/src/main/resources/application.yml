@@ -9,3 +9,4 @@ spring:
         - h2
         - app
     active: local
+

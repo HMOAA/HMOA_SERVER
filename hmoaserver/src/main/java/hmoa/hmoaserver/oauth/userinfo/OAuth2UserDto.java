@@ -9,7 +9,8 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoogleOAuth2UserInfo {
+public class OAuth2UserDto {
     private String email;
     private String name;
+
 }

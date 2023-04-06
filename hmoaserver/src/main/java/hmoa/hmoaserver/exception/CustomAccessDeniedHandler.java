@@ -1,7 +1,7 @@
 package hmoa.hmoaserver.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONObject;
+import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,9 +24,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
-        JSONObject json = new JSONObject();
-        json.put("code",errorResponse.getCode());
-        json.put("message", errorResponse.getMessage());
+        JsonObject json = new JsonObject();
+        json.addProperty("code",errorResponse.getCode());
+        json.addProperty("message", errorResponse.getMessage());
         response.getWriter().print(json);
         response.setStatus(HttpStatus.FORBIDDEN.value());
     }

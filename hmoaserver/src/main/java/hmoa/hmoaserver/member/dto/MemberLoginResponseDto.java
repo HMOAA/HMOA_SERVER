@@ -2,18 +2,19 @@ package hmoa.hmoaserver.member.dto;
 
 import hmoa.hmoaserver.oauth.jwt.Token;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TokenResponseDto {
+public class MemberLoginResponseDto {
     private String authToken;
     private String rememberedToken;
+    private Boolean existedMember;
 
-    public TokenResponseDto(Token token){
+    public MemberLoginResponseDto(Token token, boolean exist){
         this.authToken=token.getAuthToken();
         this.rememberedToken=token.getRememberedToken();
+        this.existedMember=exist;
     }
 }
