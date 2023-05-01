@@ -32,12 +32,20 @@ public enum Code {
      * 404 NOT_FOUND
      */
     UNKNOWN_ERROR(NOT_FOUND, "토큰이 존재하지 않습니다."),
+    FILE_NOT_FOUND(NOT_FOUND, "등록된 파일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
+    BRAND_NOT_FOUND(NOT_FOUND, "등록된 브랜드가 없습니다."),
+    PERFUME_NOT_FOUND(NOT_FOUND, "등록된 향수가 없습니다."),
 
     /**
      * 409 CONFLICT
      */
     DUPLICATE_NICKNAME(CONFLICT,"이미 존재하는 닉네임 입니다."),
+
+    /**
+     * 415 UNSUPPORTED_MEDIA_TYPE
+     */
+    FILE_TYPE_UNSUPPORTED(UNSUPPORTED_MEDIA_TYPE, "파일 형식은 '.jpg', '.jpeg', '.png' 만 가능합니다."),
 
     /**
      * 500 INTERNAL_SERVER_ERROR
