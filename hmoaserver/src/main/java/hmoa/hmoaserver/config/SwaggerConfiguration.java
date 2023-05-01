@@ -28,7 +28,7 @@ public class SwaggerConfiguration {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("hmoa.hmoaserver"))
                 .paths(PathSelectors.any())
                 .build();
     }

@@ -48,6 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/swagger-resources/**",
                 "/webjar/**",
                 "/v2/api-docs",
+                "/brand/**",
+                "/perfume/**",
                 "/member/testcreate"
         };
         web.ignoring()
