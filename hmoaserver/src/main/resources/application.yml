@@ -5,6 +5,7 @@ spring:
         - local
         - jwt
         - oauth2
+        - S3
       prod:
         - h2
         - app

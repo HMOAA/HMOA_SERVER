@@ -39,6 +39,9 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
 	implementation 'commons-io:commons-io:2.6'
+
+	//S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
