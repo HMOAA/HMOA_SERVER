@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.domain;
 
+import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PerfumeComment {
+public class PerfumeComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
