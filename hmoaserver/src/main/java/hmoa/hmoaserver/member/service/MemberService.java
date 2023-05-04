@@ -13,11 +13,16 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.service.ProviderService;
 import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
+import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static hmoa.hmoaserver.exception.Code.*;
@@ -33,6 +38,7 @@ public class MemberService {
 
     private final ProviderService providerService;
 
+    private final PerfumeCommentRepository perfumeCommentRepository;
     @Transactional
     public Member save(Member member){
         try{
@@ -154,5 +160,14 @@ public class MemberService {
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
             return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
         }
+    }
+
+    public List<PerfumeComment> findByComment(String token){
+        log.info("1");
+        String findEmail = jwtService.getEmail(token);
+        log.info("2");
+        Member member = findByEmail(findEmail);
+        log.info("3");
+        return perfumeCommentRepository.findAllByMemberId(member.getId());
     }
 }

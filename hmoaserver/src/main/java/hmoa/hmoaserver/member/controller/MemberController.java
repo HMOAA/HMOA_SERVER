@@ -9,6 +9,8 @@ import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.Token;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,7 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -297,5 +302,17 @@ public class MemberController {
                         .resultCode("AGE_UPDATE")
                         .message("나이 업데이트 완료")
                         .build());
+    }
+    @ApiOperation(value = "내가 쓴 댓글")
+    @GetMapping("/member/comments")
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token){
+        List<PerfumeComment> comments= memberService.findByComment(token);
+        List<PerfumeCommentResponseDto> result = new ArrayList<>();
+        for (PerfumeComment pc : comments){
+            log.info("{}",pc.getId());
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc);
+            result.add(dto);
+        }
+        return ResponseEntity.ok(result);
     }
 }

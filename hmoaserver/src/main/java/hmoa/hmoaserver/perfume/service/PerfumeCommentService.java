@@ -31,13 +31,9 @@ public class PerfumeCommentService {
 
     @Transactional
     public PerfumeComment commentSave(String token,Long id, PerfumeCommentRequestDto dto){
-        log.info("1");
         String email=jwtService.getEmail(token);
-        log.info("2");
         Member findMember = memberService.findByEmail(email);
-        log.info("3");
         Perfume findPerfume = perfumeService.findById(id);
-        log.info("4");
         return commentRepository.save(dto.toEntity(findMember,findPerfume));
 
     }

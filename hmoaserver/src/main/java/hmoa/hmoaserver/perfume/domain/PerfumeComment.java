@@ -22,11 +22,11 @@ public class PerfumeComment extends BaseEntity {
     private Boolean heart;
 
     @ManyToOne
-    @JoinColumn(name = "member")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "perfume")
+    @JoinColumn(name = "perfume_id")
     private Perfume perfume;
 
     @Builder
