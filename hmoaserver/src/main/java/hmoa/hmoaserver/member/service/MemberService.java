@@ -18,6 +18,7 @@ import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
+    @Value("${defalut.profile}")
+    private String DEFALUT_PROFILE_URL;
+
     private final MemberRepository memberRepository;
 
     private final JwtService jwtService;
@@ -39,6 +43,8 @@ public class MemberService {
     private final ProviderService providerService;
 
     private final PerfumeCommentRepository perfumeCommentRepository;
+
+
     @Transactional
     public Member save(Member member){
         try{
@@ -152,6 +158,7 @@ public class MemberService {
             Member member = Member.builder()
                     .email(profile.getEmail())
                     .providerType(provider)
+                    .imgUrl(DEFALUT_PROFILE_URL)
                     .role(Role.GUEST)
                     .build();
             member = save(member);
