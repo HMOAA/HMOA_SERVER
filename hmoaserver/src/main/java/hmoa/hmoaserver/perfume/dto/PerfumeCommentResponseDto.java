@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PerfumeCommentResponseDto {
     private Long id;
     private String comment;
-    private boolean heart;
+    private int heart;
     private Long member_id;
     private Long perfume_id;
 

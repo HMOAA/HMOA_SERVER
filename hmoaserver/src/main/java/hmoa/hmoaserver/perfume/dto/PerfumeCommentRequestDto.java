@@ -8,11 +8,10 @@ import lombok.Data;
 @Data
 public class PerfumeCommentRequestDto {
     private String comment;
-    private boolean heart;
     public PerfumeComment toEntity(Member member, Perfume perfume){
         return PerfumeComment.builder()
                 .comment(comment)
-                .heart(heart)
+                .heart(0)
                 .member(member)
                 .perfume(perfume)
                 .build();

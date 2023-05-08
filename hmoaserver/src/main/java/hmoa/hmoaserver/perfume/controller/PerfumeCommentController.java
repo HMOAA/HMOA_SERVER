@@ -27,4 +27,15 @@ public class PerfumeCommentController {
                         .message("댓글 쓰기 완료")
                         .build());
     }
+
+    @PostMapping("comments/{commentid}")
+    public ResponseEntity<ResultDto<Object>> commentHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
+        String msg = commentService.updateHeart(token,commentid);
+        log.info("4");
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .resultCode(msg)
+                        .message(msg)
+                        .build());
+    }
 }

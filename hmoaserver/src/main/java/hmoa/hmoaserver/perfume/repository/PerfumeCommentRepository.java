@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, Long> {
 
     List<PerfumeComment> findAllByMemberId(Long memberId);
+    Optional<PerfumeComment> findById(Long id);
 }

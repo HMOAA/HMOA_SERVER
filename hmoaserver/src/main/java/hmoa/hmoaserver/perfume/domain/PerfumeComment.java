@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,22 +21,32 @@ public class PerfumeComment extends BaseEntity {
     private Long id;
 
     private String comment;
-    private Boolean heart;
 
-    @ManyToOne
+    private int heart;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfume_id")
     private Perfume perfume;
 
     @Builder
-    public PerfumeComment(Long id, String comment, Boolean heart, Member member, Perfume perfume) {
+    public PerfumeComment(Long id, String comment, int heart, Member member, Perfume perfume) {
         this.id = id;
         this.comment = comment;
-        this.heart = heart;
+        this.heart = 0;
         this.member = member;
         this.perfume = perfume;
+    }
+
+    public void increaseHeartCount(){
+        this.heart+=1;
+    }
+
+    public void decreaseHeartCount(){
+        this.heart-=1;
     }
 }
