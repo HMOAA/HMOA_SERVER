@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.member.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +50,14 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String refreshToken;
 
+    @OneToMany(mappedBy = "member",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
+    private List<PerfumeComment> perfumeComments = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
+    private List<PerfumeCommentHeart> perfumeCommentHearts = new ArrayList<>();
 
 
 

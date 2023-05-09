@@ -1,27 +1,26 @@
 package hmoa.hmoaserver.member.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
-import hmoa.hmoaserver.exception.Code;
-import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberService;
-import hmoa.hmoaserver.oauth.jwt.Token;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
-
-import static hmoa.hmoaserver.exception.Code.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Api(tags="멤버")
 @Slf4j
@@ -30,6 +29,9 @@ import static hmoa.hmoaserver.exception.Code.*;
 public class MemberController {
     private final JwtService jwtService;
     private final MemberService memberService;
+
+    @Value("${defalut.profile}")
+    private String DEFALUT_PROFILE_URL;
 
 
 
@@ -41,7 +43,7 @@ public class MemberController {
             @ApiResponse(
                     code = 200,
                     message = "성공 응답",
-                    response = MemberReslutDto.class
+                    response = MemberResponseDto.class
             ),
             @ApiResponse(
                     code = 401,
@@ -65,13 +67,14 @@ public class MemberController {
             )
     })
     @GetMapping("/member")
-    public ResponseEntity<MemberReslutDto> findOneMember(HttpServletRequest request,@RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<MemberResponseDto> findOneMember(HttpServletRequest request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        log.info("{}",email);
-
-        MemberReslutDto reslutDto = new MemberReslutDto(findMember);
-        return ResponseEntity.ok(reslutDto);
+        MemberResponseDto resultDto = new MemberResponseDto(findMember);
+        if(findMember.getImgUrl()==null){
+            resultDto.setImgUrl(DEFALUT_PROFILE_URL);
+        }
+        return ResponseEntity.ok(resultDto);
 
     }
 
@@ -83,7 +86,7 @@ public class MemberController {
             @ApiResponse(
                     code = 200,
                     message = "성공 응답",
-                    response = MemberReslutDto.class
+                    response = MemberResponseDto.class
             ),
             @ApiResponse(
                     code = 401,
@@ -107,11 +110,11 @@ public class MemberController {
             )
     })
     @PatchMapping("/member/join")
-    public ResponseEntity<MemberReslutDto> joinMember(@RequestBody JoinUpdateRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<MemberResponseDto> joinMember(@RequestBody JoinUpdateRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         memberService.joinMember(findMember,request.getAge(),request.getSex(),request.getNickname());
-        MemberReslutDto reslutDto = new MemberReslutDto(findMember);
+        MemberResponseDto reslutDto = new MemberResponseDto(findMember);
         return ResponseEntity.ok(reslutDto);
     }
 
@@ -297,5 +300,17 @@ public class MemberController {
                         .resultCode("AGE_UPDATE")
                         .message("나이 업데이트 완료")
                         .build());
+    }
+    @ApiOperation(value = "내가 쓴 댓글")
+    @GetMapping("/member/comments")
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token){
+        List<PerfumeComment> comments= memberService.findByComment(token);
+        List<PerfumeCommentResponseDto> result = new ArrayList<>();
+        for (PerfumeComment pc : comments){
+            log.info("{}",pc.getId());
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc);
+            result.add(dto);
+        }
+        return ResponseEntity.ok(result);
     }
 }
