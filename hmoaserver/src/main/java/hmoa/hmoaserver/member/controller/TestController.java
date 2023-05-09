@@ -37,8 +37,6 @@ public class TestController {
                 .map(member -> new MemberResponseDto(member)).collect(Collectors.toList());
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("test")
-                        .message("test완료")
                         .data(results)
                         .build());
     }

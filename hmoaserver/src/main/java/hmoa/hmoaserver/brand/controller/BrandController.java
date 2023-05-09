@@ -39,8 +39,6 @@ public class BrandController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("BRAND_SAVED")
-                        .message("브랜드 저장 완료")
                         .build());
     }
 
@@ -53,8 +51,6 @@ public class BrandController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("BRAND_FOUND")
-                        .message("Brand 단건 조회 완료")
                         .data(responseDto)
                         .build());
     }

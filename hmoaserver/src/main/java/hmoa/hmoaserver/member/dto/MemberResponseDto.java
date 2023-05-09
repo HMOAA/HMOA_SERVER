@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 public class MemberResponseDto {
     private Long memberId;
     private String nickname;
+    private int age;
+    private boolean sex;
     private ProviderType provider;
     private String imgUrl;
     public MemberResponseDto(Member member){
@@ -23,5 +25,7 @@ public class MemberResponseDto {
         if(member.getImgUrl() != null){
             this.imgUrl=member.getImgUrl();
         }
+        this.age=member.getAge();
+        this.sex=member.isSex();
     }
 }

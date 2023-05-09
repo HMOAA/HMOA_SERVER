@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JoinUpdateRequestDto {
     private int age;
-    private String sex;
+    private boolean sex;
     private String nickname;
 }

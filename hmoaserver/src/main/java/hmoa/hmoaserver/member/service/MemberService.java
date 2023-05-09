@@ -103,7 +103,7 @@ public class MemberService {
      * 첫 로그인시 회원 업데이트
      */
     @Transactional
-    public void joinMember(Member member, int age,String sex,String nickname){
+    public void joinMember(Member member, int age,boolean sex,String nickname){
         try{
             member.updateAge(age);
             member.updateSex(sex);
@@ -136,7 +136,7 @@ public class MemberService {
      * 성별 업데이트
      */
     @Transactional
-    public void updateSex(Member member, String sex){
+    public void updateSex(Member member, boolean sex){
         member.updateSex(sex);
         save(member);
     }
@@ -155,13 +155,16 @@ public class MemberService {
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
             return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),true);
         }else{
+            log.info("1");
             Member member = Member.builder()
                     .email(profile.getEmail())
                     .providerType(provider)
                     .imgUrl(DEFALUT_PROFILE_URL)
                     .role(Role.GUEST)
                     .build();
+            log.info("2");
             member = save(member);
+            log.info("3");
             String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
