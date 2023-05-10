@@ -23,8 +23,6 @@ public class PerfumeCommentController {
         log.info("여기");
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("COMMENT_SAVE")
-                        .message("댓글 쓰기 완료")
                         .build());
     }
 
@@ -34,8 +32,6 @@ public class PerfumeCommentController {
         log.info("4");
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode(msg)
-                        .message(msg)
                         .build());
     }
 }

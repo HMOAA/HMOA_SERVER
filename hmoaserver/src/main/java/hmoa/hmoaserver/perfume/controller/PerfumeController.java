@@ -37,8 +37,6 @@ public class PerfumeController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("PERFUME_SAVED")
-                         .message("향수 저장 완료")
                         .build());
     }
 
@@ -51,8 +49,6 @@ public class PerfumeController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("PERFUME_FOUND")
-                        .message("Perfume 단건 조회 완료")
                         .data(responseDto)
                         .build());
     }

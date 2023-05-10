@@ -113,7 +113,7 @@ public class MemberController {
     public ResponseEntity<MemberResponseDto> joinMember(@RequestBody JoinUpdateRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        memberService.joinMember(findMember,request.getAge(),request.getSex(),request.getNickname());
+        memberService.joinMember(findMember,request.getAge(),request.isSex(),request.getNickname());
         MemberResponseDto reslutDto = new MemberResponseDto(findMember);
         return ResponseEntity.ok(reslutDto);
     }
@@ -161,8 +161,6 @@ public class MemberController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("NICKNAME_UPDATE")
-                        .message("닉네임 변경 완료")
                         .build());
     }
 
@@ -249,8 +247,6 @@ public class MemberController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("AGE_UPDATE")
-                        .message("나이 업데이트 완료")
                         .build());
     }
 
@@ -293,12 +289,10 @@ public class MemberController {
     public ResponseEntity<ResultDto<Object>> updateSex(@RequestBody SexRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        memberService.updateSex(findMember, request.getSex());
+        memberService.updateSex(findMember, request.isSex());
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
-                        .resultCode("AGE_UPDATE")
-                        .message("나이 업데이트 완료")
                         .build());
     }
     @ApiOperation(value = "내가 쓴 댓글")
