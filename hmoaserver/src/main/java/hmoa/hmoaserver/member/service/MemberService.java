@@ -5,6 +5,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
+import hmoa.hmoaserver.member.dto.MemberResponseDto;
 import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.AccessToken;
@@ -14,12 +15,15 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.service.ProviderService;
 import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
+import hmoa.hmoaserver.perfume.repository.PerfumeCommentHeartRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -45,6 +50,8 @@ public class MemberService {
     private final ProviderService providerService;
 
     private final PerfumeCommentRepository perfumeCommentRepository;
+
+    private final PerfumeCommentHeartRepository perfumeCommentHeartRepository;
 
 
     @Transactional
@@ -179,5 +186,16 @@ public class MemberService {
         Member member = findByEmail(findEmail);
         Pageable pageable = PageRequest.of(page,10);
         return perfumeCommentRepository.findAllByMemberId(member.getId(),pageable);
+    }
+
+    public Page<PerfumeComment> findByHeartComment(String token, int page){
+        String findEmail = jwtService.getEmail(token);
+        Member member = findByEmail(findEmail);
+        PageRequest pageRequest = PageRequest.of(page,10);
+        List<PerfumeCommentHeart> hearts= perfumeCommentHeartRepository.findAllByMemberId(member.getId());
+        List<PerfumeComment> comments = hearts.stream().map(heart->heart.getPerfumeComment()).collect(Collectors.toList());
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start+pageRequest.getPageSize()), comments.size());
+        return new PageImpl<>(comments.subList(start,end),pageRequest,comments.size());
     }
 }
