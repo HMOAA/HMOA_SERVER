@@ -50,19 +50,15 @@ public class PerfumeCommentService {
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
-        log.info("1");
         if (!hasHeart(findComment,findMember)){
             findComment.increaseHeartCount();
-            log.info("2");
             PerfumeCommentHeart heart = PerfumeCommentHeart.builder()
                     .member(findMember)
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
-            log.info("3");
             return CREATE_HEART_SUCCESS;
         }
-        log.info("4");
         findComment.decreaseHeartCount();
         return removeHeart(findComment,findMember);
     }

@@ -64,13 +64,11 @@ public class TestController {
         TestDto test2= TestDto.builder().title("향모아 사용자들이 사랑한").perfumeList(results2).build();
         TestDto test3= TestDto.builder().title("향모아 사용자들이 즐겨찾는").perfumeList(results2).build();
         TestDto test4= TestDto.builder().title("향모아 사용자들이 즐기는").perfumeList(results2).build();
-        TestDto test5= TestDto.builder().title("향모아 사용자들이 재밌어한").perfumeList(results2).build();
         List<TestDto> results = new ArrayList<>();
         results.add(test1);
         results.add(test2);
         results.add(test3);
         results.add(test4);
-        results.add(test5);
         return ResponseEntity.status(200)
                 .body(MainResultDto.builder()
                         .mainImage(DEFALUT_MAIN)

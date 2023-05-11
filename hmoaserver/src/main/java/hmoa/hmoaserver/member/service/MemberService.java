@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -172,12 +174,10 @@ public class MemberService {
         }
     }
 
-    public List<PerfumeComment> findByComment(String token){
-        log.info("1");
+    public Page<PerfumeComment> findByComment(String token,int page){
         String findEmail = jwtService.getEmail(token);
-        log.info("2");
         Member member = findByEmail(findEmail);
-        log.info("3");
-        return perfumeCommentRepository.findAllByMemberId(member.getId());
+        Pageable pageable = PageRequest.of(page,10);
+        return perfumeCommentRepository.findAllByMemberId(member.getId(),pageable);
     }
 }

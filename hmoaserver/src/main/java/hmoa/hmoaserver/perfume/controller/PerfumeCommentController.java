@@ -20,7 +20,6 @@ public class PerfumeCommentController {
     @PostMapping("/{perfumeid}/comments")
     public ResponseEntity<ResultDto<Object>> commentSave(@PathVariable Long perfumeid, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
         commentService.commentSave(token,perfumeid,dto);
-        log.info("여기");
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
@@ -29,7 +28,6 @@ public class PerfumeCommentController {
     @PostMapping("comments/{commentid}")
     public ResponseEntity<ResultDto<Object>> commentHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
         String msg = commentService.updateHeart(token,commentid);
-        log.info("4");
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
