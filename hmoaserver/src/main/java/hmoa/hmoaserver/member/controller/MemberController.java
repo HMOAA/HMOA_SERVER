@@ -15,12 +15,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags="멤버")
 @Slf4j
@@ -297,8 +299,8 @@ public class MemberController {
     }
     @ApiOperation(value = "내가 쓴 댓글")
     @GetMapping("/member/comments")
-    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token){
-        List<PerfumeComment> comments= memberService.findByComment(token);
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token,@RequestParam(value="page", defaultValue = "0") int page){
+        Page<PerfumeComment> comments= memberService.findByComment(token,page);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments){
             log.info("{}",pc.getId());
@@ -306,5 +308,14 @@ public class MemberController {
             result.add(dto);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "좋아요한 댓글")
+    @GetMapping("/member/hearts")
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page){
+        Page<PerfumeComment> comments = memberService.findByHeartComment(token,page);
+        List<PerfumeCommentResponseDto> results = comments.stream()
+                .map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 }
