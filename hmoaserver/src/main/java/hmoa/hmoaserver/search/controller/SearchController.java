@@ -1,6 +1,7 @@
 package hmoa.hmoaserver.search.controller;
 
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.SearchRequestDto;
 import hmoa.hmoaserver.search.service.SearchService;
 import io.swagger.annotations.Api;
@@ -27,6 +28,13 @@ public class SearchController {
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기")
     @PostMapping("/search/brand")
     public ResponseEntity<List<BrandDefaultResponseDto>> brandSearch(@RequestBody SearchRequestDto searchRequestDto){
-        return ResponseEntity.ok(searchService.brandSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord()));
+        return ResponseEntity.ok(searchService.brandSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord(),searchRequestDto.getPage()));
     }
+
+    @ApiOperation(value = "검색어가 포함된 향수 불러오기")
+    @PostMapping("/search/perfume")
+    public ResponseEntity<List<PerfumeSearchResponseDto>> perfumeSearch(@RequestBody SearchRequestDto searchRequestDto){
+        return ResponseEntity.ok(searchService.perfumeSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord(),searchRequestDto.getPage()));
+    }
+
 }
