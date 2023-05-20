@@ -117,6 +117,7 @@ public class MemberService {
             member.updateAge(age);
             member.updateSex(sex);
             member.updateNickname(nickname);
+            updateRole(member);
         }catch (RuntimeException e){
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -154,26 +155,22 @@ public class MemberService {
      */
     @Transactional
     public MemberLoginResponseDto loginMember(String accessToken, ProviderType provider){
-        log.info("loginMember");
         OAuth2UserDto profile = providerService.getProfile(accessToken,provider);
         Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(),provider);
-        if(findMember.isPresent()){
+        if(findMember.isPresent()&&findMember.get().getRole()!=Role.GUEST){
             Member member = findMember.get();
             String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
             return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),true);
         }else{
-            log.info("1");
             Member member = Member.builder()
                     .email(profile.getEmail())
                     .providerType(provider)
                     .imgUrl(DEFALUT_PROFILE_URL)
                     .role(Role.GUEST)
                     .build();
-            log.info("2");
             member = save(member);
-            log.info("3");
             String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);

@@ -37,7 +37,7 @@ public class ProviderService {
         log.info("getProfile");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        httpHeaders.add("Content-type", "application");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
 

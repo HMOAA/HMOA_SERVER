@@ -1,8 +1,11 @@
 package hmoa.hmoaserver.member.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
@@ -72,6 +75,9 @@ public class MemberController {
     public ResponseEntity<MemberResponseDto> findOneMember(HttpServletRequest request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
+        if (findMember.getRole()== Role.GUEST){
+            throw new CustomException(null, Code.MEMBER_NOT_FOUND);
+        }
         MemberResponseDto resultDto = new MemberResponseDto(findMember);
         if(findMember.getImgUrl()==null){
             resultDto.setImgUrl(DEFALUT_PROFILE_URL);

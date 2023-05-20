@@ -50,7 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/v2/api-docs",
                 "/brand/**",
                 "/perfume/**",
-                "/member/testcreate"
+                "/member/testcreate",
+                "/search/**"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
