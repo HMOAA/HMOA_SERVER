@@ -23,6 +23,7 @@ public class Brand {
 
     private String brandName;
     private String englishName;
+    private int heartCount;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<BrandPhoto> brandPhotos = new ArrayList<>();
@@ -34,6 +35,7 @@ public class Brand {
     public Brand(String brandName, String englishName) {
         this.brandName = brandName;
         this.englishName = englishName;
+        this.heartCount = 0;
     }
 
     public BrandPhoto getBrandPhoto() {
@@ -44,6 +46,14 @@ public class Brand {
 
         BrandPhoto brandPhoto = this.brandPhotos.get(brandPhotoSize - 1);
         return brandPhoto;
+    }
+
+    public void increaseHeartCount(){
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount(){
+        this.heartCount -= 1;
     }
 
 }
