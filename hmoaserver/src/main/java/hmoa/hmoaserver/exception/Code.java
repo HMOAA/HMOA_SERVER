@@ -43,6 +43,7 @@ public enum Code {
      * 409 CONFLICT
      */
     DUPLICATE_NICKNAME(CONFLICT,"이미 존재하는 닉네임 입니다."),
+    DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),
 
     /**
      * 415 UNSUPPORTED_MEDIA_TYPE
