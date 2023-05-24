@@ -10,8 +10,10 @@ import hmoa.hmoaserver.member.dto.MemberResponseDto;
 import hmoa.hmoaserver.member.service.TestService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -49,30 +51,38 @@ public class TestController {
                         .build());
     }
 
+    @ApiOperation(value = "테스트 향수 목록 만들기")
     @PostMapping("/perfume/testcreate")
     public void perfumeTestCreate(){testService.perfumeTest();}
 
+    @ApiOperation(value = "메인 페이지 호출 1")
     @GetMapping("/perfume/findtest")
     public ResponseEntity<MainResultDto<Object>> perfumeFindTest(){
-        Page<Perfume> perfumes1 = testService.perfumeFindTest();
-        Page<Perfume> perfumes2 = testService.perfumeFindTest2();
-        List<MainTestDto> results1 = perfumes1.stream()
-                .map(perfume -> new MainTestDto(perfume)).collect(Collectors.toList());
-        List<MainTestDto> results2 = perfumes2.stream()
+        Page<Perfume> perfumes = testService.perfumeFindTest();
+        List<MainTestDto> results1 = perfumes.stream()
                 .map(perfume -> new MainTestDto(perfume)).collect(Collectors.toList());
         TestDto test1= TestDto.builder().title("향모아 사용자들이 좋아한").perfumeList(results1).build();
-        TestDto test2= TestDto.builder().title("향모아 사용자들이 사랑한").perfumeList(results2).build();
-        TestDto test3= TestDto.builder().title("향모아 사용자들이 즐겨찾는").perfumeList(results2).build();
-        TestDto test4= TestDto.builder().title("향모아 사용자들이 즐기는").perfumeList(results2).build();
-        List<TestDto> results = new ArrayList<>();
-        results.add(test1);
-        results.add(test2);
-        results.add(test3);
-        results.add(test4);
         return ResponseEntity.status(200)
                 .body(MainResultDto.builder()
                         .mainImage(DEFALUT_MAIN)
-                        .recommend(results)
+                        .recommend(test1)
                         .build());
+    }
+    @ApiOperation(value = "메인 페이지 호출 2")
+    @GetMapping("/perfume/findtest2")
+    public ResponseEntity<ResultDto<Object>> perfumeFindTest2(){
+        Page<Perfume> perfumes = testService.perfumeFindTest2();
+        List<MainTestDto> results = perfumes.stream()
+                .map(perfume -> new MainTestDto(perfume)).collect(Collectors.toList());
+        TestDto test1= TestDto.builder().title("향모아 사용자들이 사랑한").perfumeList(results).build();
+        TestDto test2= TestDto.builder().title("향모아 사용자들이 즐겨찾는").perfumeList(results).build();
+        TestDto test3= TestDto.builder().title("향모아 사용자들이 즐기는").perfumeList(results).build();
+        List<TestDto> dtos = new ArrayList<>();
+        dtos.add(test1);
+        dtos.add(test2);
+        dtos.add(test3);
+        return ResponseEntity.ok(ResultDto.builder()
+                .data(dtos)
+                .build());
     }
 }
