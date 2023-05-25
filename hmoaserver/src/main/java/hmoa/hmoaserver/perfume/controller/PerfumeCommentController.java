@@ -25,9 +25,16 @@ public class PerfumeCommentController {
                         .build());
     }
 
-    @PostMapping("comments/{commentid}")
-    public ResponseEntity<ResultDto<Object>> commentHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
-        String msg = commentService.updateHeart(token,commentid);
+    @PutMapping("comments/{commentid}")
+    public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
+        commentService.saveHeart(token,commentid);
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .build());
+    }
+    @DeleteMapping("comments/{commentid}")
+    public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
+        commentService.deleteHeart(token,commentid);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
