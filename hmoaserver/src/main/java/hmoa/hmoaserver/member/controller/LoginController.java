@@ -70,10 +70,9 @@ public class LoginController {
         }
     }
 
+    @ApiOperation(value = "소셜 로그인")
     @PostMapping("/login/oauth2/{provider}")
     public ResponseEntity<MemberLoginResponseDto> loginSocial(@RequestBody AccessToken accessToken, @PathVariable ProviderType provider) {
-        log.info("{}",accessToken.getToken());
-        log.info("{}",provider);
         MemberLoginResponseDto responseDto = memberService.loginMember(accessToken.getToken(), provider);
         return ResponseEntity.ok(responseDto);
     }
