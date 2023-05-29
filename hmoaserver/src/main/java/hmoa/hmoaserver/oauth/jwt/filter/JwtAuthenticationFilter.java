@@ -62,12 +62,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 errorResult(response,401,"ACCESS Token이 만료되었습니다.");
             } else{
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                errorResult(response,400,"잘못된 JWT 입니다");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                errorResult(response,401,"잘못된 JWT 입니다");
             }
         }else{
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errorResult(response,400,"jwt가 존재하지 않습니다.");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            errorResult(response,404,"jwt가 존재하지 않습니다.");
         }
 
     }

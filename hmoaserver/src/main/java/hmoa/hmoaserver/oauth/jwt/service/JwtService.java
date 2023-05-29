@@ -107,13 +107,6 @@ public class JwtService {
     }
 
     /**
-     * 헤더에서 RefreshToken 추출
-     */
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(refreshHeader));
-    }
-
-    /**
      * 헤더에서 AccessToken 추출
      */
     public Optional<String> extractAccessToken(HttpServletRequest request) {

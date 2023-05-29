@@ -237,11 +237,6 @@ public class MemberController {
                     response = ExceptionResponseDto.class
             ),
             @ApiResponse(
-                    code = 409,
-                    message = "이미 존재하는 닉네임입니다.",
-                    response = ExceptionResponseDto.class
-            ),
-            @ApiResponse(
                     code = 500,
                     message = "서버 에러입니다.",
                     response = ExceptionResponseDto.class
@@ -259,7 +254,7 @@ public class MemberController {
     }
 
     /**
-     * 나이 업데이트
+     * 성별 업데이트
      */
     @ApiOperation(value = "성별 업데이트")
     @ApiResponses({
@@ -283,11 +278,6 @@ public class MemberController {
                     response = ExceptionResponseDto.class
             ),
             @ApiResponse(
-                    code = 409,
-                    message = "이미 존재하는 닉네임입니다.",
-                    response = ExceptionResponseDto.class
-            ),
-            @ApiResponse(
                     code = 500,
                     message = "서버 에러입니다.",
                     response = ExceptionResponseDto.class
@@ -304,6 +294,33 @@ public class MemberController {
                         .build());
     }
     @ApiOperation(value = "내가 쓴 댓글")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답",
+                    response = PerfumeCommentResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "토큰이 없거나 잘못됐습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원이 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
     @GetMapping("/member/comments")
     public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token,@RequestParam(value="page", defaultValue = "0") int page){
         Page<PerfumeComment> comments= memberService.findByComment(token,page);
@@ -317,6 +334,33 @@ public class MemberController {
     }
 
     @ApiOperation(value = "좋아요한 댓글")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답",
+                    response = PerfumeCommentResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "토큰이 없거나 잘못됐습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원이 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
     @GetMapping("/member/hearts")
     public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page){
         Page<PerfumeComment> comments = memberService.findByHeartComment(token,page);
