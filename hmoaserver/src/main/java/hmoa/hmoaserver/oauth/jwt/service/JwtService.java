@@ -72,11 +72,8 @@ public class JwtService {
 
     //refreshToken 생성
     public String createRefreshToken(String email, Role roles) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles",roles);
         Date now = new Date();
         String refreshToken = Jwts.builder()
-                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(SignatureAlgorithm.HS256,secretKey)

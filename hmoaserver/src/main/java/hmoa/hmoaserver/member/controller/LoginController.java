@@ -4,6 +4,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
+import hmoa.hmoaserver.member.dto.RememberedLoginRequestDto;
 import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.AccessToken;
@@ -59,10 +60,11 @@ public class LoginController {
                     response = ExceptionResponseDto.class
             )
     })
-    @GetMapping("/login/remembered")
-    public ResponseEntity<TokenResponseDto> rememberedLogin(@RequestHeader("rememberedToken") String rememberedToken) {
-        if (!rememberedToken.isEmpty()) {
-            Token token = memberService.reIssue(rememberedToken);
+    @PostMapping("/login/remembered")
+    public ResponseEntity<TokenResponseDto> rememberedLogin(@RequestBody RememberedLoginRequestDto dto) {
+
+        if (!dto.getRememberedToken().isEmpty()) {
+            Token token = memberService.reIssue(dto.getRememberedToken());
             TokenResponseDto responseDto = new TokenResponseDto(token);
             return ResponseEntity.ok(responseDto);
         } else {
