@@ -72,11 +72,8 @@ public class JwtService {
 
     //refreshToken 생성
     public String createRefreshToken(String email, Role roles) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles",roles);
         Date now = new Date();
         String refreshToken = Jwts.builder()
-                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(SignatureAlgorithm.HS256,secretKey)
@@ -104,13 +101,6 @@ public class JwtService {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(result);
-    }
-
-    /**
-     * 헤더에서 RefreshToken 추출
-     */
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(refreshHeader));
     }
 
     /**

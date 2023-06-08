@@ -2,6 +2,8 @@ package hmoa.hmoaserver.oauth.service;
 
 
 import com.google.gson.Gson;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.oauth.userinfo.GoogleOAuth2UserInfo;
 import hmoa.hmoaserver.oauth.userinfo.KakaoOAuth2UserInfo;
@@ -17,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.naming.CommunicationException;
 import javax.servlet.http.HttpServletRequest;
+
+import static hmoa.hmoaserver.exception.Code.*;
 
 
 @Slf4j
@@ -42,21 +46,19 @@ public class ProviderService {
 
 
         String profileUrl = urlMapping(provider);
-        log.info("{}",profileUrl);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(profileUrl, request, String.class);
-        log.info("{}",response.getHeaders());
 
 
         try {
+            ResponseEntity<String> response = restTemplate.postForEntity(profileUrl, request, String.class);
             if (response.getStatusCode() == HttpStatus.OK) {
                 log.info("{}",response);
                 return extractProfile(response, provider);
             }
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new CustomException(e, WRONG_TYPE_TOKEN);
         }
-        throw new RuntimeException();
+        throw new CustomException(null, WRONG_TYPE_TOKEN);
     }
 
     private String urlMapping(ProviderType checkProvider){

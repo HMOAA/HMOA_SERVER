@@ -35,7 +35,6 @@ public class PerfumeCommentService {
 
     private final PerfumeService perfumeService;
 
-    @Transactional
     public PerfumeComment commentSave(String token,Long id, PerfumeCommentRequestDto dto){
         String email=jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
@@ -44,8 +43,7 @@ public class PerfumeCommentService {
 
     }
 
-    @Transactional
-    public String updateHeart(String token,Long commentId){
+    public String saveHeart(String token,Long commentId){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
@@ -59,13 +57,17 @@ public class PerfumeCommentService {
             commentHeartRepository.save(heart);
             return CREATE_HEART_SUCCESS;
         }
-        findComment.decreaseHeartCount();
-        return removeHeart(findComment,findMember);
+        throw new CustomException(null,DUPLICATE_LIKED);
     }
-    private String removeHeart(final PerfumeComment perfumeComment, final Member member){
-        PerfumeCommentHeart perfumeCommentHeart = commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment,member)
+    public String deleteHeart(String token,Long commentId){
+        String email = jwtService.getEmail(token);
+        Member findMember = memberService.findByEmail(email);
+        PerfumeComment findComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
+        PerfumeCommentHeart perfumeCommentHeart = commentHeartRepository.findByPerfumeCommentAndMember(findComment,findMember)
                 .orElseThrow(()-> new CustomException(null,HEART_NOT_FOUND));
         commentHeartRepository.delete(perfumeCommentHeart);
+        findComment.decreaseHeartCount();
         return DELETE_HEART_SUCCESS;
 
     }
