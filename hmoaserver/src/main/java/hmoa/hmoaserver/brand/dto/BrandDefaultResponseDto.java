@@ -18,6 +18,8 @@ public class BrandDefaultResponseDto {
     public BrandDefaultResponseDto(Brand brand) {
         this.brandId = brand.getId();
         this.brandName = brand.getBrandName();
-        this.brandImageUrl = brand.getBrandPhoto().getPhotoUrl();
+        if(brand.getBrandPhoto()!=null){
+            this.brandImageUrl = brand.getBrandPhoto().getPhotoUrl();
+        }
     }
 }

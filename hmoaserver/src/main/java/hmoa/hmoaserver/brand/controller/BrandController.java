@@ -13,6 +13,7 @@ import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = {"브랜드"})
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/brand")
@@ -33,15 +35,16 @@ public class BrandController {
 
     @ApiOperation(value = "브랜드 저장")
     @PostMapping(value = "/new")
-    public ResponseEntity<ResultDto<Object>> saveBrand(HttpServletRequest request, @RequestParam(value="image") MultipartFile file, BrandSaveRequestDto requestDto) {
+    public ResponseEntity<ResultDto<Object>> saveBrand(HttpServletRequest request, @RequestParam(value="image",required = false) MultipartFile file, BrandSaveRequestDto requestDto) {
 
         Brand brand = brandService.save(requestDto);
+        if(file!=null) {
+            log.info("?");
+            photoService.validateFileExistence(file);
+            photoService.validateFileType(file);
 
-        photoService.validateFileExistence(file);
-        photoService.validateFileType(file);
-
-        brandPhotoService.saveBrandPhotos(brand, file);
-
+            brandPhotoService.saveBrandPhotos(brand, file);
+        }
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
