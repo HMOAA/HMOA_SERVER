@@ -4,7 +4,6 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 @ToString
 @Getter
@@ -17,13 +16,14 @@ public class MemberResponseDto {
     private int age;
     private boolean sex;
     private ProviderType provider;
-    private String imgUrl;
+    private String memberImageUrl;
+
     public MemberResponseDto(Member member){
         this.memberId = member.getId();
         this.nickname= member.getNickname();
         this.provider=member.getProviderType();
-        if(member.getImgUrl() != null){
-            this.imgUrl=member.getImgUrl();
+        if(member.getMemberPhoto() != null){
+            this.memberImageUrl = member.getMemberPhoto().getPhotoUrl();
         }
         this.age=member.getAge();
         this.sex=member.isSex();

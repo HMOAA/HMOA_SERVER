@@ -3,6 +3,7 @@ package hmoa.hmoaserver.member.domain;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
+import hmoa.hmoaserver.photo.domain.MemberPhoto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,11 +32,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String password;
 
-
     private String nickname;
-
-
-    private String imgUrl;
 
     private int age;
 
@@ -59,6 +56,8 @@ public class Member extends BaseEntity implements UserDetails {
     @OrderBy("id asc")
     private List<PerfumeCommentHeart> perfumeCommentHearts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<MemberPhoto> memberPhotos = new ArrayList<>();
 
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
@@ -113,4 +112,16 @@ public class Member extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+    public MemberPhoto getMemberPhoto() {
+        int profilePhotoSize = this.memberPhotos.size();
+        if (profilePhotoSize == 0)
+            return null;
+
+        MemberPhoto memberPhoto = this.memberPhotos.get(profilePhotoSize - 1);
+        if (memberPhoto.isDeleted())
+            return null;
+        return memberPhoto;
+    }
+
 }
