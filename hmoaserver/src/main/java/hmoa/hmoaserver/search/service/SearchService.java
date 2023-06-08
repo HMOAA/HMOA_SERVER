@@ -7,6 +7,7 @@ import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
+import hmoa.hmoaserver.search.dto.SearchBrandResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class SearchService {
     private final BrandRepository brandRepository;
     private final PerfumeRepository perfumeRepository;
+    private final UnicodeService unicodeService;
 
     public List<BrandDefaultResponseDto> brandSearchAll(){
         List<Brand> brands= brandRepository.findAll();
@@ -32,10 +34,14 @@ public class SearchService {
         return dto;
     }
 
-    public List<BrandDefaultResponseDto> brandSearch(String brandName, String englishName,int page){
+    public List<SearchBrandResponseDto> brandSearch(String brandName, String englishName,int page){
         Pageable pageable= PageRequest.of(page,10);
         Page<Brand> brands = brandRepository.findAllSearch(brandName,englishName,pageable);
-        List<BrandDefaultResponseDto> dto = brands.stream().map(brand -> new BrandDefaultResponseDto(brand)).collect(Collectors.toList());
+        List<SearchBrandResponseDto> dto = brands.stream().map(brand -> {
+            // num = 브랜드 한글 이름 첫글자의 초성 번호
+            int num = unicodeService.extractIntialChar(brand.getBrandName());
+            return new SearchBrandResponseDto(brand, num);
+        }).collect(Collectors.toList());
         return dto;
     }
 

@@ -170,6 +170,7 @@ public class MemberService {
         }else{
             Member member = Member.builder()
                     .email(profile.getEmail())
+                    .nickname(profile.getName())
                     .providerType(provider)
                     .imgUrl(DEFALUT_PROFILE_URL)
                     .role(Role.GUEST)

@@ -10,7 +10,5 @@ import java.util.Optional;
 
 public interface PerfumeCommentHeartRepository extends JpaRepository<PerfumeCommentHeart, Long> {
     Optional<PerfumeCommentHeart> findByPerfumeCommentAndMember(PerfumeComment perfumeComment, Member member);
-
     List<PerfumeCommentHeart> findAllByMemberId(Long memberId);
-
 }
