@@ -19,6 +19,7 @@ import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentHeartRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
+import hmoa.hmoaserver.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,7 @@ public class MemberService {
 
     private final PerfumeCommentHeartRepository perfumeCommentHeartRepository;
 
+    private final MemberPhotoService memberPhotoService;
 
     @Transactional
     public Member save(Member member){
@@ -171,7 +174,6 @@ public class MemberService {
             Member member = Member.builder()
                     .email(profile.getEmail())
                     .providerType(provider)
-                    .imgUrl(DEFALUT_PROFILE_URL)
                     .role(Role.GUEST)
                     .build();
             member = save(member);
@@ -198,5 +200,13 @@ public class MemberService {
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start+pageRequest.getPageSize()), comments.size());
         return new PageImpl<>(comments.subList(start,end),pageRequest,comments.size());
+    }
+
+    @Transactional
+    public void saveMemberPhoto(Member member, MultipartFile file) {
+        if (member.getMemberPhoto() != null)
+            memberPhotoService.delete(member.getMemberPhoto());
+
+        memberPhotoService.saveMemberPhotos(member, file);
     }
 }
