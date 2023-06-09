@@ -11,6 +11,8 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
+import hmoa.hmoaserver.photo.service.MemberPhotoService;
+import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,23 +23,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api(tags="멤버")
+@Api(tags = "멤버")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
     private final JwtService jwtService;
     private final MemberService memberService;
+    private final PhotoService photoService;
+    private final MemberPhotoService memberPhotoService;
 
     @Value("${defalut.profile}")
     private String DEFALUT_PROFILE_URL;
-
 
 
     /**
@@ -75,12 +79,12 @@ public class MemberController {
     public ResponseEntity<MemberResponseDto> findOneMember(HttpServletRequest request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        if (findMember.getRole()== Role.GUEST){
+        if (findMember.getRole() == Role.GUEST) {
             throw new CustomException(null, Code.MEMBER_NOT_FOUND);
         }
         MemberResponseDto resultDto = new MemberResponseDto(findMember);
-        if(findMember.getImgUrl()==null){
-            resultDto.setImgUrl(DEFALUT_PROFILE_URL);
+        if (findMember.getMemberPhoto() == null) {
+            resultDto.setMemberImageUrl(DEFALUT_PROFILE_URL);
         }
         return ResponseEntity.ok(resultDto);
 
@@ -118,10 +122,10 @@ public class MemberController {
             )
     })
     @PatchMapping("/member/join")
-    public ResponseEntity<MemberResponseDto> joinMember(@RequestBody JoinUpdateRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<MemberResponseDto> joinMember(@RequestBody JoinUpdateRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
-        memberService.joinMember(findMember,request.getAge(),request.isSex(),request.getNickname());
+        memberService.joinMember(findMember, request.getAge(), request.isSex(), request.getNickname());
         MemberResponseDto reslutDto = new MemberResponseDto(findMember);
         return ResponseEntity.ok(reslutDto);
     }
@@ -162,7 +166,7 @@ public class MemberController {
             )
     })
     @PatchMapping("/member/nickname")
-    public ResponseEntity<ResultDto<Object>> updateNickname(@RequestBody NicknameRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> updateNickname(@RequestBody NicknameRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         memberService.updateNickname(findMember, request.getNickname());
@@ -208,7 +212,7 @@ public class MemberController {
             )
     })
     @PostMapping("/member/existsnickname")
-    public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestBody NicknameRequestDto request){
+    public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestBody NicknameRequestDto request) {
         return ResponseEntity.ok(memberService.isExistingNickname(request.getNickname()));
     }
 
@@ -243,7 +247,7 @@ public class MemberController {
             )
     })
     @PatchMapping("/member/age")
-    public ResponseEntity<ResultDto<Object>> updateAge(@RequestBody AgeRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> updateAge(@RequestBody AgeRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         memberService.updateAge(findMember, request.getAge());
@@ -284,7 +288,7 @@ public class MemberController {
             )
     })
     @PatchMapping("/member/sex")
-    public ResponseEntity<ResultDto<Object>> updateSex(@RequestBody SexRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> updateSex(@RequestBody SexRequestDto request, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         memberService.updateSex(findMember, request.isSex());
@@ -293,6 +297,7 @@ public class MemberController {
                 .body(ResultDto.builder()
                         .build());
     }
+
     @ApiOperation(value = "내가 쓴 댓글")
     @ApiResponses({
             @ApiResponse(
@@ -322,11 +327,11 @@ public class MemberController {
             )
     })
     @GetMapping("/member/comments")
-    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token,@RequestParam(value="page", defaultValue = "0") int page){
-        Page<PerfumeComment> comments= memberService.findByComment(token,page);
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<PerfumeComment> comments = memberService.findByComment(token, page);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
-        for (PerfumeComment pc : comments){
-            log.info("{}",pc.getId());
+        for (PerfumeComment pc : comments) {
+            log.info("{}", pc.getId());
             PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc);
             result.add(dto);
         }
@@ -362,10 +367,46 @@ public class MemberController {
             )
     })
     @GetMapping("/member/hearts")
-    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page){
-        Page<PerfumeComment> comments = memberService.findByHeartComment(token,page);
+    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
         List<PerfumeCommentResponseDto> results = comments.stream()
                 .map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
+    }
+
+    /**
+     * 프로필 사진 저장
+     */
+    @ApiOperation(value = "프로필 사진 저장")
+    @PostMapping("/member/profile-photo")
+    public ResponseEntity<ResultDto<Object>> saveMemberPhoto(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "image") MultipartFile file) {
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
+
+        photoService.validateFileExistence(file);
+        photoService.validateFileExistence(file);
+
+        memberService.saveMemberPhoto(member, file);
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .build());
+    }
+
+    /**
+     * 프로필 사진 삭제
+     */
+    @ApiOperation(value = "프로필 사진 삭제")
+    @DeleteMapping("/member/profile-photo")
+    public ResponseEntity<ResultDto<Object>> deleteMemberPhoto(@RequestHeader("X-AUTH-TOKEN") String token) {
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
+
+        memberPhotoService.validateMemberPhotoIsExistence(member);
+        memberPhotoService.delete(member.getMemberPhoto());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .build());
     }
 }
