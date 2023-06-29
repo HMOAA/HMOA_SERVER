@@ -36,7 +36,7 @@ public class SearchService {
         return dto;
     }
 
-    public ResultDto brandSearch(String brandName, String englishName, int page){
+    public List<SearchBrandResponseDto> brandSearch(String brandName, String englishName, int page){
         Pageable pageable= PageRequest.of(page,10);
         Page<Brand> brands = brandRepository.findAllSearch(brandName,englishName,pageable);
         List<BrandDefaultResponseDto> brandList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class SearchService {
                 .consonant(temp)
                 .brandList(brandList)
                 .build());
-        return ResultDto.builder().data(searchBrandList).build();
+        return searchBrandList;
     }
 
     public List<PerfumeSearchResponseDto> perfumeSearch(String perfumeName, String englishName,int page){

@@ -8,6 +8,8 @@ import hmoa.hmoaserver.search.dto.SearchRequestDto;
 import hmoa.hmoaserver.search.service.SearchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class SearchController {
 
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "자음은 ㄱ부터 1으로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ순입니다. 예외 경우는 0으로 , 영어 검색시 한글 브랜드 이름 기준으로")
     @PostMapping("/search/brand")
-    public ResponseEntity<ResultDto> brandSearch(@RequestBody SearchRequestDto searchRequestDto){
+    public ResponseEntity<List<SearchBrandResponseDto>> brandSearch(@RequestBody SearchRequestDto searchRequestDto){
         return ResponseEntity.ok(searchService.brandSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord(),searchRequestDto.getPage()));
     }
 
