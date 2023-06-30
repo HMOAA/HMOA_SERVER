@@ -20,7 +20,7 @@ public class PerfumeComment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String comment;
+    private String content;
 
     private int heart;
 
@@ -34,9 +34,9 @@ public class PerfumeComment extends BaseEntity {
     private Perfume perfume;
 
     @Builder
-    public PerfumeComment(Long id, String comment, int heart, Member member, Perfume perfume) {
+    public PerfumeComment(Long id, String content, int heart, Member member, Perfume perfume) {
         this.id = id;
-        this.comment = comment;
+        this.content = content;
         this.heart = 0;
         this.member = member;
         this.perfume = perfume;
@@ -48,5 +48,9 @@ public class PerfumeComment extends BaseEntity {
 
     public void decreaseHeartCount(){
         this.heart-=1;
+    }
+
+    public void modifyComment(String content){
+        this.content=content;
     }
 }

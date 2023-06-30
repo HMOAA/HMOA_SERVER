@@ -3,6 +3,7 @@ package hmoa.hmoaserver.perfume.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.dto.MemberResponseDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentModifyRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
@@ -90,9 +91,9 @@ public class PerfumeCommentController {
                     response = ExceptionResponseDto.class
             )
     })
-    @PutMapping("comments/{commentid}/like")
-    public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.saveHeart(token,commentid);
+    @PutMapping("comments/{commentId}/like")
+    public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
+        commentService.saveHeart(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
@@ -130,11 +131,20 @@ public class PerfumeCommentController {
                     response = ExceptionResponseDto.class
             )
     })
-    @DeleteMapping("comments/{commentid}/like")
-    public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentid, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.deleteHeart(token,commentid);
+    @DeleteMapping("comments/{commentId}/like")
+    public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
+        commentService.deleteHeart(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation(value = "향수 댓글 수정")
+    @PutMapping("comments/{commentId}/modify")
+    public ResponseEntity<ResultDto<Object>> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto){
+        commentService.modifyComment(token,commentId,dto.getContent());
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder().build());
+
     }
 }

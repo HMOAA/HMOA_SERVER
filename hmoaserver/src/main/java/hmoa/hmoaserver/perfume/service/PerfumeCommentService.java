@@ -75,4 +75,16 @@ public class PerfumeCommentService {
     public boolean hasHeart(final PerfumeComment perfumeComment, final Member member){
         return commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment, member).isPresent();
     }
+
+    public String modifyComment(String token, Long commentId,String content){
+        String email = jwtService.getEmail(token);
+        Member findMember = memberService.findByEmail(email);
+        PerfumeComment findComment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new CustomException(null, COMMENT_NOT_FOUND));
+        if(findComment.getMember().getId() != findMember.getId()){
+            throw new CustomException(null,UNAUTHORIZED_COMMENT);
+        }
+        findComment.modifyComment(content);
+        return "MODIFY_SUCCESS";
+    }
 }

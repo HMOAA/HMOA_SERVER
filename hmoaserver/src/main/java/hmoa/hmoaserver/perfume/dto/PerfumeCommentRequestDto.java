@@ -7,10 +7,10 @@ import lombok.Data;
 
 @Data
 public class PerfumeCommentRequestDto {
-    private String comment;
+    private String content;
     public PerfumeComment toEntity(Member member, Perfume perfume){
         return PerfumeComment.builder()
-                .comment(comment)
+                .content(content)
                 .heart(0)
                 .member(member)
                 .perfume(perfume)
