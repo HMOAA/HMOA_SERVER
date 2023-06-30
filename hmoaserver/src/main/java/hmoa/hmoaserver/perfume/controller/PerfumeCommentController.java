@@ -93,7 +93,7 @@ public class PerfumeCommentController {
     })
     @PutMapping("comments/{commentId}/like")
     public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.saveHeart(token,commentId);
+        commentService.saveLike(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
@@ -133,7 +133,7 @@ public class PerfumeCommentController {
     })
     @DeleteMapping("comments/{commentId}/like")
     public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.deleteHeart(token,commentId);
+        commentService.deleteLike(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());

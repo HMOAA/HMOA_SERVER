@@ -5,19 +5,15 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
-import hmoa.hmoaserver.member.dto.MemberResponseDto;
-import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.repository.MemberRepository;
-import hmoa.hmoaserver.oauth.AccessToken;
 import hmoa.hmoaserver.oauth.jwt.Token;
 import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.service.ProviderService;
 import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
-import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
-import hmoa.hmoaserver.perfume.repository.PerfumeCommentHeartRepository;
+import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
+import hmoa.hmoaserver.perfume.repository.PerfumeCommentLikedRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import hmoa.hmoaserver.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +49,7 @@ public class MemberService {
 
     private final PerfumeCommentRepository perfumeCommentRepository;
 
-    private final PerfumeCommentHeartRepository perfumeCommentHeartRepository;
+    private final PerfumeCommentLikedRepository perfumeCommentHeartRepository;
 
     private final MemberPhotoService memberPhotoService;
 
@@ -196,7 +192,7 @@ public class MemberService {
         String findEmail = jwtService.getEmail(token);
         Member member = findByEmail(findEmail);
         PageRequest pageRequest = PageRequest.of(page,10);
-        List<PerfumeCommentHeart> hearts= perfumeCommentHeartRepository.findAllByMemberId(member.getId());
+        List<PerfumeCommentLiked> hearts= perfumeCommentHeartRepository.findAllByMemberId(member.getId());
         List<PerfumeComment> comments = hearts.stream().map(heart->heart.getPerfumeComment()).collect(Collectors.toList());
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start+pageRequest.getPageSize()), comments.size());

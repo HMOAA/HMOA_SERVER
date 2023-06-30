@@ -11,7 +11,7 @@ public class PerfumeCommentRequestDto {
     public PerfumeComment toEntity(Member member, Perfume perfume){
         return PerfumeComment.builder()
                 .content(content)
-                .heart(0)
+                .likeCount(0)
                 .member(member)
                 .perfume(perfume)
                 .build();
