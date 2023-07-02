@@ -3,16 +3,14 @@ package hmoa.hmoaserver.perfume.service;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
-import hmoa.hmoaserver.perfume.domain.PerfumeCommentHeart;
+import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentRequestDto;
-import hmoa.hmoaserver.perfume.repository.PerfumeCommentHeartRepository;
+import hmoa.hmoaserver.perfume.repository.PerfumeCommentLikedRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
-import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,10 +23,10 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional
 @Slf4j
 public class PerfumeCommentService {
-    private final static String CREATE_HEART_SUCCESS = "좋아요 등록 성공";
-    private final static String DELETE_HEART_SUCCESS = "좋아요 취소 성공";
+    private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
+    private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
     private final PerfumeCommentRepository commentRepository;
-    private final PerfumeCommentHeartRepository commentHeartRepository;
+    private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
 
     private final MemberService memberService;
@@ -43,36 +41,48 @@ public class PerfumeCommentService {
 
     }
 
-    public String saveHeart(String token,Long commentId){
+    public String saveLike(String token,Long commentId){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
-        if (!hasHeart(findComment,findMember)){
+        if (!hasLike(findComment,findMember)){
             findComment.increaseHeartCount();
-            PerfumeCommentHeart heart = PerfumeCommentHeart.builder()
+            PerfumeCommentLiked heart = PerfumeCommentLiked.builder()
                     .member(findMember)
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
-            return CREATE_HEART_SUCCESS;
+            return CREATE_LIKE_SUCCESS;
         }
         throw new CustomException(null,DUPLICATE_LIKED);
     }
-    public String deleteHeart(String token,Long commentId){
+    public String deleteLike(String token,Long commentId){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
-        PerfumeCommentHeart perfumeCommentHeart = commentHeartRepository.findByPerfumeCommentAndMember(findComment,findMember)
+        PerfumeCommentLiked perfumeCommentLiked = commentHeartRepository.findByPerfumeCommentAndMember(findComment,findMember)
                 .orElseThrow(()-> new CustomException(null,HEART_NOT_FOUND));
-        commentHeartRepository.delete(perfumeCommentHeart);
+        commentHeartRepository.delete(perfumeCommentLiked);
         findComment.decreaseHeartCount();
-        return DELETE_HEART_SUCCESS;
+        return DELETE_LIKE_SUCCESS;
 
     }
 
-    public boolean hasHeart(final PerfumeComment perfumeComment, final Member member){
+    public boolean hasLike(final PerfumeComment perfumeComment, final Member member){
         return commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment, member).isPresent();
+    }
+
+    public String modifyComment(String token, Long commentId,String content){
+        String email = jwtService.getEmail(token);
+        Member findMember = memberService.findByEmail(email);
+        PerfumeComment findComment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new CustomException(null, COMMENT_NOT_FOUND));
+        if(findComment.getMember().getId() != findMember.getId()){
+            throw new CustomException(null,UNAUTHORIZED_COMMENT);
+        }
+        findComment.modifyComment(content);
+        return "MODIFY_SUCCESS";
     }
 }

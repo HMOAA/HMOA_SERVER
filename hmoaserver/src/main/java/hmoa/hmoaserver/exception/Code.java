@@ -22,6 +22,7 @@ public enum Code {
     WRONG_TYPE_TOKEN(UNAUTHORIZED, "변조된 토큰입니다."),
     EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다."),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
+    UNAUTHORIZED_COMMENT(UNAUTHORIZED, "자신이 쓴 댓글만 수정이 가능합니다."),
 
     /**
      * 403 FORBIDDEN

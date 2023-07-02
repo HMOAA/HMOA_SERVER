@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 public class PerfumeCommentRequestDto {
-    private String comment;
+    private String content;
     public PerfumeComment toEntity(Member member, Perfume perfume){
         return PerfumeComment.builder()
-                .comment(comment)
-                .heart(0)
+                .content(content)
+                .likeCount(0)
                 .member(member)
                 .perfume(perfume)
                 .build();

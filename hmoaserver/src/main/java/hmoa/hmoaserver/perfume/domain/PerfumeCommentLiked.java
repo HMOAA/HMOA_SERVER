@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PerfumeCommentHeart {
+public class PerfumeCommentLiked {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "heart_id")
@@ -30,7 +30,7 @@ public class PerfumeCommentHeart {
     private PerfumeComment perfumeComment;
 
     @Builder
-    public PerfumeCommentHeart(Member member, PerfumeComment perfumeComment) {
+    public PerfumeCommentLiked(Member member, PerfumeComment perfumeComment) {
         this.member = member;
         this.perfumeComment = perfumeComment;
     }

@@ -75,6 +75,7 @@ public class ProviderService {
             return new OAuth2UserDto(googleOAuth2UserInfo.getEmail(),googleOAuth2UserInfo.getName());
         } else if (provider.equals(ProviderType.KAKAO)) {
             KakaoOAuth2UserInfo kakaoOAuth2UserInfo = gson.fromJson(response.getBody(), KakaoOAuth2UserInfo.class);
+            log.info("{}",kakaoOAuth2UserInfo.getProperties().getNickname());
             return new OAuth2UserDto(kakaoOAuth2UserInfo.getKakao_account().getEmail(),kakaoOAuth2UserInfo.getProperties().getNickname());
 
         }

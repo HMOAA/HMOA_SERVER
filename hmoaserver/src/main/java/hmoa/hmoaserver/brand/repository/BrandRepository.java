@@ -17,7 +17,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
      * 한글 이름 , 영어 이름 포함하여 검색
      */
     @Query(
-            value = "SELECT p FROM Brand p WHERE p.brandName LIKE %:brandName% OR p.englishName LIKE %:englishName%"
+            value = "SELECT p FROM Brand p WHERE p.brandName LIKE %:brandName% OR p.englishName LIKE %:englishName% ORDER BY p.brandName ASC"
     )
     Page<Brand> findAllSearch(@Param("brandName") String brandName, @Param("englishName") String englishName, Pageable pageable);
 }
