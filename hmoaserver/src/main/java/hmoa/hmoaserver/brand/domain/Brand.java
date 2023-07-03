@@ -31,6 +31,9 @@ public class Brand {
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Perfume> perfumeList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BrandLikedMember> brandLikedMembers = new ArrayList<>();
+
     @Builder
     public Brand(String brandName, String englishName) {
         this.brandName = brandName;

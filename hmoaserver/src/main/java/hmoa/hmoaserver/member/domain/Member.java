@@ -1,8 +1,10 @@
 package hmoa.hmoaserver.member.domain;
 
+import hmoa.hmoaserver.brand.domain.BrandLikedMember;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
+import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.photo.domain.MemberPhoto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +57,12 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<PerfumeCommentLiked> perfumeCommentLikeds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BrandLikedMember> brandLikedMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeLikedMember> perfumeLikedMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<MemberPhoto> memberPhotos = new ArrayList<>();

@@ -73,7 +73,7 @@ public class BrandController {
 
         Brand brand = brandService.findById(brandId);
 
-        brandService.addPostLikes(brand, member);
+        brandService.addBrandLikes(brand, member);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

@@ -28,9 +28,13 @@ public class Perfume {
     private String englishName;
     private String perfumeInfo;
     private Long price;
+    private int heartCount;
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeComment> perfumeComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeLikedMember> perfumeLikedMembers = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn
@@ -43,6 +47,7 @@ public class Perfume {
         this.perfumeInfo = perfumeInfo;
         this.price = price;
         this.brand = brand;
+        this.heartCount = 0;
     }
 
     public PerfumePhoto getPerfumePhoto() {
@@ -54,4 +59,13 @@ public class Perfume {
         PerfumePhoto perfumePhoto = this.perfumePhotos.get(perfumePhotoSize - 1);
         return perfumePhoto;
     }
+
+    public void increaseHeartCount(){
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount(){
+        this.heartCount -= 1;
+    }
+
 }
