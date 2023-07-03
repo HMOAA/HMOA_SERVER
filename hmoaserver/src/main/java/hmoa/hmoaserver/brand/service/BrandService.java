@@ -30,7 +30,7 @@ public class BrandService {
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
     }
 
-    public Long addPostLikes(Brand brand, Member member) {
+    public Long addBrandLikes(Brand brand, Member member) {
 
         Long savedBrandLikedMemberId = brandLikedMemberService.save(brand, member);
         try {
