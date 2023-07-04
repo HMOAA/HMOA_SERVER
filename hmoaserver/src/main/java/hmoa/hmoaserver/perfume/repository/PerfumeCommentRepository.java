@@ -17,4 +17,6 @@ public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, 
 
     Page<PerfumeComment> findAllByMemberId(Long memberId, Pageable pageable);
     Optional<PerfumeComment> findById(Long id);
+
+    Page<PerfumeComment> findAllByPerfumeId(Long perfumeId, Pageable pageable);
 }

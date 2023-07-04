@@ -8,13 +8,21 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentGetResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentRequestDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentLikedRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -84,5 +92,14 @@ public class PerfumeCommentService {
         }
         findComment.modifyComment(content);
         return "MODIFY_SUCCESS";
+    }
+
+    public PerfumeCommentGetResponseDto getComments(Long perfumeId,int page,int sortType){
+        Perfume perfume = perfumeService.findById(perfumeId);
+        Pageable pageable = PageRequest.of(page,10);
+        Page<PerfumeComment> comments = commentRepository.findAllByPerfumeId(perfumeId,pageable);
+        Long commentCount=comments.getTotalElements();
+        List<PerfumeCommentResponseDto> commentsDto = comments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+        return new PerfumeCommentGetResponseDto(commentCount,commentsDto);
     }
 }
