@@ -30,15 +30,15 @@ public class SearchController {
     }
 
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "자음은 ㄱ부터 1으로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ순입니다. 예외 경우는 0으로 , 영어 검색시 한글 브랜드 이름 기준으로")
-    @PostMapping("/search/brand")
-    public ResponseEntity<List<SearchBrandResponseDto>> brandSearch(@RequestBody SearchRequestDto searchRequestDto){
-        return ResponseEntity.ok(searchService.brandSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord(),searchRequestDto.getPage()));
+    @GetMapping("/search/brand")
+    public ResponseEntity<List<SearchBrandResponseDto>> brandSearch(@RequestParam int page, @RequestParam String searchWord){
+        return ResponseEntity.ok(searchService.brandSearch(searchWord,searchWord,page));
     }
 
     @ApiOperation(value = "검색어가 포함된 향수 불러오기")
-    @PostMapping("/search/perfume")
-    public ResponseEntity<List<PerfumeSearchResponseDto>> perfumeSearch(@RequestBody SearchRequestDto searchRequestDto){
-        return ResponseEntity.ok(searchService.perfumeSearch(searchRequestDto.getSearchWord(),searchRequestDto.getSearchWord(),searchRequestDto.getPage()));
+    @GetMapping("/search/perfume")
+    public ResponseEntity<List<PerfumeSearchResponseDto>> perfumeSearch(@RequestParam int page, @RequestParam String searchWord){
+        return ResponseEntity.ok(searchService.perfumeSearch(searchWord,searchWord,page));
     }
 
 }
