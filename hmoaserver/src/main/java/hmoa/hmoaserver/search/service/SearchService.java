@@ -4,11 +4,11 @@ package hmoa.hmoaserver.search.service;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
-import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.dto.PerfumeSearchResponseDto;
+import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
-import hmoa.hmoaserver.search.dto.SearchBrandResponseDto;
+import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
+import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,11 +36,11 @@ public class SearchService {
         return dto;
     }
 
-    public List<SearchBrandResponseDto> brandSearch(String brandName, String englishName, int page){
+    public List<BrandSearchResponseDto> brandSearch(String brandName, String englishName, int page){
         Pageable pageable= PageRequest.of(page,10);
         Page<Brand> brands = brandRepository.findAllSearch(brandName,englishName,pageable);
         List<BrandDefaultResponseDto> brandList = new ArrayList<>();
-        List<SearchBrandResponseDto> searchBrandList = new ArrayList<>();
+        List<BrandSearchResponseDto> searchBrandList = new ArrayList<>();
         int temp = 0;
         for (Brand brand : brands){
             log.info("{},{}",brand.getBrandName(),unicodeService.extractIntialChar(brand.getBrandName()));
@@ -49,7 +49,7 @@ public class SearchService {
                 BrandDefaultResponseDto dto = new BrandDefaultResponseDto(brand);
                 brandList.add(dto);
             }else{
-                SearchBrandResponseDto dto2 = SearchBrandResponseDto.builder()
+                BrandSearchResponseDto dto2 = BrandSearchResponseDto.builder()
                         .consonant(temp)
                         .brandList(brandList)
                         .build();
@@ -60,7 +60,7 @@ public class SearchService {
                 searchBrandList.add(dto2);
             }
         }
-        searchBrandList.add(SearchBrandResponseDto.builder()
+        searchBrandList.add(BrandSearchResponseDto.builder()
                 .consonant(temp)
                 .brandList(brandList)
                 .build());
@@ -68,9 +68,16 @@ public class SearchService {
     }
 
     public List<PerfumeSearchResponseDto> perfumeSearch(String perfumeName, String englishName,int page){
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,6);
         Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,englishName,pageable);
         List<PerfumeSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeSearchResponseDto(perfume)).collect(Collectors.toList());
+        return dto;
+    }
+
+    public List<PerfumeNameSearchResponseDto> perfumeNameSearch(String perfumeName, int page){
+        Pageable pageable = PageRequest.of(page,10);
+        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,perfumeName,pageable);
+        List<PerfumeNameSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeNameSearchResponseDto(perfume)).collect(Collectors.toList());
         return dto;
     }
 }
