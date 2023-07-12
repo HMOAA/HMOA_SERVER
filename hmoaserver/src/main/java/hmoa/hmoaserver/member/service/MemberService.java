@@ -62,6 +62,15 @@ public class MemberService {
         }
     }
     @Transactional
+    public String delete(Member member){
+        try {
+            memberRepository.delete(member);
+            return "회원 탈퇴 성공";
+        }catch (RuntimeException e){
+            throw new CustomException(null,SERVER_ERROR);
+        }
+    }
+    @Transactional
     public Token reIssue(String rememberedToken){
         if(!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)){
             throw new CustomException(null, WRONG_TYPE_TOKEN);
