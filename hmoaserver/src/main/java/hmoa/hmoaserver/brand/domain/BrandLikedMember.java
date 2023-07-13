@@ -32,4 +32,5 @@ public class BrandLikedMember extends BaseEntity {
         this.brand = brand;
         this.member = member;
     }
+
 }

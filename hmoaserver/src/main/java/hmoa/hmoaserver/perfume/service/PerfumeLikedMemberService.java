@@ -12,6 +12,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
@@ -21,39 +23,54 @@ public class PerfumeLikedMemberService {
 
     private final PerfumeLikedMemberRepository perfumeLikedMemberRepository;
 
-    public boolean isMemberLikedPerfume(Perfume perfume, Member member) {
-        return perfumeLikedMemberRepository.existsByMemberIdAndPerfumeId(perfume.getId(), member.getId());
-    }
+    public boolean isMemberLikedPerfume(Member member, Perfume perfume) {
+        try {
+            return perfumeLikedMemberRepository.findByMemberAndPerfume(member, perfume).isPresent();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }    }
 
-    public Long save(Perfume perfume, Member member) {
-
-        boolean perfumeLikedYn = isMemberLikedPerfume(perfume, member);
-        if (perfumeLikedYn == true) {
-            throw new CustomException(null, DUPLICATE_LIKED);
-        }
+    public PerfumeLikedMember save(Member member, Perfume perfume) {
 
         try {
+            perfume.increaseHeartCount();
             PerfumeLikedMember perfumeLikedMember = PerfumeLikedMember.builder()
                     .member(member)
                     .perfume(perfume)
                     .build();
 
-            perfumeLikedMemberRepository.save(perfumeLikedMember);
-            return perfumeLikedMember.getId();
+            return perfumeLikedMemberRepository.save(perfumeLikedMember);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
 
-    public void deleteById(Perfume perfume, Member member) {
-        boolean likedYn = isMemberLikedPerfume(perfume, member);
-
-        if (likedYn == false) {
-            throw new CustomException(null, HEART_NOT_FOUND);
-        }
+    public void delete(PerfumeLikedMember perfumeLikedMember) {
 
         try {
-            perfumeLikedMemberRepository.deleteByMemberIdAndPerfumeId(member.getId(), perfume.getId());
+            perfumeLikedMemberRepository.delete(perfumeLikedMember);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    public PerfumeLikedMember findOneByPerfumeAndMember(Perfume perfume, Member member) {
+        return perfumeLikedMemberRepository.findByMemberAndPerfume(member, perfume)
+                .orElseThrow(() -> new CustomException(null, PERFUMELIKEDMEMBER_NOT_FOUND));
+    }
+
+    public void decrementLikedCountsOfPerfume(Perfume perfume) {
+        try {
+            perfume.decreaseHeartCount();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    public List<Long> findLikedPerfumeIdsByMemberId(Long memberId) {
+        try {
+            List<Long> foundLikedPerfumes = perfumeLikedMemberRepository.findPerfumeLikedMemberById(memberId);
+            return foundLikedPerfumes;
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }

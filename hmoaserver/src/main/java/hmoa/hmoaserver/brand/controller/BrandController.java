@@ -1,10 +1,14 @@
 package hmoa.hmoaserver.brand.controller;
 
 import hmoa.hmoaserver.brand.domain.Brand;
+import hmoa.hmoaserver.brand.domain.BrandLikedMember;
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.dto.BrandSaveRequestDto;
+import hmoa.hmoaserver.brand.service.BrandLikedMemberService;
 import hmoa.hmoaserver.brand.service.BrandService;
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
@@ -20,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static hmoa.hmoaserver.exception.Code.DUPLICATE_LIKED;
+
 @Api(tags = {"브랜드"})
 @Slf4j
 @RestController
@@ -32,6 +38,7 @@ public class BrandController {
     private final BrandPhotoService brandPhotoService;
     private final JwtService jwtService;
     private final MemberService memberService;
+    private final BrandLikedMemberService brandLikedMemberService;
 
     @ApiOperation(value = "브랜드 저장")
     @PostMapping(value = "/new")
@@ -73,12 +80,15 @@ public class BrandController {
 
         Brand brand = brandService.findById(brandId);
 
-        brandService.addBrandLikes(brand, member);
+        if (!brandLikedMemberService.isMemberLikedBrand(member, brand)) {
+            brandLikedMemberService.save(member, brand);
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .build()
+                    );
+        }
+        throw new CustomException(null, DUPLICATE_LIKED);
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .build()
-                );
     }
 
     @ApiOperation(value = "브랜드 공감 취소하기")
@@ -88,10 +98,11 @@ public class BrandController {
     ) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
-
         Brand brand = brandService.findById(brandId);
 
-        brandService.deleteBrandLikes(brand, member);
+        BrandLikedMember brandLikedMember = brandLikedMemberService.findOneByBrandAndMember(brand, member);
+        brandLikedMemberService.decrementLikedCountsOfBrand(brand);
+        brandLikedMemberService.delete(brandLikedMember);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

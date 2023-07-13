@@ -1,12 +1,16 @@
 package hmoa.hmoaserver.perfume.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
+import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.PerfumePhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -17,7 +21,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static hmoa.hmoaserver.exception.Code.DUPLICATE_LIKED;
 
 @Api(tags = {"향수"})
 @RestController
@@ -30,6 +38,7 @@ public class PerfumeController {
     private final PerfumePhotoService perfumePhotoService;
     private final JwtService jwtService;
     private final MemberService memberService;
+    private final PerfumeLikedMemberService perfumeLikedMemberService;
 
     @ApiOperation("향수 저장")
     @PostMapping("/new")
@@ -70,12 +79,14 @@ public class PerfumeController {
 
         Perfume perfume = perfumeService.findById(perfumeId);
 
-        perfumeService.addPerfumeLikes(perfume, member);
-
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .build()
-                );
+        if (!perfumeLikedMemberService.isMemberLikedPerfume(member, perfume)) {
+            perfumeLikedMemberService.save(member, perfume);
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .build()
+                    );
+        }
+        throw new CustomException(null, DUPLICATE_LIKED);
     }
 
     @ApiOperation(value = "향수 공감 취소하기")
@@ -85,10 +96,11 @@ public class PerfumeController {
     ) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
-
         Perfume perfume = perfumeService.findById(perfumeId);
 
-        perfumeService.deletePerfumeLikes(perfume, member);
+        PerfumeLikedMember perfumeLikedMember = perfumeLikedMemberService.findOneByPerfumeAndMember(perfume, member);
+        perfumeLikedMemberService.decrementLikedCountsOfPerfume(perfume);
+        perfumeLikedMemberService.delete(perfumeLikedMember);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
@@ -96,4 +108,27 @@ public class PerfumeController {
                 );
     }
 
+    @ApiOperation(value = "내가 공감한 향수 목록 조회")
+    @GetMapping("like")
+    public ResponseEntity<ResultDto<Object>> findLikedPerfumesByMember(@RequestHeader("X-AUTH-TOKEN") String token) {
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
+
+        List<Long> foundPerfumeIds = perfumeLikedMemberService.findLikedPerfumeIdsByMemberId(member.getId());
+
+        List<Perfume> resultPerfumes = new ArrayList<>();
+        for (Long perfumeId : foundPerfumeIds) {
+            Perfume perfume = perfumeService.findById(perfumeId);
+            resultPerfumes.add(perfume);
+        }
+
+        List<PerfumeDefaultResponseDto> response = resultPerfumes.stream()
+                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(response)
+                        .build()
+                );
+    }
 }
