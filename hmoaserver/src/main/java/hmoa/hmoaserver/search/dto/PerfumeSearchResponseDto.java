@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.perfume.dto;
+package hmoa.hmoaserver.search.dto;
 
 
 import hmoa.hmoaserver.perfume.domain.Perfume;

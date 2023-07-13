@@ -13,15 +13,15 @@ public class PerfumeCommentResponseDto {
     private Long id;
     private String content;
     private int likeCount;
-    private Long member_id;
-    private Long perfume_id;
+    private String nickname;
+    private Long perfumeId;
 
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
         this.likeCount=perfumeComment.getLikeCount();
-        this.member_id=perfumeComment.getMember().getId();
-        this.perfume_id=perfumeComment.getPerfume().getId();
+        this.nickname=perfumeComment.getMember().getNickname();
+        this.perfumeId=perfumeComment.getPerfume().getId();
     }
 
 }

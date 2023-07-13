@@ -3,9 +3,7 @@ package hmoa.hmoaserver.perfume.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.dto.MemberResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentModifyRequestDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentRequestDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
+import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,12 +49,45 @@ public class PerfumeCommentController {
                     response = ExceptionResponseDto.class
             )
     })
-    @PostMapping("/{perfumeid}/comments")
-    public ResponseEntity<ResultDto<Object>> commentSave(@PathVariable Long perfumeid, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.commentSave(token,perfumeid,dto);
+    @PostMapping("/{perfumeId}/comments")
+    public ResponseEntity<ResultDto<Object>> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
+        commentService.commentSave(token,perfumeId,dto);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답"
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "토큰이 없거나 잘못됐습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원 또는 향수가 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
+    @GetMapping("/{perfumeId}/comments")
+    public ResponseEntity<PerfumeCommentGetResponseDto> getComments(@PathVariable Long perfumeId, @RequestParam int page,@RequestParam int sortType, @RequestHeader("X-AUTH-TOKEN") String token){
+        PerfumeCommentGetResponseDto result = commentService.getComments(perfumeId,page,sortType);
+        return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value = "향수 댓글 하트")
