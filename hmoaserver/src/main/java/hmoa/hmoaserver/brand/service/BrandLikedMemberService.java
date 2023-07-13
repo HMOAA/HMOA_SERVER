@@ -22,43 +22,48 @@ public class BrandLikedMemberService {
 
     private final BrandLikedMemberRepository brandLikedMemberRepository;
 
-    public boolean isMemberLikedBrand(Brand brand, Member member) {
-        return brandLikedMemberRepository.existsByMemberIdAndBrandId(brand.getId(), member.getId());
+    public boolean isMemberLikedBrand(Member member, Brand brand) {
+        try {
+            return brandLikedMemberRepository.findByMemberAndBrand(member, brand).isPresent();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
-    public Long save(Brand brand, Member member) {
-
-        boolean brandLikedYn = isMemberLikedBrand(brand, member);
-        if (brandLikedYn == true) {
-            throw new CustomException(null, DUPLICATE_LIKED);
-        }
+    public BrandLikedMember save(Member member, Brand brand) {
 
         try {
+            brand.increaseHeartCount();
             BrandLikedMember brandLikedMember = BrandLikedMember.builder()
                     .member(member)
                     .brand(brand)
                     .build();
 
-            brandLikedMemberRepository.save(brandLikedMember);
-            return brandLikedMember.getId();
-        } catch (DataAccessException | ConstraintViolationException e) {
+            return brandLikedMemberRepository.save(brandLikedMember);
+        } catch (RuntimeException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
 
-    public void deleteById(Brand brand, Member member) {
-
-        boolean likedYn = isMemberLikedBrand(brand, member);
-
-        if(likedYn == false) {
-            throw new CustomException(null, HEART_NOT_FOUND);
-        }
+    public void delete(BrandLikedMember brandLikedMember) {
 
         try {
-            brandLikedMemberRepository.deleteByMemberIdAndBrandId(member.getId(), brand.getId());
+            brandLikedMemberRepository.delete(brandLikedMember);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
 
+    public BrandLikedMember findOneByBrandAndMember(Brand brand, Member member) {
+        return brandLikedMemberRepository.findByMemberAndBrand(member, brand)
+                .orElseThrow(() -> new CustomException(null, BRANDLIKEDMEMBER_NOT_FOUND));
+    }
+
+    public void decrementLikedCountsOfBrand(Brand brand) {
+        try {
+            brand.decreaseHeartCount();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
 }
