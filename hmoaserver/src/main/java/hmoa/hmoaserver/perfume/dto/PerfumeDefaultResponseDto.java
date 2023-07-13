@@ -10,14 +10,18 @@ public class PerfumeDefaultResponseDto {
 
     private Long perfumeId;
     private String brandName;
-    private String perfumeName;
+    private String koreanName;
+    private String englishName;
     private String perfumeInfo;
+    private Long price;
     private String perfumeImageUrl;
 
     public PerfumeDefaultResponseDto(Perfume perfume) {
         this.perfumeId = perfume.getId();
         this.brandName = perfume.getBrand().getBrandName();
-        this.perfumeName = perfume.getKoreanName();
+        this.koreanName = perfume.getKoreanName();
+        this.englishName = perfume.getEnglishName();
+        this.price = perfume.getPrice();
         this.perfumeInfo = perfume.getPerfumeInfo();
         this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
     }

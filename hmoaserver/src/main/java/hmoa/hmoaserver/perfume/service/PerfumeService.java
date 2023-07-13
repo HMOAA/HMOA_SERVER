@@ -38,29 +38,4 @@ public class PerfumeService {
                 .orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
     }
 
-    public Long addPerfumeLikes(Perfume perfume, Member member) {
-        Long savedPerfumeLikedMemberId = perfumeLikedMemberService.save(perfume, member);
-        try {
-            perfume.increaseHeartCount();
-            perfumeRepository.save(perfume);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            throw new CustomException(null, SERVER_ERROR);
-        }
-        return savedPerfumeLikedMemberId;
-    }
-
-    public void deletePerfumeLikes(Perfume perfume, Member member) {
-        if (perfume.getHeartCount() <= 0) {
-            throw new CustomException(null, HEART_NOT_FOUND);
-        }
-        perfumeLikedMemberService.deleteById(perfume, member);
-
-        try {
-            perfume.decreaseHeartCount();
-            perfumeRepository.save(perfume);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            throw new CustomException(null, SERVER_ERROR);
-        }
-    }
-
 }
