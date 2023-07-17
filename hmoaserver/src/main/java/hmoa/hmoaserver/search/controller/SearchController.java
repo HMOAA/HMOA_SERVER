@@ -23,7 +23,7 @@ public class SearchController {
     private final SearchService searchService;
     @ApiOperation(value = "브랜드 전부 불러오기")
     @GetMapping("/brandAll")
-    public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(){
+    public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(@RequestParam int consonant){
         return ResponseEntity.ok(searchService.brandSearchAll());
     }
 
