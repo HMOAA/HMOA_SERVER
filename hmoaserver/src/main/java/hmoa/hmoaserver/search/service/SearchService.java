@@ -36,9 +36,8 @@ public class SearchService {
         return dto;
     }
 
-    public List<BrandSearchResponseDto> brandSearch(String brandName, String englishName, int page){
-        Pageable pageable= PageRequest.of(page,10);
-        Page<Brand> brands = brandRepository.findAllSearch(brandName,englishName,pageable);
+    public List<BrandSearchResponseDto> brandSearch(String brandName){
+        List<Brand> brands = brandRepository.findAllSearch(brandName,brandName);
         List<BrandDefaultResponseDto> brandList = new ArrayList<>();
         List<BrandSearchResponseDto> searchBrandList = new ArrayList<>();
         int temp = 0;
