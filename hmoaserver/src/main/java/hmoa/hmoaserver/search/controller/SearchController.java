@@ -29,8 +29,8 @@ public class SearchController {
 
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "자음은 ㄱ부터 1으로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ순입니다. 예외 경우는 0으로 , 영어 검색시 한글 브랜드 이름 기준으로")
     @GetMapping("/brand")
-    public ResponseEntity<List<BrandSearchResponseDto>> brandSearch(@RequestParam int page, @RequestParam String searchWord){
-        return ResponseEntity.ok(searchService.brandSearch(searchWord,searchWord,page));
+    public ResponseEntity<List<BrandSearchResponseDto>> brandSearch(@RequestParam String searchWord){
+        return ResponseEntity.ok(searchService.brandSearch(searchWord));
     }
 
     @ApiOperation(value = "검색어가 포함된 향수 불러오기 (향수 정보)", notes = "향수 정보가 포함된 내용을 리턴")
