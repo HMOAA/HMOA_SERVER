@@ -21,10 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SearchController {
     private final SearchService searchService;
-    @ApiOperation(value = "브랜드 전부 불러오기")
+    @ApiOperation(value = "브랜드 전부 불러오기",notes = "consonant ㄱ부터 1로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ 순 입니다.")
     @GetMapping("/brandAll")
     public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(@RequestParam int consonant){
-        return ResponseEntity.ok(searchService.brandSearchAll());
+        return ResponseEntity.ok(searchService.brandSearchAll(consonant));
     }
 
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "자음은 ㄱ부터 1으로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ순입니다. 예외 경우는 0으로 , 영어 검색시 한글 브랜드 이름 기준으로")

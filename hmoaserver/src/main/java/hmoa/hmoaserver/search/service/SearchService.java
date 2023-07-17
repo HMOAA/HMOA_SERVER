@@ -30,8 +30,8 @@ public class SearchService {
     private final PerfumeRepository perfumeRepository;
     private final UnicodeService unicodeService;
 
-    public List<BrandDefaultResponseDto> brandSearchAll(){
-        List<Brand> brands= brandRepository.findAll();
+    public List<BrandDefaultResponseDto> brandSearchAll(int consonant){
+        List<Brand> brands= brandRepository.findAllByConsonant(consonant);
         List<BrandDefaultResponseDto> dto = brands.stream().map(brand-> new BrandDefaultResponseDto(brand)).collect(Collectors.toList());
         return dto;
     }

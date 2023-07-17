@@ -14,6 +14,8 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     Optional<Brand> findByBrandName(String brandName);
     Optional<Brand> findById(Long id);
 
+    List<Brand> findAllByConsonant(int consonant);
+
     /**
      * 한글 이름 , 영어 이름 포함하여 검색
      */
