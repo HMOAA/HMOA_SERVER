@@ -23,6 +23,7 @@ public class Brand {
 
     private String brandName;
     private String englishName;
+    private int consonant;
     private int heartCount;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL , orphanRemoval = true)
@@ -35,9 +36,10 @@ public class Brand {
     private List<BrandLikedMember> brandLikedMembers = new ArrayList<>();
 
     @Builder
-    public Brand(String brandName, String englishName) {
+    public Brand(String brandName, String englishName , int consonant) {
         this.brandName = brandName;
         this.englishName = englishName;
+        this.consonant = consonant;
         this.heartCount = 0;
     }
 
