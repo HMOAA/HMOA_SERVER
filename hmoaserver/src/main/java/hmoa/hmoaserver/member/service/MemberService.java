@@ -41,6 +41,8 @@ public class MemberService {
     @Value("${defalut.profile}")
     private String DEFALUT_PROFILE_URL;
 
+    private Long deleteId=0l;
+
     private final MemberRepository memberRepository;
 
     private final JwtService jwtService;
