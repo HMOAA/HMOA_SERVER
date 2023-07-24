@@ -1,6 +1,7 @@
 package hmoa.hmoaserver.perfume.domain;
 
 import hmoa.hmoaserver.brand.domain.Brand;
+import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Perfume {
+public class Perfume extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,17 +12,24 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
+import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.BrandPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.DUPLICATE_LIKED;
 
@@ -39,6 +46,7 @@ public class BrandController {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final BrandLikedMemberService brandLikedMemberService;
+    private final PerfumeService perfumeService;
 
     @ApiOperation(value = "브랜드 저장")
     @PostMapping(value = "/new")
@@ -106,6 +114,23 @@ public class BrandController {
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "브랜드별 향수 목록 조회")
+    @GetMapping("/perfumes/{brandId}")
+    public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+
+        brandService.findById(brandId);
+        Page<Perfume> perfumes = perfumeService.findPerfumesByBrand(brandId, pageNum);
+
+        List<PerfumeDefaultResponseDto> response = perfumes.stream()
+                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(response)
                         .build()
                 );
     }
