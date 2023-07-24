@@ -49,4 +49,17 @@ public class PerfumeService {
         }
     }
 
+    public Page<Perfume> findTopPerfumesByBrand(Long brandId, int pageNum) {
+        try {
+            Page<Perfume> foundPerfumes =
+                    perfumeRepository.findAllByBrandIdOrderByHeartCountDesc(
+                            brandId,
+                            PageRequest.of(pageNum, 6)
+                    );
+            return foundPerfumes;
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
 }

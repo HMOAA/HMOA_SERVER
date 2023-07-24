@@ -118,12 +118,29 @@ public class BrandController {
                 );
     }
 
-    @ApiOperation(value = "브랜드별 향수 목록 조회")
+    @ApiOperation(value = "브랜드별 향수 목록 조회(최신순)")
     @GetMapping("/perfumes/{brandId}")
     public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findPerfumesByBrand(brandId, pageNum);
+
+        List<PerfumeDefaultResponseDto> response = perfumes.stream()
+                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "브랜드별 향수 목록 조회(좋아요순)")
+    @GetMapping("/perfumes/{brandId}/top")
+    public ResponseEntity<ResultDto<Object>> findTopPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+
+        brandService.findById(brandId);
+        Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(brandId, pageNum);
 
         List<PerfumeDefaultResponseDto> response = perfumes.stream()
                 .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
