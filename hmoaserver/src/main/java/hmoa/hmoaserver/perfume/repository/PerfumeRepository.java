@@ -15,4 +15,8 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
             value = "SELECT p FROM Perfume p WHERE p.koreanName LIKE %:koreanName% OR p.englishName LIKE %:englishName% ORDER BY p.koreanName ASC"
     )
     Page<Perfume> findAllSearch(@Param("koreanName") String koreanName, @Param("englishName") String englishName, Pageable pageable);
+
+    Page<Perfume> findAllByBrandIdOrderByCreatedAtDesc(Long brandId, Pageable pageable);
+
+    Page<Perfume> findAllByBrandIdOrderByHeartCountDesc(Long brandId, Pageable pageable);
 }
