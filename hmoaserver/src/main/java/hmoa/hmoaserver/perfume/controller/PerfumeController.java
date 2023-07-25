@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.controller;
 
+import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
@@ -90,7 +91,7 @@ public class PerfumeController {
     }
 
     @ApiOperation(value = "향수 공감 취소하기")
-    @DeleteMapping("{perfumeId}/like")
+    @DeleteMapping("/{perfumeId}/like")
     public ResponseEntity<ResultDto<Object>> deletePerfumeLikes(
             @PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token
     ) {
@@ -131,4 +132,5 @@ public class PerfumeController {
                         .build()
                 );
     }
+
 }
