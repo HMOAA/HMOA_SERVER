@@ -11,6 +11,7 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
+import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import hmoa.hmoaserver.photo.service.MemberPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
@@ -40,6 +41,7 @@ public class MemberController {
     private final MemberService memberService;
     private final PhotoService photoService;
     private final MemberPhotoService memberPhotoService;
+    private final PerfumeCommentService perfumeCommentService;
 
     @Value("${defalut.profile}")
     private String DEFALUT_PROFILE_URL;
@@ -419,6 +421,7 @@ public class MemberController {
     public ResponseEntity<ResultDto<Object>> deleteMember(@RequestHeader("X-AUTH-TOKEN") String token){
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
+        perfumeCommentService.deleteMemberComment(member);
         String code = memberService.delete(member);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder().data(code).build());

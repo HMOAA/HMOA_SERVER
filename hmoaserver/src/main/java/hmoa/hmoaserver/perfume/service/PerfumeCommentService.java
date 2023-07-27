@@ -3,6 +3,7 @@ package hmoa.hmoaserver.perfume.service;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
@@ -33,6 +34,8 @@ import static hmoa.hmoaserver.exception.Code.*;
 public class PerfumeCommentService {
     private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
+    private Long deleteMemberId= 0l;
+    private final MemberRepository memberRepository;
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
@@ -101,5 +104,15 @@ public class PerfumeCommentService {
         Long commentCount=comments.getTotalElements();
         List<PerfumeCommentResponseDto> commentsDto = comments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
         return new PerfumeCommentGetResponseDto(commentCount,commentsDto);
+    }
+
+    public void deleteMemberComment(Member member){
+        Member deleteMember = memberRepository.findById(deleteMemberId).get();
+        List<PerfumeComment> comments = commentRepository.findAllByMemberId(member.getId());
+        log.info("{}",comments.get(0).getMember().getId());
+        for(PerfumeComment comment : comments){
+            comment.modifyCommentMember(deleteMember);
+        }
+        log.info("{}",comments.get(0).getMember().getId());
     }
 }
