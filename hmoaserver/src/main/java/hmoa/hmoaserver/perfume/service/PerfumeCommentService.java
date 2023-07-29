@@ -16,6 +16,8 @@ import hmoa.hmoaserver.perfume.repository.PerfumeCommentLikedRepository;
 import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -97,13 +99,28 @@ public class PerfumeCommentService {
         return "MODIFY_SUCCESS";
     }
 
-    public PerfumeCommentGetResponseDto getComments(Long perfumeId,int page,int sortType){
-        Perfume perfume = perfumeService.findById(perfumeId);
-        Pageable pageable = PageRequest.of(page,10);
-        Page<PerfumeComment> comments = commentRepository.findAllByPerfumeId(perfumeId,pageable);
-        Long commentCount=comments.getTotalElements();
-        List<PerfumeCommentResponseDto> commentsDto = comments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
-        return new PerfumeCommentGetResponseDto(commentCount,commentsDto);
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page){
+        try{
+            Page<PerfumeComment> foundComments =
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
+            Long commentCount = foundComments.getTotalElements();
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+            return new PerfumeCommentGetResponseDto(commentCount,dto);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page){
+        try{
+            Page<PerfumeComment> foundComments =
+                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,10));
+            Long commentCount = foundComments.getTotalElements();
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+            return new PerfumeCommentGetResponseDto(commentCount,dto);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
     }
 
     public void deleteMemberComment(Member member){

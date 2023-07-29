@@ -57,7 +57,7 @@ public class PerfumeCommentController {
                         .build());
     }
 
-    @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기")
+    @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(최신순)")
     @ApiResponses({
             @ApiResponse(
                     code = 200,
@@ -85,8 +85,40 @@ public class PerfumeCommentController {
             )
     })
     @GetMapping("/{perfumeId}/comments")
-    public ResponseEntity<PerfumeCommentGetResponseDto> getComments(@PathVariable Long perfumeId, @RequestParam int page,@RequestParam int sortType, @RequestHeader("X-AUTH-TOKEN") String token){
-        PerfumeCommentGetResponseDto result = commentService.getComments(perfumeId,page,sortType);
+    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader("X-AUTH-TOKEN") String token){
+        PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
+        return ResponseEntity.ok(result);
+    }
+    @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답"
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "토큰이 없거나 잘못됐습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원 또는 향수가 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
+    @GetMapping("/{perfumeId}/comments/top")
+    public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader("X-AUTH-TOKEN") String token){
+        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page);
         return ResponseEntity.ok(result);
     }
 

@@ -19,7 +19,7 @@ public class PerfumeCommentResponseDto {
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
-        this.likeCount=perfumeComment.getLikeCount();
+        this.likeCount=perfumeComment.getHeartCount();
         this.nickname=perfumeComment.getMember().getNickname();
         this.perfumeId=perfumeComment.getPerfume().getId();
     }

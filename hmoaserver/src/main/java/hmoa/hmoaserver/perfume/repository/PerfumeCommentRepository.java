@@ -20,4 +20,14 @@ public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, 
     Optional<PerfumeComment> findById(Long id);
 
     Page<PerfumeComment> findAllByPerfumeId(Long perfumeId, Pageable pageable);
+
+    /**
+     * 최신순
+     */
+    Page<PerfumeComment> findAllByPerfumeIdOrderByCreatedAtDesc(Long perfumeId, Pageable pageable);
+
+    /**
+     * 좋아요순
+     */
+    Page<PerfumeComment> findAllByPerfumeIdOrderByHeartCountDesc(Long perfumeId, Pageable pageable);
 }
