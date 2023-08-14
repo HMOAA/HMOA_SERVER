@@ -56,7 +56,13 @@ public class PerfumeController {
                 .body(ResultDto.builder()
                         .build());
     }
-
+    @ApiOperation("향수 저장 테스트")
+    @PostMapping("/test")
+    public ResponseEntity<PerfumeDefaultResponseDto> testPerfume(PerfumeSaveRequestDto dto){
+        Perfume perfume = perfumeService.testSave(dto);
+        PerfumeDefaultResponseDto result = new PerfumeDefaultResponseDto(perfume);
+        return ResponseEntity.ok(result);
+    }
     @ApiOperation(value = "향수 단건 조회")
     @GetMapping("/{perfumeId}")
     public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId) {
