@@ -27,8 +27,13 @@ public class Perfume extends BaseEntity {
 
     private String koreanName;
     private String englishName;
-    private String perfumeInfo;
-    private Long price;
+    private int price;
+    @ElementCollection
+    private List<Integer> volume;
+    private int priceVolume;
+    private String topNote;
+    private String heartNote;
+    private String baseNote;
     private int heartCount;
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
@@ -42,11 +47,15 @@ public class Perfume extends BaseEntity {
     private Brand brand;
 
     @Builder
-    public Perfume(String koreanName, String englishName, String perfumeInfo, Long price, Brand brand) {
+    public Perfume(String koreanName, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand) {
         this.koreanName = koreanName;
         this.englishName = englishName;
-        this.perfumeInfo = perfumeInfo;
         this.price = price;
+        this.volume=volume;
+        this.priceVolume=priceVolume;
+        this.topNote=topNote;
+        this.heartNote=heartNote;
+        this.baseNote=baseNote;
         this.brand = brand;
         this.heartCount = 0;
     }

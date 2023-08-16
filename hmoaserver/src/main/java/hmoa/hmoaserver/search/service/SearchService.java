@@ -44,10 +44,15 @@ public class SearchService {
         for (Brand brand : brands){
             log.info("{},{}",brand.getBrandName(),unicodeService.extractIntialChar(brand.getBrandName()));
             int num = unicodeService.extractIntialChar(brand.getBrandName());
+            log.info("{}",num);
             if (temp==num){
                 BrandDefaultResponseDto dto = new BrandDefaultResponseDto(brand);
                 brandList.add(dto);
-            }else{
+            } else if (temp==0) {
+                temp=num;
+                BrandDefaultResponseDto dto = new BrandDefaultResponseDto(brand);
+                brandList.add(dto);
+            } else{
                 BrandSearchResponseDto dto2 = BrandSearchResponseDto.builder()
                         .consonant(temp)
                         .brandList(brandList)

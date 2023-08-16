@@ -16,7 +16,8 @@ public class Term {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String title;
+    private String Title;
+    private String englishTitle;
 
     private String content;
 

@@ -22,7 +22,7 @@ public class PerfumeComment extends BaseEntity {
 
     private String content;
 
-    private int likeCount;
+    private int heartCount;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,20 +34,20 @@ public class PerfumeComment extends BaseEntity {
     private Perfume perfume;
 
     @Builder
-    public PerfumeComment(Long id, String content, int likeCount, Member member, Perfume perfume) {
+    public PerfumeComment(Long id, String content, int heartCount, Member member, Perfume perfume) {
         this.id = id;
         this.content = content;
-        this.likeCount = 0;
+        this.heartCount = 0;
         this.member = member;
         this.perfume = perfume;
     }
 
     public void increaseHeartCount(){
-        this.likeCount+=1;
+        this.heartCount+=1;
     }
 
     public void decreaseHeartCount(){
-        this.likeCount-=1;
+        this.heartCount-=1;
     }
 
     public void modifyComment(String content){

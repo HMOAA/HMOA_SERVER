@@ -31,6 +31,14 @@ public class PerfumeService {
         return perfumeRepository.save(requestDto.toEntity(brand));
     }
 
+    /**
+     *  향수 저장 테스트 서비스
+     */
+    public Perfume testSave(PerfumeSaveRequestDto dto){
+        Brand brand = brandRepository.findByBrandName(dto.getBrandName())
+                .orElseThrow(()-> new CustomException(null,BRAND_NOT_FOUND));
+        return perfumeRepository.save(dto.toEntity(brand));
+    }
     public Perfume findById(Long perfumeId) {
         return perfumeRepository.findById(perfumeId)
                 .orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
