@@ -36,6 +36,8 @@ public class Perfume extends BaseEntity {
     private String baseNote;
     private int heartCount;
 
+    private String searchName;
+
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeComment> perfumeComments = new ArrayList<>();
 
@@ -47,7 +49,7 @@ public class Perfume extends BaseEntity {
     private Brand brand;
 
     @Builder
-    public Perfume(String koreanName, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand) {
+    public Perfume(String koreanName, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.price = price;
@@ -58,6 +60,7 @@ public class Perfume extends BaseEntity {
         this.baseNote=baseNote;
         this.brand = brand;
         this.heartCount = 0;
+        this.searchName=searchName;
     }
 
     public PerfumePhoto getPerfumePhoto() {

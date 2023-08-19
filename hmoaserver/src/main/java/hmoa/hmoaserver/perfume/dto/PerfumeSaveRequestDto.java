@@ -3,14 +3,10 @@ package hmoa.hmoaserver.perfume.dto;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.*;
 
 import java.util.List;
-
+@ToString
 @Data
 public class PerfumeSaveRequestDto {
     @ApiModelProperty(position = 0)
@@ -42,7 +38,12 @@ public class PerfumeSaveRequestDto {
                 .baseNote(baseNote)
                 .priceVolume(priceVolume)
                 .price(price)
+                .searchName(removeSpace(koreanName))
                 .brand(brand)
                 .build();
+    }
+    private String removeSpace(String str){
+        String result = str.replaceAll(" ","");
+        return result;
     }
 }
