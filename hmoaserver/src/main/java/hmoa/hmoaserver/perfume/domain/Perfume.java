@@ -30,7 +30,10 @@ public class Perfume extends BaseEntity {
     private int price;
     @ElementCollection
     private List<Integer> volume;
+    @ElementCollection
+    private List<String> singleNote;
     private int priceVolume;
+    private int sortType;
     private String topNote;
     private String heartNote;
     private String baseNote;
@@ -44,12 +47,12 @@ public class Perfume extends BaseEntity {
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerfumeLikedMember> perfumeLikedMembers = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Brand brand;
 
     @Builder
-    public Perfume(String koreanName, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
+    public Perfume(String koreanName,int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.price = price;
@@ -61,8 +64,9 @@ public class Perfume extends BaseEntity {
         this.brand = brand;
         this.heartCount = 0;
         this.searchName=searchName;
+        this.sortType=sortType;
+        this.singleNote=singleNote;
     }
-
     public PerfumePhoto getPerfumePhoto() {
         int perfumePhotoSize = this.perfumePhotos.size();
         if (perfumePhotoSize == 0) {
@@ -71,6 +75,9 @@ public class Perfume extends BaseEntity {
 
         PerfumePhoto perfumePhoto = this.perfumePhotos.get(perfumePhotoSize - 1);
         return perfumePhoto;
+    }
+    public Brand getPerfumeBrand(){
+        return this.getBrand();
     }
 
     public void increaseHeartCount(){

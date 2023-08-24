@@ -25,7 +25,7 @@ public class PerfumeService {
     private final BrandRepository brandRepository;
 
     public Perfume save(PerfumeSaveRequestDto requestDto) {
-        Brand brand = brandRepository.findByBrandName(requestDto.getBrandName())
+        Brand brand = brandRepository.findByBrandName(requestDto.getABrandName())
                         .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
 
         return perfumeRepository.save(requestDto.toEntity(brand));
@@ -35,7 +35,7 @@ public class PerfumeService {
      *  향수 저장 테스트 서비스
      */
     public Perfume testSave(PerfumeSaveRequestDto dto){
-        Brand brand = brandRepository.findByBrandName(dto.getBrandName())
+        Brand brand = brandRepository.findByBrandName(dto.getABrandName())
                 .orElseThrow(()-> new CustomException(null,BRAND_NOT_FOUND));
         return perfumeRepository.save(dto.toEntity(brand));
     }
