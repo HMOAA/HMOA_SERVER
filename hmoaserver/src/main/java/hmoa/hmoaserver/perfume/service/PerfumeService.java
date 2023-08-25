@@ -44,7 +44,10 @@ public class PerfumeService {
                 .orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
     }
 
-    public Page<Perfume> findPerfumesByBrand(Long brandId, int pageNum) {
+    /**
+     *  향수 조회(최신순) 보류
+     */
+    public Page<Perfume> findUpdatePerfumesByBrand(Long brandId, int pageNum) {
         try {
             Page<Perfume> foundPerfumes =
                     perfumeRepository.findAllByBrandIdOrderByCreatedAtDesc(
@@ -57,6 +60,25 @@ public class PerfumeService {
         }
     }
 
+    /**
+     *  향수 조회(문자열순)
+     */
+    public Page<Perfume> findPerfumesByBrand(Long brandId, int pageNum) {
+        try {
+            Page<Perfume> foundPerfumes =
+                    perfumeRepository.findAllByBrandIdOrderByKoreanName(
+                            brandId,
+                            PageRequest.of(pageNum, 6)
+                    );
+            return foundPerfumes;
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    /**
+     *  향수 조회(좋아요순)
+     */
     public Page<Perfume> findTopPerfumesByBrand(Long brandId, int pageNum) {
         try {
             Page<Perfume> foundPerfumes =
