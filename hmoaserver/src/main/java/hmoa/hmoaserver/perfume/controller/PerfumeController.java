@@ -58,8 +58,9 @@ public class PerfumeController {
     }
     @ApiOperation("향수 저장 테스트")
     @PostMapping("/test")
-    public ResponseEntity<PerfumeDefaultResponseDto> testPerfume(PerfumeSaveRequestDto dto){
+    public ResponseEntity<PerfumeDefaultResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
         Perfume perfume = perfumeService.testSave(dto);
+        Brand brand = perfume.getBrand();
         PerfumeDefaultResponseDto result = new PerfumeDefaultResponseDto(perfume);
         return ResponseEntity.ok(result);
     }
