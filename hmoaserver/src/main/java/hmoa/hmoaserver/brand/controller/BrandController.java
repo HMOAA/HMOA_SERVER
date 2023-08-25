@@ -7,7 +7,6 @@ import hmoa.hmoaserver.brand.dto.BrandSaveRequestDto;
 import hmoa.hmoaserver.brand.service.BrandLikedMemberService;
 import hmoa.hmoaserver.brand.service.BrandService;
 import hmoa.hmoaserver.common.ResultDto;
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -119,6 +118,23 @@ public class BrandController {
     }
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(최신순)")
+    @GetMapping("/perfumes/{brandId}/update")
+    public ResponseEntity<ResultDto<Object>> findUpdatePerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+
+        brandService.findById(brandId);
+        Page<Perfume> perfumes = perfumeService.findUpdatePerfumesByBrand(brandId, pageNum);
+
+        List<PerfumeDefaultResponseDto> response = perfumes.stream()
+                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "브랜드별 향수 목록 조회(문자열순)")
     @GetMapping("/perfumes/{brandId}")
     public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
 
