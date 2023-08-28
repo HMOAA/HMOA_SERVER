@@ -1,12 +1,12 @@
 package hmoa.hmoaserver.perfume.dto;
 
-import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PerfumeDefaultResponseDto {
@@ -27,7 +27,7 @@ public class PerfumeDefaultResponseDto {
     private String heartNote;
     private String baseNote;
     private List<String> singleNote;
-
+    private int sortType;
     public PerfumeDefaultResponseDto(Perfume perfume) {
         this.perfumeId = perfume.getId();
         this.heartNum=perfume.getHeartCount();
@@ -48,5 +48,6 @@ public class PerfumeDefaultResponseDto {
         }
         this.priceVolume=perfume.getPriceVolume();
         this.price = perfume.getPrice();
+        this.sortType=perfume.getSortType();
     }
 }

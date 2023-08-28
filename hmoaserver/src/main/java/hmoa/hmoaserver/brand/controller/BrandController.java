@@ -12,6 +12,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.BrandPhotoService;

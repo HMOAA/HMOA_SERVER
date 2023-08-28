@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 public class PerfumeCommentResponseDto {
     private Long id;
     private String content;
-    private int likeCount;
+    private int heartCount;
     private String nickname;
     private Long perfumeId;
 
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
-        this.likeCount=perfumeComment.getHeartCount();
+        this.heartCount=perfumeComment.getHeartCount();
         this.nickname=perfumeComment.getMember().getNickname();
         this.perfumeId=perfumeComment.getPerfume().getId();
     }
