@@ -15,7 +15,7 @@ public interface PerfumeLikedMemberRepository extends JpaRepository<PerfumeLiked
     @Query(value = "SELECT perfume_id " +
             "FROM PerfumeLikedMember plm " +
             "WHERE plm.member_id = :memberId " +
-            "ORDER BY plm.created_at DESC", nativeQuery = true)
+            "ORDER BY plm.createdAt DESC", nativeQuery = true)
     List<Long> findPerfumeLikedMemberById(@Param("memberId") Long memberId);
 
     void deleteByMemberIdAndPerfumeId(Long memberId, Long perfumeId);
