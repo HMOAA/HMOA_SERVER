@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PerfumeLikedMemberRepository extends JpaRepository<PerfumeLikedMember, Long> {
 
     @Query(value = "SELECT perfume_id " +
-            "FROM perfume_liked_member plm " +
+            "FROM PerfumeLikedMember plm " +
             "WHERE plm.member_id = :memberId " +
             "ORDER BY plm.created_at DESC", nativeQuery = true)
     List<Long> findPerfumeLikedMemberById(@Param("memberId") Long memberId);
