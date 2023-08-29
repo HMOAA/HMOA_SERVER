@@ -117,7 +117,7 @@ public class PerfumeController {
     }
 
     @ApiOperation(value = "내가 공감한 향수 목록 조회")
-    @GetMapping("like")
+    @GetMapping("/like")
     public ResponseEntity<ResultDto<Object>> findLikedPerfumesByMember(@RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
