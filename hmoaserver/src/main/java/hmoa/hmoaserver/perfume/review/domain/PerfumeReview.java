@@ -31,4 +31,29 @@ public class PerfumeReview {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfume_id")
     private Perfume perfume;
+
+    public void increaseSpring(){
+        this.spring+=1;
+    }
+    public void increaseSummer(){
+        this.summer+=1;
+    }
+    public void increaseAutumn(){
+        this.autumn+=1;
+    }
+    public void increaseWinter(){
+        this.winter-=1;
+    }
+    public void decreaseSpring(){
+        this.spring-=1;
+    }
+    public void decreaseSummer(){
+        this.summer-=1;
+    }
+    public void decreaseAutumn(){
+        this.autumn-=1;
+    }
+    public void decreaseWinter(){
+        this.winter-=1;
+    }
 }
