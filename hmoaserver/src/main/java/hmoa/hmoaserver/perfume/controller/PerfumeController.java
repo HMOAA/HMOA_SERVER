@@ -11,6 +11,8 @@ import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
+import hmoa.hmoaserver.perfume.review.service.PerfumeWeatherService;
 import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.PerfumePhotoService;
@@ -40,6 +42,7 @@ public class PerfumeController {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final PerfumeLikedMemberService perfumeLikedMemberService;
+    private final PerfumeWeatherService perfumeWeatherService;
 
     @ApiOperation("향수 저장")
     @PostMapping("/new")
@@ -138,6 +141,13 @@ public class PerfumeController {
                         .data(response)
                         .build()
                 );
+    }
+
+    @ApiOperation(value = "향수 계절감 평가하기")
+    @PostMapping("/{perfumeId}/weather")
+    public ResponseEntity<ResultDto<Object>> savePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeWeatherRequestDto dto){
+        perfumeWeatherService.save(token,perfumeId,dto);
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
 }
