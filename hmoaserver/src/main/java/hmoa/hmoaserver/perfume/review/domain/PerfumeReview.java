@@ -64,4 +64,16 @@ public class PerfumeReview {
     public void decreaseMan(){this.man-=1;}
     public void decreaseWoman(){this.woman-=1;}
     public void decreaseNeuter(){this.neuter-=1;}
+
+    public void increaseTen(){this.ten +=1;}
+    public void increaseTwenty(){this.twenty +=1;}
+    public void increaseThirty(){this.thirty +=1;}
+    public void increaseFourty(){this.fourty +=1;}
+    public void increaseFifty(){this.fifty +=1;}
+
+    public void decreaseTen(){this.ten -=1;}
+    public void decreaseTwenty(){this.twenty -=1;}
+    public void decreaseThirty(){this.thirty -=1;}
+    public void decreaseFourty(){this.fourty -=1;}
+    public void decreaseFifty(){this.fifty -=1;}
 }

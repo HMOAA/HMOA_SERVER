@@ -11,8 +11,10 @@ import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
+import hmoa.hmoaserver.perfume.review.service.PerfumeAgeService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeGenderService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeWeatherService;
 import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
@@ -46,6 +48,7 @@ public class PerfumeController {
     private final PerfumeLikedMemberService perfumeLikedMemberService;
     private final PerfumeWeatherService perfumeWeatherService;
     private final PerfumeGenderService perfumeGenderService;
+    private final PerfumeAgeService perfumeAgeService;
     @ApiOperation("향수 저장")
     @PostMapping("/new")
     public ResponseEntity<ResultDto<Object>> savePerfume(@RequestParam(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
@@ -156,6 +159,13 @@ public class PerfumeController {
     @PostMapping("/{perfumeId}/gender")
     public ResponseEntity<ResultDto<Object>> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
         perfumeGenderService.save(token,perfumeId,dto);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "향수 연령 평가하기")
+    @PostMapping("/{perfumeId}/age")
+    public ResponseEntity<ResultDto<Object>> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
+        perfumeAgeService.save(token,perfumeId,dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
