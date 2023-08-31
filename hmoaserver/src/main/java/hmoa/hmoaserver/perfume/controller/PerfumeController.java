@@ -10,12 +10,14 @@ import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeGetSecondResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
 import hmoa.hmoaserver.perfume.review.service.PerfumeAgeService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeGenderService;
+import hmoa.hmoaserver.perfume.review.service.PerfumeReviewService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeWeatherService;
 import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
@@ -49,6 +51,7 @@ public class PerfumeController {
     private final PerfumeWeatherService perfumeWeatherService;
     private final PerfumeGenderService perfumeGenderService;
     private final PerfumeAgeService perfumeAgeService;
+    private final PerfumeReviewService perfumeReviewService;
     @ApiOperation("향수 저장")
     @PostMapping("/new")
     public ResponseEntity<ResultDto<Object>> savePerfume(@RequestParam(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
@@ -169,4 +172,14 @@ public class PerfumeController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "향수 단건조회 2")
+    @PostMapping("/{perfumeId}/2")
+    public ResponseEntity<ResultDto<Object>> findOnePerfume2(@PathVariable Long perfumeId){
+        List<Double> res = perfumeReviewService.calcurateWeather(perfumeId);
+        PerfumeGetSecondResponseDto dto = new PerfumeGetSecondResponseDto(res);
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(dto)
+                        .build());
+    }
 }
