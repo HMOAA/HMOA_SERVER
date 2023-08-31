@@ -41,8 +41,8 @@ public class PerfumeWeatherService {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
-        perfumeReviewService.intialSaveReview(perfume);
         if(!isPresentPerfumeWeather(member,perfume)){
+            perfumeReviewService.intialSaveReview(perfume);
             PerfumeWeather perfumeWeather = PerfumeWeather.builder()
                     .perfume(perfume)
                     .member(member)
@@ -84,15 +84,4 @@ public class PerfumeWeatherService {
         }else throw new CustomException(null,SERVER_ERROR);
     }
 
-//    public String determineWeather(int weather){
-//        if (weather==1){
-//            return "spring";
-//        } else if (weather==2) {
-//            return "summer";
-//        } else if (weather==3) {
-//            return "autumn";
-//        } else if (weather==4) {
-//            return "winter";
-//        }else throw new CustomException(null,SERVER_ERROR);
-//    }
 }
