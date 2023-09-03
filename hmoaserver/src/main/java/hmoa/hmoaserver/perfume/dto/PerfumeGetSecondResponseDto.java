@@ -1,25 +1,23 @@
 package hmoa.hmoaserver.perfume.dto;
 
+import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherResponseDto;
 import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PerfumeGetSecondResponseDto {
-    private int spring;
-    private int summer;
-    private int autumn;
-    private int winter;
+    private PerfumeWeatherResponseDto weather;
+    private PerfumeGenderResponseDto gender;
+    private PerfumeAgeResponseDto age;
 
-    public PerfumeGetSecondResponseDto(List<Double> weatherPercentage){
-        if (weatherPercentage.size()!=0) {
-            this.spring = (int) Math.round(weatherPercentage.get(0));
-            this.summer = (int) Math.round(weatherPercentage.get(1));
-            this.autumn = (int) Math.round(weatherPercentage.get(2));
-            this.winter = (int) Math.round(weatherPercentage.get(3));
-        }
+    public PerfumeGetSecondResponseDto(PerfumeAgeResponseDto age, PerfumeWeatherResponseDto weather, PerfumeGenderResponseDto gender){
+        this.weather=weather;
+        this.gender=gender;
+        this.age=age;
     }
 }

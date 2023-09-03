@@ -174,12 +174,8 @@ public class PerfumeController {
 
     @ApiOperation(value = "향수 단건조회 2")
     @PostMapping("/{perfumeId}/2")
-    public ResponseEntity<ResultDto<Object>> findOnePerfume2(@PathVariable Long perfumeId){
-        List<Double> res = perfumeReviewService.calcurateWeather(perfumeId);
-        PerfumeGetSecondResponseDto dto = new PerfumeGetSecondResponseDto(res);
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .data(dto)
-                        .build());
+    public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId){
+        PerfumeGetSecondResponseDto dto= perfumeReviewService.getReview(perfumeId);
+        return ResponseEntity.ok(dto);
     }
 }
