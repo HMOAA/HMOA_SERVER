@@ -118,7 +118,7 @@ public class PerfumeCommentController {
     })
     @GetMapping("/{perfumeId}/comments/top")
     public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader("X-AUTH-TOKEN") String token){
-        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page);
+        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10);
         return ResponseEntity.ok(result);
     }
 

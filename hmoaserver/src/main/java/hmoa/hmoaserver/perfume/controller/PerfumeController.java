@@ -9,6 +9,7 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentGetResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeGetSecondResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
@@ -19,6 +20,7 @@ import hmoa.hmoaserver.perfume.review.service.PerfumeAgeService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeGenderService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeReviewService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeWeatherService;
+import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.PerfumePhotoService;
@@ -52,6 +54,7 @@ public class PerfumeController {
     private final PerfumeGenderService perfumeGenderService;
     private final PerfumeAgeService perfumeAgeService;
     private final PerfumeReviewService perfumeReviewService;
+    private final PerfumeCommentService perfumeCommentService;
     @ApiOperation("향수 저장")
     @PostMapping("/new")
     public ResponseEntity<ResultDto<Object>> savePerfume(@RequestParam(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
@@ -175,7 +178,9 @@ public class PerfumeController {
     @ApiOperation(value = "향수 단건조회 2")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId){
-        PerfumeGetSecondResponseDto dto= perfumeReviewService.getReview(perfumeId);
+        PerfumeGetSecondResponseDto dto = perfumeReviewService.getReview(perfumeId);
+        PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3);
+        dto.setCommentInfo(commentDto);
         return ResponseEntity.ok(dto);
     }
 }

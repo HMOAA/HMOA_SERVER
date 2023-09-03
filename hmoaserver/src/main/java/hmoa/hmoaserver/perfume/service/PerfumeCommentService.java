@@ -111,10 +111,10 @@ public class PerfumeCommentService {
         }
     }
 
-    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page){
+    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page,int size){
         try{
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,10));
+                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
