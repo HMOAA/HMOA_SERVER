@@ -8,6 +8,7 @@ import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherResponseDto;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeReviewRepository;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeWeatherRepository;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
@@ -37,7 +38,7 @@ public class PerfumeWeatherService {
         }
     }
 
-    public void save(String token, Long perfumeId, PerfumeWeatherRequestDto dto){
+    public PerfumeWeatherResponseDto save(String token, Long perfumeId, PerfumeWeatherRequestDto dto){
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
@@ -50,12 +51,14 @@ public class PerfumeWeatherService {
                     .build();
             reflectWeatherToReview(dto.getWeather(),perfume);
             perfumeWeatherRepository.save(perfumeWeather);
+            return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume),true);
         }else {
             PerfumeWeather perfumeWeather = perfumeWeatherRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeWeather.getWeatherIndex();
             modifyWeatherToReview(idx,perfume);
             perfumeWeather.updateWeatherIndex(dto.getWeather());
             reflectWeatherToReview(dto.getWeather(),perfume);
+            return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume),true);
         }
     }
     public void reflectWeatherToReview(int weather,Perfume perfume){

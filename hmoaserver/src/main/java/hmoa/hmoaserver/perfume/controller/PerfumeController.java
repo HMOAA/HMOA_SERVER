@@ -13,9 +13,7 @@ import hmoa.hmoaserver.perfume.dto.PerfumeCommentGetResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeGetSecondResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeRequestDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.*;
 import hmoa.hmoaserver.perfume.review.service.PerfumeAgeService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeGenderService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeReviewService;
@@ -156,23 +154,20 @@ public class PerfumeController {
 
     @ApiOperation(value = "향수 계절감 평가하기")
     @PostMapping("/{perfumeId}/weather")
-    public ResponseEntity<ResultDto<Object>> savePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeWeatherRequestDto dto){
-        perfumeWeatherService.save(token,perfumeId,dto);
-        return ResponseEntity.ok(ResultDto.builder().build());
+    public ResponseEntity<PerfumeWeatherResponseDto> savePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeWeatherRequestDto dto){
+        return ResponseEntity.ok(perfumeWeatherService.save(token,perfumeId,dto));
     }
 
     @ApiOperation(value = "향수 성별 평가하기")
     @PostMapping("/{perfumeId}/gender")
-    public ResponseEntity<ResultDto<Object>> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
-        perfumeGenderService.save(token,perfumeId,dto);
-        return ResponseEntity.ok(ResultDto.builder().build());
+    public ResponseEntity<PerfumeGenderResponseDto> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
+        return ResponseEntity.ok(perfumeGenderService.save(token,perfumeId,dto));
     }
 
     @ApiOperation(value = "향수 연령 평가하기")
     @PostMapping("/{perfumeId}/age")
-    public ResponseEntity<ResultDto<Object>> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
-        perfumeAgeService.save(token,perfumeId,dto);
-        return ResponseEntity.ok(ResultDto.builder().build());
+    public ResponseEntity<PerfumeAgeResponseDto> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
+        return ResponseEntity.ok(perfumeAgeService.save(token,perfumeId,dto));
     }
 
     @ApiOperation(value = "향수 단건조회 2")

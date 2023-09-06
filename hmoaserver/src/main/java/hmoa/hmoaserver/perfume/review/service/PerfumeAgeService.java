@@ -9,6 +9,7 @@ import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeAgeRepository;
 
@@ -37,7 +38,7 @@ public class PerfumeAgeService {
         }
     }
 
-    public void save(String token, Long perfumeId, PerfumeAgeRequestDto dto){
+    public PerfumeAgeResponseDto save(String token, Long perfumeId, PerfumeAgeRequestDto dto){
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
@@ -50,12 +51,14 @@ public class PerfumeAgeService {
                     .build();
             reflectAgeToReview(dto.getAge(),perfume);
             perfumeAgeRepository.save(perfumeAge);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume),true);
         }else {
             PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeAge.getAgeRange();
             modifyAgeToReview(idx,perfume);
             perfumeAge.updateAgeRange(dto.getAge());
             reflectAgeToReview(dto.getAge(),perfume);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume),true);
         }
     }
 

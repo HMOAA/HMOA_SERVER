@@ -8,6 +8,7 @@ import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
+import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeGenderRepository;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class PerfumeGenderService {
         }
     }
 
-    public void save(String token, Long perfumeId, PerfumeGenderRequestDto dto){
+    public PerfumeGenderResponseDto save(String token, Long perfumeId, PerfumeGenderRequestDto dto){
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
@@ -47,12 +48,14 @@ public class PerfumeGenderService {
                     .build();
             reflectGenderToReview(dto.getGender(),perfume);
             perfumeGenderRepository.save(perfumeGender);
+            return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume),true);
         }else {
             PerfumeGender perfumeGender = perfumeGenderRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeGender.getGender();
             modifyGenderToReview(idx,perfume);
             perfumeGender.updateGender(dto.getGender());
             reflectGenderToReview(dto.getGender(),perfume);
+            return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume),true);
         }
     }
 
