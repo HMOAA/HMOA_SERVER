@@ -107,7 +107,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -123,9 +123,9 @@ public class PerfumeCommentService {
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true);
+                    return new PerfumeCommentResponseDto(comment,true,member);
                 }else{
-                    return new PerfumeCommentResponseDto(comment,false);
+                    return new PerfumeCommentResponseDto(comment,false,member);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -142,7 +142,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -159,9 +159,9 @@ public class PerfumeCommentService {
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true);
+                    return new PerfumeCommentResponseDto(comment,true,member);
                 }else {
-                    return new PerfumeCommentResponseDto(comment,false);
+                    return new PerfumeCommentResponseDto(comment,false,member);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);

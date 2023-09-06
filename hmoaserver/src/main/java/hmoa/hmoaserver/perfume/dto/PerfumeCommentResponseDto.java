@@ -16,14 +16,22 @@ public class PerfumeCommentResponseDto {
     private String nickname;
     private Long perfumeId;
     private boolean isLiked;
+    private boolean isWrited;
 
-    public PerfumeCommentResponseDto(PerfumeComment perfumeComment,boolean isLiked){
+    public PerfumeCommentResponseDto(PerfumeComment perfumeComment,boolean isLiked,Member member){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
         this.heartCount=perfumeComment.getHeartCount();
         this.nickname=perfumeComment.getMember().getNickname();
         this.perfumeId=perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
+        if (member==null){
+            this.isWrited=false;
+        }else{
+            if(perfumeComment.getMember().getId()== member.getId()){
+                this.isWrited=true;
+            }else this.isWrited=false;
+        }
     }
 
 }
