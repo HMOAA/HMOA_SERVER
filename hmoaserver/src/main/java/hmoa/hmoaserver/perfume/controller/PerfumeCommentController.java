@@ -91,7 +91,7 @@ public class PerfumeCommentController {
     })
     @GetMapping("/{perfumeId}/comments")
     public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        if(token == null){
+        if(token==null || token.equals("")){
             PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
             return ResponseEntity.ok(result);
         }else {
@@ -130,7 +130,7 @@ public class PerfumeCommentController {
     })
     @GetMapping("/{perfumeId}/comments/top")
     public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        if(token == null){
+        if(token==null || token.equals("")){
             PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10);
             return ResponseEntity.ok(result);
         }else {

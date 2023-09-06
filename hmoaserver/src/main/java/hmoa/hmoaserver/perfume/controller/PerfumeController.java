@@ -26,6 +26,7 @@ import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,7 @@ import static hmoa.hmoaserver.exception.Code.DUPLICATE_LIKED;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/perfume")
+@Slf4j
 public class PerfumeController {
 
     private final PerfumeService perfumeService;
@@ -173,15 +175,16 @@ public class PerfumeController {
     @ApiOperation(value = "향수 단건조회 2")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId,@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        if(token!=null) {
-            Member member = memberService.findByMember(token);
-            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
-            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
+        log.info("{}",token);
+        if(token==null || token.equals("")) {
+            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
+            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
             resultDto.setCommentInfo(commentDto);
             return ResponseEntity.ok(resultDto);
         }else {
-            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
-            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
+            Member member = memberService.findByMember(token);
+            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
+            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
             resultDto.setCommentInfo(commentDto);
             return ResponseEntity.ok(resultDto);
         }
