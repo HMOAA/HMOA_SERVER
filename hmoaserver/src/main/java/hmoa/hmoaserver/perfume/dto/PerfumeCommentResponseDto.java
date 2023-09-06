@@ -15,13 +15,15 @@ public class PerfumeCommentResponseDto {
     private int heartCount;
     private String nickname;
     private Long perfumeId;
+    private boolean isLiked;
 
-    public PerfumeCommentResponseDto(PerfumeComment perfumeComment){
+    public PerfumeCommentResponseDto(PerfumeComment perfumeComment,boolean isLiked){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
         this.heartCount=perfumeComment.getHeartCount();
         this.nickname=perfumeComment.getMember().getNickname();
         this.perfumeId=perfumeComment.getPerfume().getId();
+        this.isLiked = isLiked;
     }
 
 }

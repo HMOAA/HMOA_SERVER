@@ -335,7 +335,7 @@ public class MemberController {
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
             log.info("{}", pc.getId());
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false);
             result.add(dto);
         }
         return ResponseEntity.ok(result);
@@ -373,7 +373,7 @@ public class MemberController {
     public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
         List<PerfumeCommentResponseDto> results = comments.stream()
-                .map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+                .map(comment -> new PerfumeCommentResponseDto(comment,true)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 

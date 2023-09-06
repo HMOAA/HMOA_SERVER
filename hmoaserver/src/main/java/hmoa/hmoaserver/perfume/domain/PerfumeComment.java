@@ -24,6 +24,8 @@ public class PerfumeComment extends BaseEntity {
 
     private int heartCount;
 
+    @OneToMany(mappedBy = "perfumeComment", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<PerfumeCommentLiked> perfumeCommentLikeds = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -59,4 +61,5 @@ public class PerfumeComment extends BaseEntity {
         this.member=member;
         return null;
     }
+
 }

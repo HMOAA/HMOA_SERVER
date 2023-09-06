@@ -99,24 +99,71 @@ public class PerfumeCommentService {
         return "MODIFY_SUCCESS";
     }
 
+    /**
+     * 비로그인시 댓글 조회
+     */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page){
         try{
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
 
+    /**
+     * 로그인 시 댓글 조회
+     */
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page,Member member){
+        try{
+            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,10));
+            Long commentCount = foundComments.getTotalElements();
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
+                if(hasLike(comment,member)){
+                    return new PerfumeCommentResponseDto(comment,true);
+                }else{
+                    return new PerfumeCommentResponseDto(comment,false);
+                }
+            }).collect(Collectors.toList());
+            return new PerfumeCommentGetResponseDto(commentCount,dto);
+        }catch (DataAccessException | ConstraintViolationException e){
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 비 로그인시 댓글 조회 (좋아요순)
+     */
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page,int size){
         try{
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false)).collect(Collectors.toList());
+            return new PerfumeCommentGetResponseDto(commentCount,dto);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 로그인 시 댓글 조회 (좋아요순)
+     */
+    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size, Member member){
+        try{
+            Page<PerfumeComment> foundComments =
+                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
+            Long commentCount = foundComments.getTotalElements();
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
+                if(hasLike(comment,member)){
+                    return new PerfumeCommentResponseDto(comment,true);
+                }else {
+                    return new PerfumeCommentResponseDto(comment,false);
+                }
+            }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);

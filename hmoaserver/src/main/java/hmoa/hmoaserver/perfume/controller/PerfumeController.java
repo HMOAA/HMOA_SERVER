@@ -178,9 +178,10 @@ public class PerfumeController {
     @ApiOperation(value = "향수 단건조회 2")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId){
-        PerfumeGetSecondResponseDto dto = perfumeReviewService.getReview(perfumeId);
+        PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
         PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3);
-        dto.setCommentInfo(commentDto);
-        return ResponseEntity.ok(dto);
+
+        resultDto.setCommentInfo(commentDto);
+        return ResponseEntity.ok(resultDto);
     }
 }

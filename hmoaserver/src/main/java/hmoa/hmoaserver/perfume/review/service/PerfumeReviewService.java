@@ -46,7 +46,7 @@ public class PerfumeReviewService {
     public PerfumeGetSecondResponseDto getReview(Long perfumeId){
         Perfume perfume = perfumeService.findById(perfumeId);
         List<Double> weather = calcurateWeather(perfume);
-        List<Double> age = calcurateAge(perfume);
+        Double age = calcurateAge(perfume);
         List<Double> gender = calcurateGender(perfume);
         PerfumeWeatherResponseDto weatherDto = new PerfumeWeatherResponseDto(weather);
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age);
@@ -71,21 +71,27 @@ public class PerfumeReviewService {
      */
     public List<Double> calcurateGender(Perfume perfume){
         PerfumeReview perfumeReview = findPerfumeReview(perfume);
-        List<Integer> genders = List.of(perfumeReview.getMan(),perfumeReview.getWoman(),perfumeReview.getNeuter());
+        List<Integer> genders = List.of(perfumeReview.getMan(),perfumeReview.getWoman());
         return calcurateReview(genders);
     }
 
     /**
-     * 나이 백분율 구하기
+     * 나이 평균 구하기
      */
-    public List<Double> calcurateAge(Perfume perfume){
+    public Double calcurateAge(Perfume perfume){
         PerfumeReview perfumeReview = findPerfumeReview(perfume);
-        List<Integer> ages = List.of(perfumeReview.getTen(),perfumeReview.getTwenty(),perfumeReview.getThirty(),perfumeReview.getFourty(),perfumeReview.getFifty());
-        return calcurateReview(ages);
+        List<Integer> ages = List.of(10*perfumeReview.getTen(),20*perfumeReview.getTwenty(),30*perfumeReview.getThirty(),40*perfumeReview.getFourty(),50*perfumeReview.getFifty());
+
+        int sum = ages.stream().mapToInt(Integer::intValue).sum();
+        if (sum==0){
+            return 0.0;
+        }
+        return (double) sum / (double) ages.size();
+
     }
 
     /**
-     * 성별, 계절감, 나이 백분율 계산 함수
+     * 성별, 계절감 백분율 계산 함수
      */
     public List<Double> calcurateReview(List<Integer> reviews){
         int sum = reviews.stream().mapToInt(Integer::intValue).sum();
