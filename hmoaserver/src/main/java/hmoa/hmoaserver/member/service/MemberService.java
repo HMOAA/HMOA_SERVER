@@ -119,6 +119,13 @@ public class MemberService {
     }
 
     /**
+     * 토큰으로 회원 조회
+     */
+    public Member findByMember(String token){
+        String email = jwtService.getEmail(token);
+        return findByEmail(email);
+    }
+    /**
      * 첫 로그인시 회원 업데이트
      */
     @Transactional

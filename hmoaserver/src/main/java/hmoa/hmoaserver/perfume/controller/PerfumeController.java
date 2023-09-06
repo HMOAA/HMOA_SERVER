@@ -177,11 +177,19 @@ public class PerfumeController {
 
     @ApiOperation(value = "향수 단건조회 2")
     @PostMapping("/{perfumeId}/2")
-    public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId){
-        PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
-        PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3);
+    public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId,@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
+        if(token!=null) {
+            Member member = memberService.findByMember(token);
+            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
+            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
+            resultDto.setCommentInfo(commentDto);
+            return ResponseEntity.ok(resultDto);
+        }else {
+            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
+            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
+            resultDto.setCommentInfo(commentDto);
+            return ResponseEntity.ok(resultDto);
+        }
 
-        resultDto.setCommentInfo(commentDto);
-        return ResponseEntity.ok(resultDto);
     }
 }

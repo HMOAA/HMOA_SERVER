@@ -28,7 +28,6 @@ public class PerfumeReview {
     private int man;
     private int woman;
 
-    private int neuter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfume_id")
@@ -60,10 +59,16 @@ public class PerfumeReview {
     }
     public void increaseMan(){this.man+=1;}
     public void increaseWoman(){this.woman+=1;}
-    public void increaseNeuter(){this.neuter+=1;}
+    public void increaseNeuter(){
+        this.man+=1;
+        this.woman+=1;
+    }
     public void decreaseMan(){this.man-=1;}
     public void decreaseWoman(){this.woman-=1;}
-    public void decreaseNeuter(){this.neuter-=1;}
+    public void decreaseNeuter(){
+        this.man-=1;
+        this.woman-=1;
+    }
 
     public void increaseTen(){this.ten +=1;}
     public void increaseTwenty(){this.twenty +=1;}
