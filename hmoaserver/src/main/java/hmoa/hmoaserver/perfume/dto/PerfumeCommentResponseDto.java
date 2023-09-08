@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PerfumeCommentResponseDto {
@@ -18,6 +21,7 @@ public class PerfumeCommentResponseDto {
     private String profileImg;
     private boolean isLiked;
     private boolean isWrited;
+    private String createAt;
 
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment,boolean isLiked,Member member,String profileImg){
         this.id=perfumeComment.getId();
@@ -26,6 +30,7 @@ public class PerfumeCommentResponseDto {
         this.nickname=perfumeComment.getMember().getNickname();
         this.perfumeId=perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
+        this.createAt=formateDateTime(perfumeComment.getCreatedAt());
         if(perfumeComment.getMember().getMemberPhoto()==null){
             this.profileImg=profileImg;
         }else {
@@ -39,5 +44,8 @@ public class PerfumeCommentResponseDto {
             }else this.isWrited=false;
         }
     }
-
+    private String formateDateTime(LocalDateTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        return time.format(formatter);
+    }
 }
