@@ -9,10 +9,7 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentGetResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeGetSecondResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
+import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.review.dto.*;
 import hmoa.hmoaserver.perfume.review.service.PerfumeAgeService;
 import hmoa.hmoaserver.perfume.review.service.PerfumeGenderService;
@@ -27,6 +24,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -176,16 +174,21 @@ public class PerfumeController {
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId,@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
         log.info("{}",token);
+        Perfume perfume = perfumeService.findById(perfumeId);
+        Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(perfume.getBrand().getId(),0);
+        List<PerfumeSimilarResponseDto> similarResponseDtos= perfumes.stream().map(findPerfume -> new PerfumeSimilarResponseDto(findPerfume.getPerfumeBrand().getBrandName(),findPerfume.getPerfumePhoto().getPhotoUrl(),findPerfume.getKoreanName())).collect(Collectors.toList());
         if(token==null || token.equals("")) {
             PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
             PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
             resultDto.setCommentInfo(commentDto);
+            resultDto.setSimilarPerfumes(similarResponseDtos);
             return ResponseEntity.ok(resultDto);
         }else {
             Member member = memberService.findByMember(token);
             PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
             PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
             resultDto.setCommentInfo(commentDto);
+            resultDto.setSimilarPerfumes(similarResponseDtos);
             return ResponseEntity.ok(resultDto);
         }
 

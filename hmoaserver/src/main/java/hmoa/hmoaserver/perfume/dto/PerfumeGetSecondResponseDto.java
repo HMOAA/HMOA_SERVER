@@ -16,9 +16,8 @@ public class PerfumeGetSecondResponseDto {
     private PerfumeWeatherResponseDto weather;
     private PerfumeGenderResponseDto gender;
     private PerfumeAgeResponseDto age;
-
     private PerfumeCommentGetResponseDto commentInfo;
-
+    private List<PerfumeSimilarResponseDto> similarPerfumes;
 
     public PerfumeGetSecondResponseDto(PerfumeAgeResponseDto age, PerfumeWeatherResponseDto weather, PerfumeGenderResponseDto gender){
         this.weather=weather;
