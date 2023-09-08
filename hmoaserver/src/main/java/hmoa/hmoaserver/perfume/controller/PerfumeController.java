@@ -78,7 +78,7 @@ public class PerfumeController {
         PerfumeDefaultResponseDto result = new PerfumeDefaultResponseDto(perfume);
         return ResponseEntity.ok(result);
     }
-    @ApiOperation(value = "향수 단건 조회")
+    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)")
     @GetMapping("/{perfumeId}")
     public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId) {
         Perfume perfume = perfumeService.findById(perfumeId);
@@ -154,25 +154,25 @@ public class PerfumeController {
                 );
     }
 
-    @ApiOperation(value = "향수 계절감 평가하기")
+    @ApiOperation(value = "향수 계절감 평가하기", notes = "weather에 1~4까지 순서대로 봄,여름,가을,겨울로 보내면 됨")
     @PostMapping("/{perfumeId}/weather")
     public ResponseEntity<PerfumeWeatherResponseDto> savePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeWeatherRequestDto dto){
         return ResponseEntity.ok(perfumeWeatherService.save(token,perfumeId,dto));
     }
 
-    @ApiOperation(value = "향수 성별 평가하기")
+    @ApiOperation(value = "향수 성별 평가하기", notes = "gender는 1~3까지 순서대로 1은 남자 ,2는 여자 ,3은 중성")
     @PostMapping("/{perfumeId}/gender")
     public ResponseEntity<PerfumeGenderResponseDto> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
         return ResponseEntity.ok(perfumeGenderService.save(token,perfumeId,dto));
     }
 
-    @ApiOperation(value = "향수 연령 평가하기")
+    @ApiOperation(value = "향수 연령 평가하기", notes = "age는 1~5까지 순서대로 1은 10대 , 2는 20대 ~~ 5는 50대")
     @PostMapping("/{perfumeId}/age")
     public ResponseEntity<PerfumeAgeResponseDto> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
         return ResponseEntity.ok(perfumeAgeService.save(token,perfumeId,dto));
     }
 
-    @ApiOperation(value = "향수 단건조회 2")
+    @ApiOperation(value = "향수 단건조회 2",notes = "weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId,@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
         log.info("{}",token);
