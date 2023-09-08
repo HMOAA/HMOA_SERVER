@@ -17,6 +17,7 @@ import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,8 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional
 @Slf4j
 public class PerfumeCommentService {
+    @Value("${defalut.profile}")
+    private String DEFALUT_PROFILE_URL;
     private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
     private Long deleteMemberId= 0l;
@@ -107,7 +110,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -123,9 +126,9 @@ public class PerfumeCommentService {
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true,member);
+                    return new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL);
                 }else{
-                    return new PerfumeCommentResponseDto(comment,false,member);
+                    return new PerfumeCommentResponseDto(comment,false,member,DEFALUT_PROFILE_URL);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -142,7 +145,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -159,9 +162,9 @@ public class PerfumeCommentService {
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true,member);
+                    return new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL);
                 }else {
-                    return new PerfumeCommentResponseDto(comment,false,member);
+                    return new PerfumeCommentResponseDto(comment,false,member,DEFALUT_PROFILE_URL);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);

@@ -337,7 +337,7 @@ public class MemberController {
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
             log.info("{}", pc.getId());
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false,member);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false,member,DEFALUT_PROFILE_URL);
             result.add(dto);
         }
         return ResponseEntity.ok(result);
@@ -377,7 +377,7 @@ public class MemberController {
         Member member = memberService.findByEmail(email);
         Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
         List<PerfumeCommentResponseDto> results = comments.stream()
-                .map(comment -> new PerfumeCommentResponseDto(comment,true,member)).collect(Collectors.toList());
+                .map(comment -> new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 
