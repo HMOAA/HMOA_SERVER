@@ -332,10 +332,12 @@ public class MemberController {
     @GetMapping("/comments")
     public ResponseEntity<List<PerfumeCommentResponseDto>> findMyComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<PerfumeComment> comments = memberService.findByComment(token, page);
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
             log.info("{}", pc.getId());
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false,member,DEFALUT_PROFILE_URL);
             result.add(dto);
         }
         return ResponseEntity.ok(result);
@@ -371,9 +373,11 @@ public class MemberController {
     })
     @GetMapping("/hearts")
     public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
         Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
         List<PerfumeCommentResponseDto> results = comments.stream()
-                .map(comment -> new PerfumeCommentResponseDto(comment)).collect(Collectors.toList());
+                .map(comment -> new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 

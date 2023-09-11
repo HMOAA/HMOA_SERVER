@@ -2,7 +2,10 @@ package hmoa.hmoaserver.perfume.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
+import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.dto.MemberResponseDto;
+import hmoa.hmoaserver.member.service.MemberService;
+import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import io.swagger.annotations.Api;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class PerfumeCommentController {
     private final PerfumeCommentService commentService;
+    private final MemberService memberService;
+    private final JwtService jwtService;
 
     @ApiOperation(value = "향수 댓글 저장")
     @ApiResponses({
@@ -85,9 +90,16 @@ public class PerfumeCommentController {
             )
     })
     @GetMapping("/{perfumeId}/comments")
-    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader("X-AUTH-TOKEN") String token){
-        PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
+        if(token==null || token.equals("")){
+            PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
+            return ResponseEntity.ok(result);
+        }else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+            PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
+            return ResponseEntity.ok(result);
+        }
     }
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
     @ApiResponses({
@@ -117,9 +129,16 @@ public class PerfumeCommentController {
             )
     })
     @GetMapping("/{perfumeId}/comments/top")
-    public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader("X-AUTH-TOKEN") String token){
-        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
+        if(token==null || token.equals("")){
+            PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10);
+            return ResponseEntity.ok(result);
+        }else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+            PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10,member);
+            return ResponseEntity.ok(result);
+        }
     }
 
     @ApiOperation(value = "향수 댓글 하트")
