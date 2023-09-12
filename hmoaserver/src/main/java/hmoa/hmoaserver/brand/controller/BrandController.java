@@ -12,9 +12,11 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.dto.PerfumeByBrandResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDetailResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSimilarResponseDto;
+import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.BrandPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -47,6 +49,7 @@ public class BrandController {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final BrandLikedMemberService brandLikedMemberService;
+    private final PerfumeLikedMemberService perfumeLikedMemberService;
     private final PerfumeService perfumeService;
 
     @ApiOperation(value = "브랜드 저장")
@@ -121,53 +124,104 @@ public class BrandController {
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(최신순)")
     @GetMapping("/perfumes/{brandId}/update")
-    public ResponseEntity<ResultDto<Object>> findUpdatePerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+    public ResponseEntity<ResultDto<Object>> findUpdatePerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findUpdatePerfumesByBrand(brandId, pageNum);
 
-        List<PerfumeSimilarResponseDto> response = perfumes.stream()
-                .map(perfume -> new PerfumeSimilarResponseDto(perfume)).collect(Collectors.toList());
+        if (token == null) {
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .data(response)
-                        .build()
-                );
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        } else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> {
+                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        }
     }
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(문자열순)")
     @GetMapping("/perfumes/{brandId}")
-    public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+    public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findPerfumesByBrand(brandId, pageNum);
 
-        List<PerfumeSimilarResponseDto> response = perfumes.stream()
-                .map(perfume -> new PerfumeSimilarResponseDto(perfume)).collect(Collectors.toList());
+        if (token == null) {
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .data(response)
-                        .build()
-                );
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        } else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+
+
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> {
+                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        }
+
     }
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(좋아요순)")
     @GetMapping("/perfumes/{brandId}/top")
-    public ResponseEntity<ResultDto<Object>> findTopPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum) {
+    public ResponseEntity<ResultDto<Object>> findTopPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(brandId, pageNum);
 
-        List<PerfumeSimilarResponseDto> response = perfumes.stream()
-                .map(perfume -> new PerfumeSimilarResponseDto(perfume)).collect(Collectors.toList());
+        if (token == null) {
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .data(response)
-                        .build()
-                );
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        } else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+
+            List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                    .map(perfume -> {
+                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(response)
+                            .build()
+                    );
+        }
+
     }
 
 }
