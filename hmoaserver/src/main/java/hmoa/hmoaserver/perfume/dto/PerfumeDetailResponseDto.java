@@ -28,7 +28,9 @@ public class PerfumeDetailResponseDto {
     private String baseNote;
     private List<String> singleNote;
     private int sortType;
-    public PerfumeDetailResponseDto(Perfume perfume) {
+    private boolean isLiked = false;
+
+    public PerfumeDetailResponseDto(Perfume perfume, boolean isLiked) {
         this.perfumeId = perfume.getId();
         this.heartNum=perfume.getHeartCount();
         this.perfumeImageUrl=perfume.getPerfumePhoto().getPhotoUrl();
@@ -39,6 +41,7 @@ public class PerfumeDetailResponseDto {
         this.koreanName = perfume.getKoreanName();
         this.englishName = perfume.getEnglishName();
         this.volume=perfume.getVolume();
+        this.isLiked = isLiked;
         if(perfume.getSortType()==0) {
             this.topNote = perfume.getTopNote();
             this.heartNote = perfume.getHeartNote();

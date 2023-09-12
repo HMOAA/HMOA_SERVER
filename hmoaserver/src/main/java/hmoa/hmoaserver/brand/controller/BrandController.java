@@ -125,8 +125,8 @@ public class BrandController {
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findUpdatePerfumesByBrand(brandId, pageNum);
 
-        List<PerfumeDetailResponseDto> response = perfumes.stream()
-                .map(perfume -> new PerfumeDetailResponseDto(perfume)).collect(Collectors.toList());
+        List<PerfumeDefaultResponseDto> response = perfumes.stream()
+                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
