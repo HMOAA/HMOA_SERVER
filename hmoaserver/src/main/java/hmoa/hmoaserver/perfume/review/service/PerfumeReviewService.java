@@ -36,7 +36,8 @@ public class PerfumeReviewService {
     private final PerfumeGenderRepository perfumeGenderRepository;
 
     public PerfumeReview findPerfumeReview(Perfume perfume){
-        return perfumeReviewRepository.findByPerfume(perfume).orElseThrow(()->new CustomException(null,Code.REVIEW_NOT_FOUND));
+        intialSaveReview(perfume);
+        return perfumeReviewRepository.findByPerfume(perfume).orElseThrow(()->new CustomException(null,Code.SERVER_ERROR));
     }
     public boolean isPresentPerfumeReview(Perfume perfume){
         try {

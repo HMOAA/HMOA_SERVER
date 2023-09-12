@@ -192,7 +192,7 @@ public class PerfumeController {
         log.info("{}",token);
         Perfume perfume = perfumeService.findById(perfumeId);
         Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(perfume.getBrand().getId(),0);
-        List<PerfumeSimilarResponseDto> similarResponseDtos= perfumes.stream().map(findPerfume -> new PerfumeSimilarResponseDto(findPerfume.getPerfumeBrand().getBrandName(),findPerfume.getPerfumePhoto().getPhotoUrl(),findPerfume.getKoreanName())).collect(Collectors.toList());
+        List<PerfumeSimilarResponseDto> similarResponseDtos= perfumes.stream().map(findPerfume -> new PerfumeSimilarResponseDto(findPerfume)).collect(Collectors.toList());
         if(token==null || token.equals("")) {
             PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
             PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
