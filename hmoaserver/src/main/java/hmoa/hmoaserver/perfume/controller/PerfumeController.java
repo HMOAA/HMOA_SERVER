@@ -7,7 +7,6 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.review.dto.*;
@@ -53,6 +52,7 @@ public class PerfumeController {
     private final PerfumeAgeService perfumeAgeService;
     private final PerfumeReviewService perfumeReviewService;
     private final PerfumeCommentService perfumeCommentService;
+
     @ApiOperation("향수 저장")
     @PostMapping("/new")
     public ResponseEntity<ResultDto<Object>> savePerfume(@RequestParam(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
@@ -68,25 +68,41 @@ public class PerfumeController {
                 .body(ResultDto.builder()
                         .build());
     }
+
     @ApiOperation("향수 저장 테스트")
     @PostMapping("/test")
-    public ResponseEntity<PerfumeDefaultResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
+    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
         Perfume perfume = perfumeService.testSave(dto);
         Brand brand = perfume.getBrand();
-        PerfumeDefaultResponseDto result = new PerfumeDefaultResponseDto(perfume);
+        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume, false);
         return ResponseEntity.ok(result);
     }
+
     @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)")
     @GetMapping("/{perfumeId}")
-    public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId) {
+    public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         Perfume perfume = perfumeService.findById(perfumeId);
 
-        PerfumeDefaultResponseDto responseDto = new PerfumeDefaultResponseDto(perfume);
+        if (token == null) {
+            PerfumeDetailResponseDto responseDto = new PerfumeDetailResponseDto(perfume, false);
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .data(responseDto)
-                        .build());
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(responseDto)
+                            .build());
+        } else {
+            String email = jwtService.getEmail(token);
+            Member member = memberService.findByEmail(email);
+
+            boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+            PerfumeDetailResponseDto responseDto = new PerfumeDetailResponseDto(perfume, memberLikedPerfume);
+
+            return ResponseEntity.status(200)
+                    .body(ResultDto.builder()
+                            .data(responseDto)
+                            .build());
+        }
+
     }
 
     @ApiOperation(value = "향수 공감하기")
