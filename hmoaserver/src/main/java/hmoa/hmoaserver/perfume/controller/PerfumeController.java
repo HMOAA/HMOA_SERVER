@@ -7,7 +7,6 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.review.dto.*;
@@ -70,10 +69,10 @@ public class PerfumeController {
     }
     @ApiOperation("향수 저장 테스트")
     @PostMapping("/test")
-    public ResponseEntity<PerfumeDefaultResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
+    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
         Perfume perfume = perfumeService.testSave(dto);
         Brand brand = perfume.getBrand();
-        PerfumeDefaultResponseDto result = new PerfumeDefaultResponseDto(perfume);
+        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume);
         return ResponseEntity.ok(result);
     }
     @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)")
@@ -81,7 +80,7 @@ public class PerfumeController {
     public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId) {
         Perfume perfume = perfumeService.findById(perfumeId);
 
-        PerfumeDefaultResponseDto responseDto = new PerfumeDefaultResponseDto(perfume);
+        PerfumeDetailResponseDto responseDto = new PerfumeDetailResponseDto(perfume);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

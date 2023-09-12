@@ -12,8 +12,8 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeDetailResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.BrandPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -125,8 +125,8 @@ public class BrandController {
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findUpdatePerfumesByBrand(brandId, pageNum);
 
-        List<PerfumeDefaultResponseDto> response = perfumes.stream()
-                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+        List<PerfumeDetailResponseDto> response = perfumes.stream()
+                .map(perfume -> new PerfumeDetailResponseDto(perfume)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
