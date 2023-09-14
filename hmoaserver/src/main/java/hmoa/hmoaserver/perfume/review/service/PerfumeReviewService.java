@@ -5,7 +5,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.dto.PerfumeGetSecondResponseDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeDetailSecondResponseDto;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
@@ -58,7 +58,7 @@ public class PerfumeReviewService {
     /**
      * 비회원이 리뷰 조회
      */
-    public PerfumeGetSecondResponseDto getReview(Long perfumeId){
+    public PerfumeDetailSecondResponseDto getReview(Long perfumeId){
         Perfume perfume = perfumeService.findById(perfumeId);
         List<Double> weather = calcurateWeather(perfume);
         Double age = calcurateAge(perfume);
@@ -67,14 +67,14 @@ public class PerfumeReviewService {
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age,false);
         PerfumeGenderResponseDto genderDto = new PerfumeGenderResponseDto(gender,false);
 
-        return new PerfumeGetSecondResponseDto(ageDto,weatherDto,genderDto);
+        return new PerfumeDetailSecondResponseDto(ageDto,weatherDto,genderDto);
 
     }
 
     /**
      * 회원이 리뷰 조회
      */
-    public PerfumeGetSecondResponseDto getReview(Long perfumeId, String token){
+    public PerfumeDetailSecondResponseDto getReview(Long perfumeId, String token){
         Perfume perfume = perfumeService.findById(perfumeId);
         Member member = memberService.findByMember(token);
         List<Boolean> isWritedList= isWritedReview(perfume,member);
@@ -85,7 +85,7 @@ public class PerfumeReviewService {
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age,isWritedList.get(1));
         PerfumeGenderResponseDto genderDto = new PerfumeGenderResponseDto(gender,isWritedList.get(2));
 
-        return new PerfumeGetSecondResponseDto(ageDto,weatherDto,genderDto);
+        return new PerfumeDetailSecondResponseDto(ageDto,weatherDto,genderDto);
 
     }
     private List<Boolean> isWritedReview(Perfume perfume,Member member){

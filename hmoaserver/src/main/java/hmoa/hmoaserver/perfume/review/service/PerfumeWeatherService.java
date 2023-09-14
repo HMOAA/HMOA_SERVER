@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static hmoa.hmoaserver.exception.Code.DUPLICATE_WEATHERIDX;
 import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 
 @Service
