@@ -48,6 +48,9 @@ public enum Code {
      */
     DUPLICATE_NICKNAME(CONFLICT,"이미 존재하는 닉네임 입니다."),
     DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),
+    DUPLICATE_WEATHERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
+    DUPLICATE_GENDERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
+    DUPLICATE_AGEIDX(CONFLICT, "올바른 숫자로 보내주세요"),
 
     /**
      * 415 UNSUPPORTED_MEDIA_TYPE

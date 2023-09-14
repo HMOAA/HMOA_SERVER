@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static hmoa.hmoaserver.exception.Code.DUPLICATE_GENDERIDX;
 import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 
 @Service
@@ -34,7 +35,6 @@ public class PerfumeGenderService {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
-
     public PerfumeGenderResponseDto save(String token, Long perfumeId, PerfumeGenderRequestDto dto){
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);

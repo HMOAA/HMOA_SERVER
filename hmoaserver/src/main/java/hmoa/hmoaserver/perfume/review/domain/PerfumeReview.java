@@ -43,7 +43,7 @@ public class PerfumeReview {
         this.autumn+=1;
     }
     public void increaseWinter(){
-        this.winter-=1;
+        this.winter+=1;
     }
     public void decreaseSpring(){
         this.spring-=1;

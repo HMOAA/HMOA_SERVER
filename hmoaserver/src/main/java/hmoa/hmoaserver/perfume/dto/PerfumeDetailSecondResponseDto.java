@@ -12,14 +12,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PerfumeGetSecondResponseDto {
+public class PerfumeDetailSecondResponseDto {
     private PerfumeWeatherResponseDto weather;
     private PerfumeGenderResponseDto gender;
     private PerfumeAgeResponseDto age;
     private PerfumeCommentGetResponseDto commentInfo;
     private List<PerfumeSimilarResponseDto> similarPerfumes;
 
-    public PerfumeGetSecondResponseDto(PerfumeAgeResponseDto age, PerfumeWeatherResponseDto weather, PerfumeGenderResponseDto gender){
+    public PerfumeDetailSecondResponseDto(PerfumeAgeResponseDto age, PerfumeWeatherResponseDto weather, PerfumeGenderResponseDto gender){
         this.weather=weather;
         this.gender=gender;
         this.age=age;

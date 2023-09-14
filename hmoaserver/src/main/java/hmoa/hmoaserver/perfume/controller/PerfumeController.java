@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hmoa.hmoaserver.exception.Code.DUPLICATE_LIKED;
+import static hmoa.hmoaserver.exception.Code.*;
 
 @Api(tags = {"향수"})
 @RestController
@@ -171,37 +171,46 @@ public class PerfumeController {
     @ApiOperation(value = "향수 계절감 평가하기", notes = "weather에 1~4까지 순서대로 봄,여름,가을,겨울로 보내면 됨")
     @PostMapping("/{perfumeId}/weather")
     public ResponseEntity<PerfumeWeatherResponseDto> savePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeWeatherRequestDto dto){
-        return ResponseEntity.ok(perfumeWeatherService.save(token,perfumeId,dto));
+        int idx = dto.getWeather();
+        if (idx==1||idx==2||idx==3||idx==4){
+            return ResponseEntity.ok(perfumeWeatherService.save(token,perfumeId,dto));
+        }else throw new CustomException(null,DUPLICATE_WEATHERIDX);
     }
 
     @ApiOperation(value = "향수 성별 평가하기", notes = "gender는 1~3까지 순서대로 1은 남자 ,2는 여자 ,3은 중성")
     @PostMapping("/{perfumeId}/gender")
     public ResponseEntity<PerfumeGenderResponseDto> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
-        return ResponseEntity.ok(perfumeGenderService.save(token,perfumeId,dto));
+        int idx = dto.getGender();
+        if (idx==1||idx==2||idx==3){
+            return ResponseEntity.ok(perfumeGenderService.save(token,perfumeId,dto));
+        }else throw new CustomException(null,DUPLICATE_GENDERIDX);
     }
 
     @ApiOperation(value = "향수 연령 평가하기", notes = "age는 1~5까지 순서대로 1은 10대 , 2는 20대 ~~ 5는 50대")
     @PostMapping("/{perfumeId}/age")
     public ResponseEntity<PerfumeAgeResponseDto> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
-        return ResponseEntity.ok(perfumeAgeService.save(token,perfumeId,dto));
+        int idx = dto.getAge();
+        if (idx==1||idx==2||idx==3||idx==4){
+            return ResponseEntity.ok(perfumeAgeService.save(token,perfumeId,dto));
+        }else throw new CustomException(null,DUPLICATE_AGEIDX);
     }
 
     @ApiOperation(value = "향수 단건조회 2",notes = "weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @PostMapping("/{perfumeId}/2")
-    public ResponseEntity<PerfumeGetSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId,@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
+    public ResponseEntity<PerfumeDetailSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
         log.info("{}",token);
         Perfume perfume = perfumeService.findById(perfumeId);
         Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(perfume.getBrand().getId(),0);
         List<PerfumeSimilarResponseDto> similarResponseDtos= perfumes.stream().map(findPerfume -> new PerfumeSimilarResponseDto(findPerfume)).collect(Collectors.toList());
         if(token==null || token.equals("")) {
-            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
+            PerfumeDetailSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
             PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
             resultDto.setCommentInfo(commentDto);
             resultDto.setSimilarPerfumes(similarResponseDtos);
             return ResponseEntity.ok(resultDto);
         }else {
             Member member = memberService.findByMember(token);
-            PerfumeGetSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
+            PerfumeDetailSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
             PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
             resultDto.setCommentInfo(commentDto);
             resultDto.setSimilarPerfumes(similarResponseDtos);
