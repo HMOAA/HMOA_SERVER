@@ -3,6 +3,7 @@ package hmoa.hmoaserver.community.domain;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,9 +22,17 @@ public class Community extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "category_id")
-    private Category category;
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "member_id")
     private Member member;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    @Builder
+    public Community(String title, String content, Member member, Category category){
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.member = member;
+    }
 }

@@ -1,11 +1,15 @@
 package hmoa.hmoaserver.community.service;
 
-import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
+import hmoa.hmoaserver.member.domain.Member;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 public interface CommunityService {
-    List<Community> getAllCommunitys();
+    Page<Community> getAllCommunitysByCategory(int page);
     Community getCommunityById(Long id);
+
+    Community saveCommunity(Member member, CommunityDefaultRequestDto communityDefaultRequestDto);
+
 }

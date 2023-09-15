@@ -133,5 +133,4 @@ public class Member extends BaseEntity implements UserDetails {
             return null;
         return memberPhoto;
     }
-
 }

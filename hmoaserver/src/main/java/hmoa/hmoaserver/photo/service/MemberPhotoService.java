@@ -22,8 +22,25 @@ public class MemberPhotoService {
 
     @Value("${cloud.aws.s3.bucket-name.member}")
     private String memberPhotoBucketName;
+    @Value("${defalut.profile}")
+    private String DEFALUT_PROFILE_URL;
     private final PhotoService photoService;
     private final MemberPhotoRepository memberPhotoRepository;
+    @Transactional
+    public MemberPhoto saveDefaultImage(Member member){
+        MemberPhoto savedMemberPhoto = member.getMemberPhoto();
+        if (savedMemberPhoto!=null) return null;
+        try {
+            savedMemberPhoto = MemberPhoto.builder()
+                    .member(member)
+                    .photoUrl(DEFALUT_PROFILE_URL)
+                    .build();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+
+        return save(savedMemberPhoto);
+    }
 
     /**
      * DB에 MemberPhoto 저장 |
