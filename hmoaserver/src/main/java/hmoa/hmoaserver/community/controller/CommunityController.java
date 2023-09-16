@@ -6,6 +6,7 @@ import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
 import hmoa.hmoaserver.community.dto.CommunityDefaultResponseDto;
+import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.community.service.CommunityServiceImpl;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/community")
 public class CommunityController {
     private final MemberService memberService;
-    private final CommunityServiceImpl communityService;
+    private final CommunityService communityService;
 
     @ApiOperation("게시글 저장")
     @PostMapping("/save")
