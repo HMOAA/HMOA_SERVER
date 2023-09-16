@@ -190,7 +190,7 @@ public class PerfumeController {
     @PostMapping("/{perfumeId}/age")
     public ResponseEntity<PerfumeAgeResponseDto> savePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeAgeRequestDto dto){
         int idx = dto.getAge();
-        if (idx==1||idx==2||idx==3||idx==4){
+        if (idx==1||idx==2||idx==3||idx==4||idx==5){
             return ResponseEntity.ok(perfumeAgeService.save(token,perfumeId,dto));
         }else throw new CustomException(null,DUPLICATE_AGEIDX);
     }
