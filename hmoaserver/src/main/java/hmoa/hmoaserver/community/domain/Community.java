@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,8 @@ public class Community extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL , orphanRemoval = true)
+    List<CommunityComment> communityComments = new ArrayList<>();
     @Builder
     public Community(String title, String content, Member member, Category category){
         this.title = title;

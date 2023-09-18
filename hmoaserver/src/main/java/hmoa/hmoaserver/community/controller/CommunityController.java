@@ -56,4 +56,6 @@ public class CommunityController {
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(communityService.getCommunityById(communityId),writed);
         return ResponseEntity.ok(result);
     }
+
+
 }
