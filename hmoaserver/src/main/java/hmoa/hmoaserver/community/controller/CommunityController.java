@@ -49,9 +49,9 @@ public class CommunityController {
     public ResponseEntity<CommunityDefaultResponseDto> findOneCommunity(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token,@PathVariable Long communityId){
         boolean writed = false;
         Community community = communityService.getCommunityById(communityId);
-        Member member = memberService.findByMember(token);
-        if (token != null && token != "" && member.getId()==community.getMember().getId()){
-            writed = true;
+        if (token != null && token != ""){
+            Member member = memberService.findByMember(token);
+            if(member.getId()==community.getMember().getId()) writed = true;
         }
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(communityService.getCommunityById(communityId),writed);
         return ResponseEntity.ok(result);
