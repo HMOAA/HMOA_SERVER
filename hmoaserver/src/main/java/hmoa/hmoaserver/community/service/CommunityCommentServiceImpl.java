@@ -27,10 +27,6 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 6));
     }
 
-    @Override
-    public Page<CommunityComment> getCommunityComment(Long communityId, int pageNum, Member member) {
-        return null;
-    }
 
     @Override
     public CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto,Community community) {

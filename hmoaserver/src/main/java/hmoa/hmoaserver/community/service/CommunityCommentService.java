@@ -12,6 +12,5 @@ import java.util.List;
 
 public interface CommunityCommentService {
     Page<CommunityComment> getCommunityComment(Long communityId, int pageNum);
-    Page<CommunityComment> getCommunityComment(Long communityId, int pageNum, Member member);
     CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto, Community community);
 }

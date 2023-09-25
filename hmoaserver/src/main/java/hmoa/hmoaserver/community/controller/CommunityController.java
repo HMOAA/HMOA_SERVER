@@ -35,6 +35,7 @@ public class CommunityController {
     public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestHeader("X-AUTH-TOKEN") String token , @RequestBody CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(communityService.saveCommunity(member,dto));
+        result.setWrited(true);
         return ResponseEntity.ok(result);
     }
 
