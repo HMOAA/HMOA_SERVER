@@ -39,4 +39,10 @@ public class Community extends BaseEntity {
         this.category = category;
         this.member = member;
     }
+
+    public boolean isWrited(Member member){
+        if(this.member==member){
+            return true;
+        }return false;
+    }
 }

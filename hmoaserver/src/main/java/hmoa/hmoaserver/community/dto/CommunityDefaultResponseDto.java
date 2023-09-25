@@ -5,6 +5,9 @@ import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import lombok.Data;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 public class CommunityDefaultResponseDto {
     private Long id;
@@ -15,9 +18,11 @@ public class CommunityDefaultResponseDto {
     private String profileImgUrl;
 
     private String time;
-    private boolean writed;
+    private boolean writed = false;
 
-    public CommunityDefaultResponseDto(Community community,boolean writed){
+    private CommunityCommentAllResponseDto commentsInfo;
+
+    public CommunityDefaultResponseDto(Community community){
         this.id=community.getId();
         this.title=community.getTitle();
         this.category=community.getCategory();
@@ -25,6 +30,5 @@ public class CommunityDefaultResponseDto {
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
-        this.writed = writed;
     }
 }

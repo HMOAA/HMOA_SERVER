@@ -2,7 +2,9 @@ package hmoa.hmoaserver.community.service;
 
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
+import hmoa.hmoaserver.community.dto.CommunityCommentAllResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
+import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CommunityCommentServiceImpl implements CommunityCommentService{
@@ -18,11 +24,22 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     public Page<CommunityComment> getCommunityComment(Long communityId, int pageNum) {
-        return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 8));
+        return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 6));
+    }
+
+    @Override
+    public Page<CommunityComment> getCommunityComment(Long communityId, int pageNum, Member member) {
+        return null;
     }
 
     @Override
     public CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto,Community community) {
         return commentRepository.save(dto.toEntity(member,community));
+    }
+
+    private boolean isNullMember(Member member){
+        if(member==null){
+            return true;
+        }return false;
     }
 }
