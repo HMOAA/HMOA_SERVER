@@ -57,11 +57,11 @@ public class CommunityController {
             Member member=memberService.findByMember(token);
             result.setWrited(community.isWrited(member));
             commentDto=comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,comment.isWrited(member))).collect(Collectors.toList());
-            result.setComments(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
+            result.setCommentsInfo(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
             return ResponseEntity.ok(result);
         }
         commentDto=comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,false)).collect(Collectors.toList());
-        result.setComments(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
+        result.setCommentsInfo(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
         return ResponseEntity.ok(result);
     }
 
