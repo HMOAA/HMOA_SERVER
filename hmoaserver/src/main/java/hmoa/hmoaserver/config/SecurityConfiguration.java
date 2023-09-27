@@ -50,6 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/v2/api-docs",
                 "/brand/**",
                 "/perfume/**",
+                "/term/**",
                 "/member/testcreate",
                 "/search/**"
         };
