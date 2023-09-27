@@ -20,8 +20,6 @@ public class CommunityDefaultResponseDto {
     private String time;
     private boolean writed = false;
 
-    private CommunityCommentAllResponseDto commentsInfo;
-
     public CommunityDefaultResponseDto(Community community){
         this.id=community.getId();
         this.title=community.getTitle();

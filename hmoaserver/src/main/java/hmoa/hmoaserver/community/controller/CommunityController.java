@@ -51,24 +51,15 @@ public class CommunityController {
     @GetMapping("/{communityId}")
     public ResponseEntity<CommunityDefaultResponseDto> findOneCommunity(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token,@PathVariable Long communityId){
         Community community = communityService.getCommunityById(communityId);
-        Page<CommunityComment> comments = communityCommentService.getCommunityComment(communityId,0);
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
-        List<CommunityCommentDefaultResponseDto> commentDto = null;
-        if(isTokenNull(token)){
-            Member member=memberService.findByMember(token);
-            result.setWrited(community.isWrited(member));
-            commentDto=comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,comment.isWrited(member))).collect(Collectors.toList());
-            result.setCommentsInfo(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
+        if(memberService.isTokenNullOrEmpty(token)){
             return ResponseEntity.ok(result);
         }
-        commentDto=comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,false)).collect(Collectors.toList());
-        result.setCommentsInfo(new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto));
+        Member member = memberService.findByMember(token);
+        if(member==community.getMember()){
+            result.setWrited(true);
+        }
         return ResponseEntity.ok(result);
     }
 
-    private static boolean isTokenNull(String token){
-        if(token != null && token !=""){
-            return true;
-        }return false;
-    }
 }

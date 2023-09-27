@@ -27,15 +27,23 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 6));
     }
 
+    @Override
+    public List<CommunityCommentDefaultResponseDto> getCommunityComment(Long communityId, int pageNum, Member member) {
+        Page<CommunityComment> comments = commentRepository.findAllByCommunityId(communityId,PageRequest.of(pageNum,6));
+        return comments.stream().map(comment -> {
+            if(isWritedComment(member,comment)) return new CommunityCommentDefaultResponseDto(comment,true);
+            return new CommunityCommentDefaultResponseDto(comment,false);
+        }).collect(Collectors.toList());
+    }
+
 
     @Override
     public CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto,Community community) {
         return commentRepository.save(dto.toEntity(member,community));
     }
 
-    private boolean isNullMember(Member member){
-        if(member==null){
-            return true;
-        }return false;
+    private boolean isWritedComment(Member member, CommunityComment comment){
+        return comment.getMember().getId().equals(member.getId());
     }
+
 }
