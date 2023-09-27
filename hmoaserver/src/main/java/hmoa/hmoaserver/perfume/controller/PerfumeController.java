@@ -69,40 +69,31 @@ public class PerfumeController {
                         .build());
     }
 
-    @ApiOperation("향수 저장 테스트")
-    @PostMapping("/test")
-    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
-        Perfume perfume = perfumeService.testSave(dto);
-        Brand brand = perfume.getBrand();
-        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume, false);
-        return ResponseEntity.ok(result);
-    }
+//    @ApiOperation("향수 저장 테스트")
+//    @PostMapping("/test")
+//    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
+//        Perfume perfume = perfumeService.testSave(dto);
+//        Brand brand = perfume.getBrand();
+//        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume, false);
+//        return ResponseEntity.ok(result);
+//    }
 
-    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)")
+    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @GetMapping("/{perfumeId}")
-    public ResponseEntity<ResultDto<Object>> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
+    public ResponseEntity<PerfumeDetailResponseDto> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         Perfume perfume = perfumeService.findById(perfumeId);
+        PerfumeDetailResponseDto responseDto = null;
+        if (memberService.isTokenNullOrEmpty(token)) {
+            responseDto = new PerfumeDetailResponseDto(perfume, false, perfumeReviewService.getReview(perfumeId));
 
-        if (token == null) {
-            PerfumeDetailResponseDto responseDto = new PerfumeDetailResponseDto(perfume, false);
-
-            return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
-                            .data(responseDto)
-                            .build());
         } else {
             String email = jwtService.getEmail(token);
             Member member = memberService.findByEmail(email);
 
             boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
-            PerfumeDetailResponseDto responseDto = new PerfumeDetailResponseDto(perfume, memberLikedPerfume);
-
-            return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
-                            .data(responseDto)
-                            .build());
+            responseDto = new PerfumeDetailResponseDto(perfume, memberLikedPerfume, perfumeReviewService.getReview(perfumeId,member));
         }
-
+        return ResponseEntity.ok(responseDto);
     }
 
     @ApiOperation(value = "향수 공감하기")
@@ -195,27 +186,19 @@ public class PerfumeController {
         }else throw new CustomException(null,DUPLICATE_AGEIDX);
     }
 
-    @ApiOperation(value = "향수 단건조회 2",notes = "weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
+    @ApiOperation(value = "향수 단건조회 2",notes = "댓글 정보와 같은 브랜드 향수 조회")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeDetailSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        log.info("{}",token);
         Perfume perfume = perfumeService.findById(perfumeId);
-        Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(perfume.getBrand().getId(),0);
-        List<PerfumeSimilarResponseDto> similarResponseDtos= perfumes.stream().map(findPerfume -> new PerfumeSimilarResponseDto(findPerfume)).collect(Collectors.toList());
-        if(token==null || token.equals("")) {
-            PerfumeDetailSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId);
-            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3);
-            resultDto.setCommentInfo(commentDto);
-            resultDto.setSimilarPerfumes(similarResponseDtos);
-            return ResponseEntity.ok(resultDto);
-        }else {
-            Member member = memberService.findByMember(token);
-            PerfumeDetailSecondResponseDto resultDto = perfumeReviewService.getReview(perfumeId,token);
-            PerfumeCommentGetResponseDto commentDto = perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3,member);
-            resultDto.setCommentInfo(commentDto);
-            resultDto.setSimilarPerfumes(similarResponseDtos);
-            return ResponseEntity.ok(resultDto);
+        Page<Perfume> similarPerfumes = perfumeService.findPerfumesByBrand(perfume.getBrand().getId(),0);
+        List<PerfumeSimilarResponseDto> similarDto = similarPerfumes.stream().map(PerfumeSimilarResponseDto::new).collect(Collectors.toList());
+        PerfumeDetailSecondResponseDto result = null;
+        if(memberService.isTokenNullOrEmpty(token)) {
+            result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3), similarDto);
+            return ResponseEntity.ok(result);
         }
-
+        Member member = memberService.findByMember(token);
+        result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3,member),similarDto);
+        return ResponseEntity.ok(result);
     }
 }

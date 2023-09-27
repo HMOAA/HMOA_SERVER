@@ -227,4 +227,10 @@ public class MemberService {
 
         memberPhotoService.saveMemberPhotos(member, file);
     }
+
+    public boolean isTokenNullOrEmpty(String token){
+        if(token == null || token == ""){
+            return true;
+        }return false;
+    }
 }
