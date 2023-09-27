@@ -47,7 +47,7 @@ public class CommunityController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation("커뮤니티 단건 조회")
+    @ApiOperation("커뮤니티 게시글 단건 조회")
     @GetMapping("/{communityId}")
     public ResponseEntity<CommunityDefaultResponseDto> findOneCommunity(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token,@PathVariable Long communityId){
         Community community = communityService.getCommunityById(communityId);
@@ -68,5 +68,15 @@ public class CommunityController {
         Member member = memberService.findByMember(token);
         Community community = communityService.modifyCommunity(member,dto,communityId);
         return ResponseEntity.ok(new CommunityDefaultResponseDto(community,true));
+    }
+
+    @ApiOperation("커뮤니티 게시글 삭제")
+    @DeleteMapping("/{communityId}")
+    public ResponseEntity<ResultDto> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId){
+        Member member = memberService.findByMember(token);
+        return ResponseEntity.ok(ResultDto
+                .builder()
+                .data(communityService.deleteCommunity(member,communityId))
+                .build());
     }
 }

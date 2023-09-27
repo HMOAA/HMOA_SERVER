@@ -45,8 +45,6 @@ public class Community extends BaseEntity {
     }
 
     public boolean isWrited(Member member){
-        if(this.member.equals(member)){
-            return true;
-        }return false;
+        return this.member.equals(member);
     }
 }
