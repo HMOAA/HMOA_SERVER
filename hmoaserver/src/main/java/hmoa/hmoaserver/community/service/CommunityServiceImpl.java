@@ -3,6 +3,7 @@ package hmoa.hmoaserver.community.service;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
+import hmoa.hmoaserver.community.dto.CommunityModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -30,6 +31,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Community saveCommunity(Member member, CommunityDefaultRequestDto communityDefaultRequestDto) {
         return communityRepository.save(communityDefaultRequestDto.toEntity(member));
+    }
+
+    @Override
+    public Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto,Long communityId) {
+        Community community = getCommunityById(communityId);
+        if(!member.getId().equals(community.getMember().getId())){
+            throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
+        }
+        community.modifyContent(communityModifyRequestDto.getContent());
+        return community;
     }
 
 

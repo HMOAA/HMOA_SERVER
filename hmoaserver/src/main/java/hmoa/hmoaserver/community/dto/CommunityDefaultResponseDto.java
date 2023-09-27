@@ -29,4 +29,15 @@ public class CommunityDefaultResponseDto {
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
     }
+
+    public CommunityDefaultResponseDto(Community community,boolean writed){
+        this.id=community.getId();
+        this.title=community.getTitle();
+        this.category=community.getCategory();
+        this.content=community.getContent();
+        this.author=community.getMember().getNickname();
+        this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
+        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.writed = writed;
+    }
 }

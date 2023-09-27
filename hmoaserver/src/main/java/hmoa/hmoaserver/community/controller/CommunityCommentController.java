@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Api(tags = "커뮤니티 답변")
@@ -39,14 +40,14 @@ public class CommunityCommentController {
     @ApiOperation("답변 조회")
     @PostMapping("/{communityId}/findAll")
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token, @PathVariable Long communityId,@RequestParam int page){
-        CommunityCommentAllResponseDto result = null;
         Page<CommunityComment> comments = commentService.getCommunityComment(communityId,page);
-        if(memberService.isTokenNullOrEmpty(token)){
-            result = new CommunityCommentAllResponseDto(comments.getTotalElements(),comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,false)).collect(Collectors.toList()));
-            return ResponseEntity.ok(result);
+        Member member = null;
+        if(!memberService.isTokenNullOrEmpty(token)){
+            member = memberService.findByMember(token);
         }
-        Member member = memberService.findByMember(token);
-        result = new CommunityCommentAllResponseDto(comments.getTotalElements(),commentService.getCommunityComment(communityId,page,member));
+        Member finalMember = member;
+        List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,comment.isWrited(finalMember))).collect(Collectors.toList());
+        CommunityCommentAllResponseDto result = new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto);
         return ResponseEntity.ok(result);
     }
 }

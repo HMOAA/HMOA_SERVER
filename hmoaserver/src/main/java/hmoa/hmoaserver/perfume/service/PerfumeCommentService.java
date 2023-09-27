@@ -122,7 +122,7 @@ public class PerfumeCommentService {
      */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page,Member member){
         try{
-            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,10));
+            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
@@ -143,7 +143,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page,int size){
         try{
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);

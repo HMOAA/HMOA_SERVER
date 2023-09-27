@@ -40,8 +40,12 @@ public class Community extends BaseEntity {
         this.member = member;
     }
 
+    public void modifyContent(String content){
+        this.content = content;
+    }
+
     public boolean isWrited(Member member){
-        if(this.member==member){
+        if(this.member.equals(member)){
             return true;
         }return false;
     }
