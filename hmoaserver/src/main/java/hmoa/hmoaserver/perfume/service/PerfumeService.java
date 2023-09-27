@@ -39,6 +39,10 @@ public class PerfumeService {
                 .orElseThrow(()-> new CustomException(null,BRAND_NOT_FOUND));
         return perfumeRepository.save(dto.toEntity(brand));
     }
+
+    /**
+     *  향수 단건 조회
+     */
     public Perfume findById(Long perfumeId) {
         return perfumeRepository.findById(perfumeId)
                 .orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
