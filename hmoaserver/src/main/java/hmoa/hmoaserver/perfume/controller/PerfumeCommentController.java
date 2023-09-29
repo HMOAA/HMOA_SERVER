@@ -94,12 +94,10 @@ public class PerfumeCommentController {
         if(token==null || token.equals("")){
             PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
             return ResponseEntity.ok(result);
-        }else {
-            String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
-            PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
-            return ResponseEntity.ok(result);
         }
+        Member member = memberService.findByMember(token);
+        PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
+        return ResponseEntity.ok(result);
     }
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
     @ApiResponses({
