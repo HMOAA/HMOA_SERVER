@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.domain;
 
+import hmoa.hmoaserver.admin.domain.PerfumeByHome;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
@@ -50,6 +51,10 @@ public class Perfume extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Brand brand;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfume_admin_id")
+    private PerfumeByHome perfumeByHome;
 
     @Builder
     public Perfume(String koreanName,int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
