@@ -13,18 +13,18 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PerfumeByHome {
+public class HomeMenu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "perfume_home_id")
+    @Column(name = "home_menu_id")
     private Long id;
     private String title;
-    @OneToMany(mappedBy = "perfumeByHome", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "homeMenu", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Perfume> perfumeList =new ArrayList<>();
 
     @Builder
-    public PerfumeByHome(String title){
+    public HomeMenu(String title){
         this.title = title;
     }
 }

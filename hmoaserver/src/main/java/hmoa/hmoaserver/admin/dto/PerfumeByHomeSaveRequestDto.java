@@ -1,14 +1,14 @@
 package hmoa.hmoaserver.admin.dto;
 
-import hmoa.hmoaserver.admin.domain.PerfumeByHome;
+import hmoa.hmoaserver.admin.domain.HomeMenu;
 import lombok.Data;
 
 @Data
 public class PerfumeByHomeSaveRequestDto {
     private String title;
 
-    public PerfumeByHome toEntity(){
-        return PerfumeByHome.builder()
+    public HomeMenu toEntity(){
+        return HomeMenu.builder()
                 .title(title)
                 .build();
     }

@@ -44,6 +44,7 @@ public enum Code {
     BRANDLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 브랜드에 공감하지 않았습니다."),
     PERFUMELIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 향수에 공감하지 않았습니다."),
     COMMUNITY_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다"),
+    HOMEMENU_NOT_FOUND(NOT_FOUND, "등록된 홈 메뉴가 없습니다."),
 
     /**
      * 409 CONFLICT

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //import hmoa.hmoaserver.exception.CustomAuthenticationEntryPoint;
 import hmoa.hmoaserver.exception.CustomAccessDeniedHandler;
 import hmoa.hmoaserver.exception.CustomAuthenticationEntryPoint;
+import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.jwt.filter.JwtAuthenticationFilter;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
@@ -73,6 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/member/testcreate").permitAll()
+                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
