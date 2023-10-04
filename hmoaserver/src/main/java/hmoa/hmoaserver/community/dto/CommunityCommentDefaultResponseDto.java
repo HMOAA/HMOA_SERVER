@@ -7,19 +7,19 @@ import lombok.Data;
 
 @Data
 public class CommunityCommentDefaultResponseDto {
-    private Long commentId;
+    private Long id;
     private String content;
-    private String author;
+    private String nickname;
     private String profileImg;
-    private String time;
+    private String createAt;
     private boolean writed;
 
     public CommunityCommentDefaultResponseDto(CommunityComment comment,boolean writed){
-        this.commentId=comment.getId();
-        this.content=comment.getContent();
-        this.author=comment.getMember().getNickname();
-        this.profileImg=comment.getMember().getMemberPhoto().getPhotoUrl();
-        this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
-        this.writed=writed;
+        this.id = comment.getId();
+        this.content = comment.getContent();
+        this.nickname = comment.getMember().getNickname();
+        this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
+        this.createAt = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.writed = writed;
     }
 }

@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.domain;
 
+import hmoa.hmoaserver.admin.domain.HomeMenu;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
@@ -51,6 +52,10 @@ public class Perfume extends BaseEntity {
     @JoinColumn
     private Brand brand;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "home_menu_id")
+    private HomeMenu homeMenu;
+
     @Builder
     public Perfume(String koreanName,int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
         this.koreanName = koreanName;
@@ -88,4 +93,11 @@ public class Perfume extends BaseEntity {
         this.heartCount -= 1;
     }
 
+    public void setHomeMenu(HomeMenu homeMenu){
+        this.homeMenu = homeMenu;
+    }
+
+    public void deleteHomeMenu(){
+        this.homeMenu = null;
+    }
 }
