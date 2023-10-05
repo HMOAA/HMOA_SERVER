@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.admin.controller;
 
-import hmoa.hmoaserver.admin.dto.PerfumeByHomeSaveRequestDto;
+import hmoa.hmoaserver.admin.dto.HomeMenuSaveRequestDto;
 import hmoa.hmoaserver.admin.service.HomeMenuService;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.member.domain.Member;
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.transform.Result;
+import java.util.List;
 
 @Api(tags = {"관리자 API"})
 @RestController
@@ -23,7 +23,7 @@ public class AdminController {
     private final HomeMenuService homeMenuService;
 
     @PostMapping("/homePerfume")
-    public ResponseEntity<ResultDto> saveHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token , @RequestBody PerfumeByHomeSaveRequestDto dto){
+    public ResponseEntity<ResultDto> saveHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token , @RequestBody HomeMenuSaveRequestDto dto){
         Member member = memberService.findByMember(token);
         homeMenuService.save(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -41,5 +41,4 @@ public class AdminController {
         homeMenuService.deleteHomeMenu(perfumeId);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
-
 }

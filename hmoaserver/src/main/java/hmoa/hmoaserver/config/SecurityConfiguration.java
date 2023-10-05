@@ -54,7 +54,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/term/**",
                 "/member/testcreate",
                 "/search/**",
-                "/community/**"
+                "/community/**",
+                "/main/**"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())

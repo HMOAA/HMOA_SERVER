@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.member.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
@@ -429,5 +431,14 @@ public class MemberController {
         String code = memberService.delete(member);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder().data(code).build());
+    }
+
+    @ApiOperation(value = "내가 쓴 게시글 조회")
+    @GetMapping("/communities")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllMyCommunites(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam int page){
+        Member member = memberService.findByMember(token);
+        Page<Community> communities = memberService.findByMyCommunities(member, page);
+        List<CommunityByCategoryResponseDto> result = communities.stream().map(community -> new CommunityByCategoryResponseDto(community)).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 }
