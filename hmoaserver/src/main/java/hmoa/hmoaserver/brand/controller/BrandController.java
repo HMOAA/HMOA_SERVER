@@ -58,7 +58,6 @@ public class BrandController {
 
         Brand brand = brandService.save(requestDto);
         if(file!=null) {
-            log.info("?");
             photoService.validateFileExistence(file);
             photoService.validateFileType(file);
 
