@@ -35,14 +35,14 @@ public class TermService {
 
     public void updateTermContent(Long termId, TermUpdateRequestDto requestDto) {
         Term foundTerm = findById(termId);
-        foundTerm.updateTermContent(requestDto.getContent());
+        foundTerm.updateContent(requestDto.getContent());
         termRepository.save(foundTerm);
     }
 
     public void deleteTerm(Long termId) {
         Term term = findById(termId);
 
-        term.deleteTerm();
+        term.delete();
         termRepository.save(term);
     }
 }
