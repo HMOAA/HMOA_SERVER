@@ -3,8 +3,10 @@ package hmoa.hmoaserver.community.dto;
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,8 @@ public class CommunityDefaultResponseDto {
     private String content;
     private String author;
     private String profileImgUrl;
+    private int imagesCount;
+    private List<CommunityPhotoDefaultResponseDto> communityPhotos = new ArrayList<>();
 
     private String time;
     private boolean writed = false;
@@ -28,6 +32,15 @@ public class CommunityDefaultResponseDto {
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+
+        if (community.getCommunityPhotos() != null) {
+            List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
+            this.imagesCount = communityPhotos.size();
+
+            for (CommunityPhoto communityPhoto : communityPhotos) {
+                this.communityPhotos.add(new CommunityPhotoDefaultResponseDto(communityPhoto));
+            }
+        }
     }
 
     public CommunityDefaultResponseDto(Community community,boolean writed){
@@ -39,5 +52,14 @@ public class CommunityDefaultResponseDto {
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
         this.writed = writed;
+
+        if (community.getCommunityPhotos() != null) {
+            List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
+            this.imagesCount = communityPhotos.size();
+
+            for (CommunityPhoto communityPhoto : communityPhotos) {
+                this.communityPhotos.add(new CommunityPhotoDefaultResponseDto(communityPhoto));
+            }
+        }
     }
 }

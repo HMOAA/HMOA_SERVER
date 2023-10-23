@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.term.domain;
+package hmoa.hmoaserver.note.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
 import lombok.*;
@@ -9,16 +9,16 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "Term")
+@Table(name = "Note")
 @AllArgsConstructor
-public class Term extends BaseEntity {
+public class Note extends BaseEntity {
     @Id
-    @Column(name = "term_id")
+    @Column(name = "note_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String Title;
-    private String englishTitle;
+    private String subTitle;
 
     private String content;
     private boolean isDeleted = false;

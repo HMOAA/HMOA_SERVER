@@ -2,6 +2,7 @@ package hmoa.hmoaserver.community.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +31,12 @@ public class Community extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityPhoto> communityPhotos = new ArrayList<>();
+
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL , orphanRemoval = true)
     List<CommunityComment> communityComments = new ArrayList<>();
+
     @Builder
     public Community(String title, String content, Member member, Category category){
         this.title = title;
@@ -47,4 +52,21 @@ public class Community extends BaseEntity {
     public boolean isWrited(Member member){
         return this.member.equals(member);
     }
+
+    public List<CommunityPhoto> getCommunityPhotos() {
+        List<CommunityPhoto> communityPhotos = new ArrayList<>();
+        for (CommunityPhoto communityPhoto : this.communityPhotos) {
+            communityPhotos.add(communityPhoto);
+        }
+        return communityPhotos;
+    }
+
+    public int getCommunityPhotosCount() {
+        int count = 0;
+        for (CommunityPhoto communityPhoto : this.communityPhotos) {
+            count++;
+        }
+        return count;
+    }
+
 }

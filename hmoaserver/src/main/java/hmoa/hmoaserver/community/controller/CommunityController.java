@@ -8,12 +8,18 @@ import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
+import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.photo.service.CommunityPhotoService;
+import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +30,37 @@ import java.util.stream.Collectors;
 @RequestMapping("/community")
 public class CommunityController {
     private final MemberService memberService;
+    private final PhotoService photoService;
+    private final CommunityPhotoService communityPhotoService;
     private final CommunityService communityService;
     private final CommunityCommentService communityCommentService;
 
+    @ApiOperation(value = "사진 저장 test")
+    @PostMapping(value = "/photosSave", consumes = "multipart/form-data")
+    public void savePhoto(@RequestParam(value = "files") List<MultipartFile> files) {
+        System.out.println(files.size());
+    }
+
+    @ApiOperation(value = "단일 사진 저장 test")
+    @PostMapping(value = "/photoSave")
+    public void savePhoto(@RequestParam(value = "file") MultipartFile file) {
+        System.out.println(file.getSize());
+    }
+
     @ApiOperation("게시글 저장")
-    @PostMapping("/save")
-    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestHeader("X-AUTH-TOKEN") String token , @RequestBody CommunityDefaultRequestDto dto){
+    @PostMapping(value = "/save")
+    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestParam(value="images") List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
-        CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(communityService.saveCommunity(member,dto));
+        Community community = communityService.saveCommunity(member,dto);
+
+        System.out.println("*********************************************************");
+        System.out.println("=========================================" + files.size());
+        if(files != null) {
+            photoService.validateCommunityPhotoCountExceeded(files.size());
+            communityPhotoService.saveCommunityPhotos(community, files);
+        }
+
+        CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
         result.setWrited(true);
         return ResponseEntity.ok(result);
     }

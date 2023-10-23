@@ -38,6 +38,7 @@ public enum Code {
     BRAND_NOT_FOUND(NOT_FOUND, "등록된 브랜드가 없습니다."),
     PERFUME_NOT_FOUND(NOT_FOUND, "등록된 향수가 없습니다."),
     TERM_NOT_FOUND(NOT_FOUND, "등록된 용어가 없습니다."),
+    NOTE_NOT_FOUND(NOT_FOUND, "등록된 노트가 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
     HEART_NOT_FOUND(NOT_FOUND, "등록된 하트가 없습니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "등록된 리뷰가 없습니다."),
@@ -54,6 +55,12 @@ public enum Code {
     DUPLICATE_WEATHERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_GENDERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_AGEIDX(CONFLICT, "올바른 숫자로 보내주세요"),
+
+    /**
+     * 413 PAYLOAD_TOO_LARGE
+     */
+    FILE_SIZE_EXCEED(PAYLOAD_TOO_LARGE, "파일 용량이 초과되었습니다"),
+    FILE_COUNT_EXCEED(PAYLOAD_TOO_LARGE, "파일 개수가 초과되었습니다"),
 
     /**
      * 415 UNSUPPORTED_MEDIA_TYPE
