@@ -31,7 +31,6 @@ import java.util.List;
 public class PerfumeReviewService {
     private final PerfumeReviewRepository perfumeReviewRepository;
     private final PerfumeService perfumeService;
-    private final MemberService memberService;
     private final PerfumeWeatherRepository perfumeWeatherRepository;
     private final PerfumeAgeRepository perfumeAgeRepository;
     private final PerfumeGenderRepository perfumeGenderRepository;

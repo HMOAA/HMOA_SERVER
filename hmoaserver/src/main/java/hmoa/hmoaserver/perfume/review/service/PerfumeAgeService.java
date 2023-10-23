@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static hmoa.hmoaserver.exception.Code.REVIEW_NOT_FOUND;
 import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 
 @Service
@@ -30,12 +31,18 @@ public class PerfumeAgeService {
     private final PerfumeService perfumeService;
     private final JwtService jwtService;
 
-    public boolean isPresentPerfumeAge(Member member, Perfume perfume) {
+    private boolean isPresentPerfumeAge(Member member, Perfume perfume) {
         try {
             return perfumeAgeRepository.findByMemberAndPerfume(member, perfume).isPresent();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
+    }
+
+    public void deletePerfumeAge(Member member, Perfume perfume){
+        PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
+        modifyAgeToReview(perfumeAge.getAgeRange(),perfume);
+        perfumeAgeRepository.delete(perfumeAge);
     }
 
     public PerfumeAgeResponseDto save(String token, Long perfumeId, PerfumeAgeRequestDto dto){
@@ -62,7 +69,7 @@ public class PerfumeAgeService {
         }
     }
 
-    public void reflectAgeToReview(int age,Perfume perfume){
+    private void reflectAgeToReview(int age,Perfume perfume){
         PerfumeReview perfumeReview = perfumeReviewService.findPerfumeReview(perfume);
         if (age==1){
             perfumeReview.increaseTen();
@@ -77,7 +84,7 @@ public class PerfumeAgeService {
         }else throw new CustomException(null,SERVER_ERROR);
     }
 
-    public void modifyAgeToReview(int age,Perfume perfume){
+    private void modifyAgeToReview(int age,Perfume perfume){
         PerfumeReview perfumeReview = perfumeReviewService.findPerfumeReview(perfume);
         if (age==1){
             perfumeReview.decreaseTen();
