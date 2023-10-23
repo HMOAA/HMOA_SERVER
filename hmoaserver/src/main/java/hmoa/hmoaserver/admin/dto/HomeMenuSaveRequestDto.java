@@ -4,7 +4,7 @@ import hmoa.hmoaserver.admin.domain.HomeMenu;
 import lombok.Data;
 
 @Data
-public class PerfumeByHomeSaveRequestDto {
+public class HomeMenuSaveRequestDto {
     private String title;
 
     public HomeMenu toEntity(){

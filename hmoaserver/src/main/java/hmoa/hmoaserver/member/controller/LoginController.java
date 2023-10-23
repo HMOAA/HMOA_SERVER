@@ -9,7 +9,6 @@ import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.AccessToken;
 import hmoa.hmoaserver.oauth.jwt.Token;
-import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 import static hmoa.hmoaserver.exception.Code.UNKNOWN_ERROR;
 
@@ -29,7 +26,6 @@ import static hmoa.hmoaserver.exception.Code.UNKNOWN_ERROR;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-    private final JwtService jwtService;
     private final MemberService memberService;
 
     @ApiOperation(value = "자동 로그인")
