@@ -2,6 +2,7 @@ package hmoa.hmoaserver.member.domain;
 
 import hmoa.hmoaserver.brand.domain.BrandLikedMember;
 import hmoa.hmoaserver.common.BaseEntity;
+import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
@@ -68,6 +69,9 @@ public class Member extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<MemberPhoto> memberPhotos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<Community> communities = new ArrayList<>();
 
 
     public void passwordEncode(PasswordEncoder passwordEncoder){

@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.member.service;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
@@ -226,6 +228,11 @@ public class MemberService {
             memberPhotoService.delete(member.getMemberPhoto());
 
         memberPhotoService.saveMemberPhotos(member, file);
+    }
+
+    public Page<Community> findByMyCommunities(Member member, int page){
+        List<Community> communities = member.getCommunities();
+        return new PageUtil<Community>().convertListToPage(communities, page, 10);
     }
 
     public boolean isTokenNullOrEmpty(String token){
