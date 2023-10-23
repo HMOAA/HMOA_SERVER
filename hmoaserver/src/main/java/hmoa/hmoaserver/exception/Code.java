@@ -56,6 +56,12 @@ public enum Code {
     DUPLICATE_AGEIDX(CONFLICT, "올바른 숫자로 보내주세요"),
 
     /**
+     * 413 PAYLOAD_TOO_LARGE
+     */
+    FILE_SIZE_EXCEED(PAYLOAD_TOO_LARGE, "파일 용량이 초과되었습니다"),
+    FILE_COUNT_EXCEED(PAYLOAD_TOO_LARGE, "파일 개수가 초과되었습니다"),
+
+    /**
      * 415 UNSUPPORTED_MEDIA_TYPE
      */
     FILE_TYPE_UNSUPPORTED(UNSUPPORTED_MEDIA_TYPE, "파일 형식은 '.jpg', '.jpeg', '.png' 만 가능합니다."),
