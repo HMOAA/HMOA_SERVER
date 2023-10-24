@@ -37,13 +37,13 @@ public class CommunityController {
 
     @ApiOperation(value = "사진 저장 test")
     @PostMapping(value = "/photosSave", consumes = "multipart/form-data")
-    public void savePhoto(@RequestParam(value = "files") List<MultipartFile> files) {
+    public void savePhoto(@RequestPart(value = "image") List<MultipartFile> files) {
         System.out.println(files.size());
     }
 
     @ApiOperation(value = "단일 사진 저장 test")
     @PostMapping(value = "/photoSave")
-    public void savePhoto(@RequestParam(value = "file") MultipartFile file) {
+    public void savePhoto(@RequestPart(value = "file") MultipartFile file) {
         System.out.println(file.getSize());
     }
 
