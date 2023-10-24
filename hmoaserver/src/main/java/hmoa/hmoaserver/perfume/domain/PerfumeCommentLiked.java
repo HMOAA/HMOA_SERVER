@@ -26,7 +26,7 @@ public class PerfumeCommentLiked {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="comment_id")
+    @JoinColumn(name="perfume_comment_id")
     private PerfumeComment perfumeComment;
 
     @Builder

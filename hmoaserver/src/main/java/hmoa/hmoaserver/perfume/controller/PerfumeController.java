@@ -186,6 +186,15 @@ public class PerfumeController {
         }else throw new CustomException(null,DUPLICATE_AGEIDX);
     }
 
+    @ApiOperation(value = "향수 연령대 초기화")
+    @DeleteMapping("/{perfumeId}/age")
+    public ResponseEntity<ResultDto> deletePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token){
+        Member member = memberService.findByMember(token);
+        Perfume perfume = perfumeService.findById(perfumeId);
+        perfumeAgeService.deletePerfumeAge(member, perfume);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation(value = "향수 단건조회 2",notes = "댓글 정보와 같은 브랜드 향수 조회")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeDetailSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){

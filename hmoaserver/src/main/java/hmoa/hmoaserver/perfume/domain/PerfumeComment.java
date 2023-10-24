@@ -18,6 +18,7 @@ public class PerfumeComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "perfume_comment_id")
     private Long id;
 
     private String content;
