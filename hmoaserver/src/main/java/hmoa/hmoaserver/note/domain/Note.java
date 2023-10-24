@@ -17,7 +17,7 @@ public class Note extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String Title;
+    private String title;
     private String subTitle;
 
     private String content;

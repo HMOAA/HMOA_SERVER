@@ -13,7 +13,7 @@ public class TermSaveRequestDto {
 
     public Term toEntity() {
         return Term.builder()
-                .Title(termTitle)
+                .title(termTitle)
                 .englishTitle(termEnglishTitle)
                 .content(content)
                 .build();
