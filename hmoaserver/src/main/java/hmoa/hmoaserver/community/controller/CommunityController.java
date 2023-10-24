@@ -49,7 +49,7 @@ public class CommunityController {
 
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save")
-    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestParam(value="images") List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
+    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="images") List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
         Community community = communityService.saveCommunity(member,dto);
 

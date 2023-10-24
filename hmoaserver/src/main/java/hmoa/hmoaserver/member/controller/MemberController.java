@@ -388,7 +388,7 @@ public class MemberController {
      */
     @ApiOperation(value = "프로필 사진 저장")
     @PostMapping("/profile-photo")
-    public ResponseEntity<ResultDto<Object>> saveMemberPhoto(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "image") MultipartFile file) {
+    public ResponseEntity<ResultDto<Object>> saveMemberPhoto(@RequestHeader("X-AUTH-TOKEN") String token, @RequestPart(value = "image") MultipartFile file) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
 

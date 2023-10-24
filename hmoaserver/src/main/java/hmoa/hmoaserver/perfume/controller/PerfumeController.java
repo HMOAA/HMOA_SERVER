@@ -55,7 +55,7 @@ public class PerfumeController {
 
     @ApiOperation("향수 저장")
     @PostMapping("/new")
-    public ResponseEntity<ResultDto<Object>> savePerfume(@RequestParam(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
+    public ResponseEntity<ResultDto<Object>> savePerfume(@RequestPart(value = "image") MultipartFile file, PerfumeSaveRequestDto requestDto) {
 
         Perfume perfume = perfumeService.save(requestDto);
 
