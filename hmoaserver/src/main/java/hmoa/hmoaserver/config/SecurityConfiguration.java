@@ -43,12 +43,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/plugins/**",
                 "/favicon.ico",
                 "/member/existsnickname",
-                "/api/v2/**",
                 "/swagger-ui.html",
                 "/swagger/**",
-                "/swagger-resources/**",
                 "/webjar/**",
-                "/v2/api-docs",
                 "/brand/**",
                 "/perfume/**",
                 "/term/**",
@@ -56,7 +53,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/member/testcreate",
                 "/search/**",
                 "/community/**",
-                "/main/**"
+                "/main/**",
+                "/swagger-ui/**",
+                "/swagger-resources/**",
+                "/v2/api-docs",
+                "/v3/api-docs"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
