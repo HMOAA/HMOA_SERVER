@@ -48,6 +48,7 @@ public class Community extends BaseEntity {
     public void modifyContent(String content){
         this.content = content;
     }
+    public void modifyTitle(String title){this.title = title;}
 
     public boolean isWrited(Member member){
         return this.member.equals(member);
