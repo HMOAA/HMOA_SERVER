@@ -49,6 +49,7 @@ public class CommunityServiceImpl implements CommunityService {
             throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
         }
         community.modifyContent(communityModifyRequestDto.getContent());
+        community.modifyTitle(communityModifyRequestDto.getTitle());
         return community;
     }
 

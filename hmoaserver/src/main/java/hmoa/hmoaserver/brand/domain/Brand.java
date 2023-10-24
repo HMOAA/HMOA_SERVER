@@ -50,7 +50,7 @@ public class Brand extends BaseEntity {
             return null;
         }
 
-        BrandPhoto brandPhoto = this.brandPhotos.get(brandPhotoSize - 1);
+        BrandPhoto brandPhoto = this.brandPhotos.get(0);
         return brandPhoto;
     }
 

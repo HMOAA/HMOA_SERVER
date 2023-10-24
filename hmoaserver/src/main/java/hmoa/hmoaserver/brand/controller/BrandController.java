@@ -51,10 +51,23 @@ public class BrandController {
     private final BrandLikedMemberService brandLikedMemberService;
     private final PerfumeLikedMemberService perfumeLikedMemberService;
     private final PerfumeService perfumeService;
+    @ApiOperation(value = "브랜드 저장 테스트")
+    @PostMapping(value = "{brandId}/testSave")
+    public ResponseEntity<ResultDto<Object>> saveTest(@RequestPart(value="image",required = false) MultipartFile file, @PathVariable Long brandId){
+        Brand brand = brandService.findById(brandId);
+        if(file!=null) {
+            photoService.validateFileExistence(file);
+            photoService.validateFileType(file);
 
+            brandPhotoService.saveBrandPhotos(brand, file);
+        }
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .build());
+    }
     @ApiOperation(value = "브랜드 저장")
     @PostMapping(value = "/new")
-    public ResponseEntity<ResultDto<Object>> saveBrand(HttpServletRequest request, @RequestParam(value="image",required = false) MultipartFile file, BrandSaveRequestDto requestDto) {
+    public ResponseEntity<ResultDto<Object>> saveBrand(HttpServletRequest request, @RequestPart(value="image",required = false) MultipartFile file, BrandSaveRequestDto requestDto) {
 
         Brand brand = brandService.save(requestDto);
         if(file!=null) {
