@@ -13,7 +13,7 @@ public class NoteSaveRequestDto {
 
     public Note toEntity() {
         return Note.builder()
-                .Title(noteTitle)
+                .title(noteTitle)
                 .subTitle(noteSubTitle)
                 .content(content)
                 .build();

@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.note.domain;
+package hmoa.hmoaserver.perfumer.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
 import lombok.*;
@@ -9,11 +9,11 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "Note")
+@Table(name = "Perfumer")
 @AllArgsConstructor
-public class Note extends BaseEntity {
+public class Perfumer extends BaseEntity {
     @Id
-    @Column(name = "note_id")
+    @Column(name = "perfumer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -30,5 +30,4 @@ public class Note extends BaseEntity {
     public void delete() {
         isDeleted = true;
     }
-
 }
