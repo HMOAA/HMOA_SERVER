@@ -15,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static hmoa.hmoaserver.exception.Code.DUPLICATE_GENDERIDX;
-import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
+import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
 @Transactional
@@ -57,6 +56,13 @@ public class PerfumeGenderService {
             reflectGenderToReview(dto.getGender(),perfume);
             return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume),true);
         }
+    }
+
+    public PerfumeGenderResponseDto delete(Member member, Perfume perfume) {
+        PerfumeGender perfumeGender = perfumeGenderRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
+        modifyGenderToReview(perfumeGender.getGender(), perfume);
+        perfumeGenderRepository.delete(perfumeGender);
+        return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume), false);
     }
 
     public void reflectGenderToReview(int gender,Perfume perfume){

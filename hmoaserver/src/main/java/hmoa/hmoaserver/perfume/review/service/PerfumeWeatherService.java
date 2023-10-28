@@ -18,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static hmoa.hmoaserver.exception.Code.DUPLICATE_WEATHERIDX;
-import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
+import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
 @Transactional
@@ -62,6 +61,14 @@ public class PerfumeWeatherService {
             return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume),true);
         }
     }
+
+    public PerfumeWeatherResponseDto delete(Member member, Perfume perfume) {
+        PerfumeWeather perfumeWeather = perfumeWeatherRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
+        modifyWeatherToReview(perfumeWeather.getWeatherIndex(), perfume);
+        perfumeWeatherRepository.delete(perfumeWeather);
+        return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume), false);
+    }
+
     public void reflectWeatherToReview(int weather,Perfume perfume){
         PerfumeReview perfumeReview = perfumeReviewService.findPerfumeReview(perfume);
         if (weather==1){

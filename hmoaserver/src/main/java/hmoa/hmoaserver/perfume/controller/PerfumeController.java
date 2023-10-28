@@ -168,6 +168,14 @@ public class PerfumeController {
         }else throw new CustomException(null,DUPLICATE_WEATHERIDX);
     }
 
+    @ApiOperation(value = "향수 계절감 초기화")
+    @DeleteMapping("/{perfumeId}/weather")
+    public ResponseEntity<PerfumeWeatherResponseDto> deletePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Perfume perfume = perfumeService.findById(perfumeId);
+        return ResponseEntity.ok(perfumeWeatherService.delete(member,perfume));
+    }
+
     @ApiOperation(value = "향수 성별 평가하기", notes = "gender는 1~3까지 순서대로 1은 남자 ,2는 여자 ,3은 중성")
     @PostMapping("/{perfumeId}/gender")
     public ResponseEntity<PerfumeGenderResponseDto> savePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeGenderRequestDto dto){
@@ -175,6 +183,14 @@ public class PerfumeController {
         if (idx==1||idx==2||idx==3){
             return ResponseEntity.ok(perfumeGenderService.save(token,perfumeId,dto));
         }else throw new CustomException(null,DUPLICATE_GENDERIDX);
+    }
+
+    @ApiOperation(value = "향수 성별 초기화")
+    @DeleteMapping("/{perfumeId}/gender")
+    public ResponseEntity<PerfumeGenderResponseDto> deletePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Perfume perfume = perfumeService.findById(perfumeId);
+        return ResponseEntity.ok(perfumeGenderService.delete(member,perfume));
     }
 
     @ApiOperation(value = "향수 연령 평가하기", notes = "age는 1~5까지 순서대로 1은 10대 , 2는 20대 ~~ 5는 50대")
@@ -188,11 +204,10 @@ public class PerfumeController {
 
     @ApiOperation(value = "향수 연령대 초기화")
     @DeleteMapping("/{perfumeId}/age")
-    public ResponseEntity<ResultDto> deletePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<PerfumeAgeResponseDto> deletePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token){
         Member member = memberService.findByMember(token);
         Perfume perfume = perfumeService.findById(perfumeId);
-        perfumeAgeService.deletePerfumeAge(member, perfume);
-        return ResponseEntity.ok(ResultDto.builder().build());
+        return ResponseEntity.ok(perfumeAgeService.deletePerfumeAge(member, perfume));
     }
 
     @ApiOperation(value = "향수 단건조회 2",notes = "댓글 정보와 같은 브랜드 향수 조회")
