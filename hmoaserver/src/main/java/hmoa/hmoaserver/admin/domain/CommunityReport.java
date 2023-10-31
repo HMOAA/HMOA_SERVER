@@ -20,15 +20,13 @@ public class CommunityReport extends BaseEntity {
     @Column(name = "community_report_id")
     private Long id;
 
-    private String reportContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
     private Community community;
 
     @Builder
-    public CommunityReport(Community community, String reportContent){
+    public CommunityReport(Community community){
         this.community = community;
-        this.reportContent = reportContent;
     }
 }
