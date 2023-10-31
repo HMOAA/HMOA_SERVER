@@ -39,10 +39,11 @@ public class PerfumeAgeService {
         }
     }
 
-    public void deletePerfumeAge(Member member, Perfume perfume){
+    public PerfumeAgeResponseDto deletePerfumeAge(Member member, Perfume perfume){
         PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
         modifyAgeToReview(perfumeAge.getAgeRange(),perfume);
         perfumeAgeRepository.delete(perfumeAge);
+        return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume), false);
     }
 
     public PerfumeAgeResponseDto save(String token, Long perfumeId, PerfumeAgeRequestDto dto){

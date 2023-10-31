@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, Long> {
 
 
-    Page<PerfumeComment> findAllByMemberId(Long memberId, Pageable pageable);
+    Page<PerfumeComment> findAllByMember(Member member, Pageable pageable);
     List<PerfumeComment> findAllByMemberId(Long memberId);
     Optional<PerfumeComment> findById(Long id);
 

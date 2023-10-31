@@ -2,6 +2,8 @@ package hmoa.hmoaserver.member.service;
 
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.domain.CommunityComment;
+import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
@@ -56,6 +58,8 @@ public class MemberService {
     private final PerfumeCommentLikedRepository perfumeCommentHeartRepository;
 
     private final MemberPhotoService memberPhotoService;
+
+    private final CommunityCommentRepository communityCommentRepository;
 
     @Transactional
     public Member save(Member member){
@@ -204,11 +208,17 @@ public class MemberService {
         }
     }
 
-    public Page<PerfumeComment> findByComment(String token,int page){
+    public Page<PerfumeComment> findPerfumeCommentByMe(String token, int page){
         String findEmail = jwtService.getEmail(token);
         Member member = findByEmail(findEmail);
         Pageable pageable = PageRequest.of(page,10);
-        return perfumeCommentRepository.findAllByMemberId(member.getId(),pageable);
+        return perfumeCommentRepository.findAllByMember(member,pageable);
+    }
+
+    public Page<CommunityComment> findCommunityCommentByMe(String token, int page) {
+        Member member = findByMember(token);
+        Pageable pageable = PageRequest.of(page, 10);
+        return communityCommentRepository.findAllByMember(member, pageable);
     }
 
     public Page<PerfumeComment> findByHeartComment(String token, int page){
