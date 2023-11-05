@@ -172,7 +172,13 @@ public class PerfumeCommentService {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
-
+    public void deleteComment(Member member, Long commentId) {
+        PerfumeComment perfumeComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(null,COMMENT_NOT_FOUND));
+        if(member.getId() != perfumeComment.getMember().getId()) {
+            throw new CustomException(null, FORBIDDEN_AUTHORIZATION);
+        }
+        commentRepository.delete(perfumeComment);
+    }
     public void deleteMemberComment(Member member){
         Member deleteMember = memberRepository.findById(deleteMemberId).get();
         List<PerfumeComment> comments = commentRepository.findAllByMemberId(member.getId());

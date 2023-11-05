@@ -227,4 +227,12 @@ public class PerfumeCommentController {
                 .body(ResultDto.builder().build());
 
     }
+
+    @ApiOperation(value = "향수 댓글 삭제")
+    @DeleteMapping("/comments/{commentId}/delete")
+    public ResponseEntity<ResultDto<Object>> deleteComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        commentService.deleteComment(member, commentId);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
 }
