@@ -90,7 +90,7 @@ public class PerfumeCommentService {
         return commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment, member).isPresent();
     }
 
-    public String modifyComment(String token, Long commentId,String content){
+    public PerfumeComment modifyComment(String token, Long commentId,String content){
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
@@ -99,7 +99,7 @@ public class PerfumeCommentService {
             throw new CustomException(null,UNAUTHORIZED_COMMENT);
         }
         findComment.modifyComment(content);
-        return "MODIFY_SUCCESS";
+        return findComment;
     }
 
     /**
