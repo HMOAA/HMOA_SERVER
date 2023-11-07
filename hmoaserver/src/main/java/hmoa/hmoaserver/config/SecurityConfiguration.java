@@ -51,6 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/term/**",
                 "/note/**",
                 "/perfumer/**",
+                "/brandstory/**",
                 "/member/testcreate",
                 "/search/**",
                 "/community/**",

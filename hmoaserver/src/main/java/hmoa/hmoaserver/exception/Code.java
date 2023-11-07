@@ -40,6 +40,7 @@ public enum Code {
     TERM_NOT_FOUND(NOT_FOUND, "등록된 용어가 없습니다."),
     NOTE_NOT_FOUND(NOT_FOUND, "등록된 노트가 없습니다."),
     PERFUMER_NOT_FOUND(NOT_FOUND, "등록된 조향사가 없습니다."),
+    BRANDSTORY_NOT_FOUND(NOT_FOUND, "등록된 브랜드스토리가 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
     HEART_NOT_FOUND(NOT_FOUND, "등록된 하트가 없습니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "등록된 리뷰가 없습니다."),
