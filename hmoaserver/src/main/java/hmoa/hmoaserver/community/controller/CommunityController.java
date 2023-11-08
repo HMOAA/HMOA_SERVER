@@ -36,7 +36,7 @@ public class CommunityController {
 
     @ApiOperation(value = "사진 저장 test")
     @PostMapping(value = "/photosSave", consumes = "multipart/form-data")
-    public void savePhoto(@RequestPart(value = "image") List<MultipartFile> files) {
+    public void savePhoto(@RequestPart(value = "image", required = false) List<MultipartFile> files) {
         System.out.println(files.size());
     }
 
@@ -47,14 +47,14 @@ public class CommunityController {
     }
 
     @ApiOperation("게시글 저장")
-    @PostMapping(value = "/save")
-    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="images") List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
+    @PostMapping(value = "/save", consumes = "multipart/form-data")
+    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
         Community community = communityService.saveCommunity(member,dto);
 
         System.out.println("*********************************************************");
-        System.out.println("=========================================" + files.size());
         if(files != null) {
+            System.out.println("=========================================" + files.size());
             photoService.validateCommunityPhotoCountExceeded(files.size());
             communityPhotoService.saveCommunityPhotos(community, files);
         }
