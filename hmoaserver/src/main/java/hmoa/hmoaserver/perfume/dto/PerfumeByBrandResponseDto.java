@@ -16,6 +16,7 @@ public class PerfumeByBrandResponseDto {
     private Long perfumeId;
     private String perfumeImgUrl;
     private String perfumeName;
+    private int heartCount;
     private boolean isLiked = false;
 
     public PerfumeByBrandResponseDto(Perfume perfume, boolean isLiked){
@@ -27,5 +28,6 @@ public class PerfumeByBrandResponseDto {
         this.perfumeName=perfume.getKoreanName();
         this.perfumeImgUrl=perfume.getPerfumePhoto().getPhotoUrl();
         this.isLiked = isLiked;
+        this.heartCount = perfume.getHeartCount();
     }
 }
