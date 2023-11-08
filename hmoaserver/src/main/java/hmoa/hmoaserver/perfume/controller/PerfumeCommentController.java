@@ -6,6 +6,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.dto.MemberResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import io.swagger.annotations.Api;
@@ -221,10 +222,18 @@ public class PerfumeCommentController {
 
     @ApiOperation(value = "향수 댓글 수정")
     @PutMapping("comments/{commentId}/modify")
-    public ResponseEntity<ResultDto<Object>> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto){
-        commentService.modifyComment(token,commentId,dto.getContent());
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder().build());
+    public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto){
+        Member member = memberService.findByMember(token);
+        PerfumeComment comment = commentService.modifyComment(token,commentId,dto.getContent());
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, false, member, member.getMemberPhoto().getPhotoUrl()));
 
+    }
+
+    @ApiOperation(value = "향수 댓글 삭제")
+    @DeleteMapping("/comments/{commentId}/delete")
+    public ResponseEntity<ResultDto<Object>> deleteComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        commentService.deleteComment(member, commentId);
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

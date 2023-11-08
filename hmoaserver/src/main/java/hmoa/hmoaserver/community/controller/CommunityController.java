@@ -33,7 +33,6 @@ public class CommunityController {
     private final PhotoService photoService;
     private final CommunityPhotoService communityPhotoService;
     private final CommunityService communityService;
-    private final CommunityCommentService communityCommentService;
 
     @ApiOperation(value = "사진 저장 test")
     @PostMapping(value = "/photosSave", consumes = "multipart/form-data")
@@ -84,6 +83,7 @@ public class CommunityController {
         Member member = memberService.findByMember(token);
         if(member==community.getMember()){
             result.setWrited(true);
+            result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
         }
         return ResponseEntity.ok(result);
     }
