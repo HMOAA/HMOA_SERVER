@@ -4,6 +4,9 @@ package hmoa.hmoaserver.search.service;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
+import hmoa.hmoaserver.community.domain.Category;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.repository.CommunityRepository;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class SearchService {
     private final BrandRepository brandRepository;
     private final PerfumeRepository perfumeRepository;
+    private final CommunityRepository communityRepository;
     private final UnicodeService unicodeService;
 
     public List<BrandDefaultResponseDto> brandSearchAll(int consonant){
@@ -83,5 +87,12 @@ public class SearchService {
         Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,perfumeName,pageable);
         List<PerfumeNameSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeNameSearchResponseDto(perfume)).collect(Collectors.toList());
         return dto;
+    }
+
+    public Page<Community> communitySearch(Category category, String searchContent, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                category, searchContent, searchContent, pageable
+        );
     }
 }
