@@ -7,14 +7,16 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BrandStoryDefaultResponseDto {
+public class BrandStoryDetailResponseDto {
     private Long brandStoryId;
     private String brandStoryTitle;
     private String brandStorySubtitle;
+    private String content;
 
-    public BrandStoryDefaultResponseDto(BrandStory brandStory) {
+    public BrandStoryDetailResponseDto(BrandStory brandStory) {
         this.brandStoryId = brandStory.getId();
         this.brandStoryTitle = brandStory.getTitle();
         this.brandStorySubtitle = brandStory.getSubtitle();
+        this.content = brandStory.getContent();
     }
 }
