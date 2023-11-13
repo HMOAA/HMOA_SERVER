@@ -69,6 +69,21 @@ public class PerfumeController {
                         .build());
     }
 
+    @ApiOperation("향수 메인 사진 저장")
+    @PostMapping("/{perfumeId}")
+    public ResponseEntity<ResultDto<Object>> savePerfumePhoto(@RequestPart(value = "image") MultipartFile file, @PathVariable Long perfumeId) {
+        Perfume perfume = perfumeService.findById(perfumeId);
+
+        photoService.validateFileExistence(file);
+        photoService.validateFileType(file);
+
+        perfumePhotoService.savePerfumePhotos(perfume, file);
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .build());
+    }
+
 //    @ApiOperation("향수 저장 테스트")
 //    @PostMapping("/test")
 //    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
