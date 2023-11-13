@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findAllByCategoryOrderByCreatedAtDesc(Category category, Pageable pageable);
+    Page<Community> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

@@ -66,9 +66,17 @@ public class CommunityController {
 
     @ApiOperation("카테고리 별 게시글 조회")
     @GetMapping("/category")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestParam Category category,@RequestParam int page){
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestParam Category category,@RequestParam int page) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(page,category);
         List<CommunityByCategoryResponseDto> result = communities.stream().map(community -> new CommunityByCategoryResponseDto(community)).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation("커뮤니티 홈 조회")
+    @GetMapping("/home")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findCommunitByHome() {
+        Page<Community> communities = communityService.getCommunityByHome();
+        List<CommunityByCategoryResponseDto> result = communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
 

@@ -37,6 +37,11 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public Page<Community> getCommunityByHome() {
+        return communityRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 5));
+    }
+
+    @Override
     public Community getCommunityById(Long communityId) {
         return communityRepository.findById(communityId).orElseThrow(()->new CustomException(null,Code.COMMUNITY_NOT_FOUND));
     }
