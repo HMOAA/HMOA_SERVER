@@ -8,6 +8,7 @@ import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
 import hmoa.hmoaserver.photo.domain.MemberPhoto;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Slf4j
 @Table(name = "MEMBER")
 @AllArgsConstructor
 public class Member extends BaseEntity implements UserDetails {

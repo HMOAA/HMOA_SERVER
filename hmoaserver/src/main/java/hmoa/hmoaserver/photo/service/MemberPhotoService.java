@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static hmoa.hmoaserver.exception.Code.FILE_NOT_FOUND;
@@ -31,20 +32,14 @@ public class MemberPhotoService {
 
     @Transactional
     public MemberPhoto saveDefaultImage(Member member){
-        MemberPhoto savedMemberPhoto = member.getMemberPhoto();
-
-        if (savedMemberPhoto!=null) return null;
-
         try {
-            savedMemberPhoto = MemberPhoto.builder()
+            return save(MemberPhoto.builder()
                     .member(member)
                     .photoUrl(DEFALUT_PROFILE_URL)
-                    .build();
+                    .build());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
-
-        return save(savedMemberPhoto);
     }
 
     /**
