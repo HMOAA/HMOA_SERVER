@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.TERM_NOT_FOUND;
 
 @Service
@@ -20,6 +22,10 @@ public class TermService {
 
     public Term save(TermSaveRequestDto requestDto) {
         return termRepository.save(requestDto.toEntity());
+    }
+
+    public List<Term> findTerm() {
+        return termRepository.findAll();
     }
 
     public Term findById(Long termId) {
