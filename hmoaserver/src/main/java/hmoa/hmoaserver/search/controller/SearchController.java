@@ -1,6 +1,9 @@
 package hmoa.hmoaserver.search.controller;
 
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
+import hmoa.hmoaserver.community.domain.Category;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
@@ -9,10 +12,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags="검색")
 @Slf4j
@@ -43,5 +48,12 @@ public class SearchController {
     @GetMapping("/perfumeName")
     public ResponseEntity<List<PerfumeNameSearchResponseDto>> perfumeStringSearch(@RequestParam int page, @RequestParam String searchWord){
         return ResponseEntity.ok(searchService.perfumeNameSearch(searchWord,page));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 게시글 불러오기 (카테고리별)", notes = "게시글 검색")
+    @GetMapping("/community")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> communitySearch(@RequestParam Category category, @RequestParam int page, @RequestParam String seachWord) {
+        Page<Community> communities = searchService.communitySearch(category, seachWord, page);
+        return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
     }
 }

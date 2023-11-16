@@ -88,7 +88,6 @@ public class MemberService {
             String accessToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String refreshToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),refreshToken);
-            memberPhotoService.saveDefaultImage(member);
             return new Token(accessToken,refreshToken);
         }else{
             log.info("일치하는 회원이 없습니다.");
@@ -183,7 +182,6 @@ public class MemberService {
         Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(),provider);
         if(findMember.isPresent()){
             Member member = findMember.get();
-            memberPhotoService.saveDefaultImage(member);
             String xAuthToken = jwtService.createAccessToken(member.getEmail(), member.getRole());
             String rememberedToken = jwtService.createRefreshToken(member.getEmail(), member.getRole());
             jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
@@ -203,6 +201,7 @@ public class MemberService {
             String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
+            log.info("1");
             memberPhotoService.saveDefaultImage(member);
             return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
         }
