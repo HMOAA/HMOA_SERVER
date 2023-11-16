@@ -10,12 +10,9 @@ import org.springframework.data.domain.Page;
 
 public interface CommunityService {
     Community saveCommunity(Member member, CommunityDefaultRequestDto communityDefaultRequestDto);
-
     Page<Community> getAllCommunitysByCategory(int page, Category category);
+    Page<Community> getCommunityByHome();
     Community getCommunityById(Long communityId);
-
     Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto, Long communityId);
-
     String deleteCommunity(Member member, Long communityId);
-
 }
