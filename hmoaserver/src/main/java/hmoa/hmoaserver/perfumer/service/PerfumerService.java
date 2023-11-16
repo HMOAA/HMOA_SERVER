@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.PERFUMER_NOT_FOUND;
 
 @Service
@@ -21,6 +23,10 @@ public class PerfumerService {
 
     public Perfumer save(PerfumerSaveRequestDto requestDto) {
         return perfumerRepository.save(requestDto.toEntity());
+    }
+
+    public List<Perfumer> findPerfumer() {
+        return perfumerRepository.findAll();
     }
 
     public Perfumer findById(Long perfumerId) {

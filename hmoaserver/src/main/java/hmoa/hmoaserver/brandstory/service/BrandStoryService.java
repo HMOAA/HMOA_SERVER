@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.BRANDSTORY_NOT_FOUND;
 
 @Service
@@ -21,6 +23,10 @@ public class BrandStoryService {
 
     public BrandStory save(BrandStorySaveRequestDto requestDto) {
         return brandStoryRepository.save(requestDto.toEntity());
+    }
+
+    public List<BrandStory> findBrandStory() {
+        return brandStoryRepository.findAll();
     }
 
     public BrandStory findById(Long brandStoryId) {

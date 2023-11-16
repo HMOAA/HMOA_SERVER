@@ -8,11 +8,15 @@ import hmoa.hmoaserver.community.repository.CommunityRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +52,21 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto,Long communityId) {
+    public Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto,Long communityId,
+                                     List<CommunityPhoto> deleteCommunityPhotos) {
         Community community = getCommunityById(communityId);
+
         if(!community.isWrited(member)){
             throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
         }
+
         community.modifyContent(communityModifyRequestDto.getContent());
         community.modifyTitle(communityModifyRequestDto.getTitle());
+
+        for (CommunityPhoto deleteCommunityPhoto : deleteCommunityPhotos) {
+            deleteCommunityPhoto.delete();
+        }
+
         return community;
     }
 
@@ -69,5 +81,9 @@ public class CommunityServiceImpl implements CommunityService {
         return DELETE_SUCCESS;
     }
 
-
+    @Override
+    @Transactional
+    public List<CommunityPhoto> findAllCommunityPhotosFromCommunity(Community community) {
+        return community.getCommunityPhotos();
+    }
 }

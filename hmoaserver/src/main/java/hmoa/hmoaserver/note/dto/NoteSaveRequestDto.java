@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public class NoteSaveRequestDto {
     private String noteTitle;
-    private String noteSubTitle;
+    private String noteSubtitle;
     private String content;
 
     public Note toEntity() {
         return Note.builder()
                 .title(noteTitle)
-                .subTitle(noteSubTitle)
+                .subtitle(noteSubtitle)
                 .content(content)
                 .build();
     }

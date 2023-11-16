@@ -57,7 +57,8 @@ public class Community extends BaseEntity {
     public List<CommunityPhoto> getCommunityPhotos() {
         List<CommunityPhoto> communityPhotos = new ArrayList<>();
         for (CommunityPhoto communityPhoto : this.communityPhotos) {
-            communityPhotos.add(communityPhoto);
+            if (!communityPhoto.isDeleted())
+                communityPhotos.add(communityPhoto);
         }
         return communityPhotos;
     }
@@ -65,7 +66,8 @@ public class Community extends BaseEntity {
     public int getCommunityPhotosCount() {
         int count = 0;
         for (CommunityPhoto communityPhoto : this.communityPhotos) {
-            count++;
+            if (!communityPhoto.isDeleted())
+                count++;
         }
         return count;
     }

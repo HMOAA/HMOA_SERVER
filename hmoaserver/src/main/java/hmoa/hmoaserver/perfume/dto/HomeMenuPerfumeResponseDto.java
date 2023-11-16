@@ -13,6 +13,6 @@ public class HomeMenuPerfumeResponseDto {
         this.perfumeId = perfume.getId();
         this.brandName = perfume.getBrand().getBrandName();
         this.perfumeName = perfume.getKoreanName();
-        this.imgUrl = perfume.getPerfumePhoto().getPhotoUrl();
+        this.imgUrl = perfume.getPerfumeMainPhoto().getPhotoUrl();
     }
 }

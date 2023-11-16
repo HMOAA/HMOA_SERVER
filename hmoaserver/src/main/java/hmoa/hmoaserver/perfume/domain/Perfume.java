@@ -78,9 +78,20 @@ public class Perfume extends BaseEntity {
             return null;
         }
 
+        PerfumePhoto perfumePhoto = this.perfumePhotos.get(0);
+        return perfumePhoto;
+    }
+
+    public PerfumePhoto getPerfumeMainPhoto() {
+        int perfumePhotoSize = this.perfumePhotos.size();
+        if (perfumePhotoSize == 0) {
+            return null;
+        }
+
         PerfumePhoto perfumePhoto = this.perfumePhotos.get(perfumePhotoSize - 1);
         return perfumePhoto;
     }
+
     public Brand getPerfumeBrand(){
         return this.getBrand();
     }
