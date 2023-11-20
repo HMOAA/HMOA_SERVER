@@ -50,7 +50,7 @@ public class CommunityController {
     @PostMapping(value = "/save", consumes = "multipart/form-data")
     public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
-        Community community = communityService.saveCommunity(member,dto);
+        Community community = communityService.saveCommunity(member, dto);
 
         System.out.println("*********************************************************");
         if(files != null) {

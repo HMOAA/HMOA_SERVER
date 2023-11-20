@@ -23,7 +23,7 @@ public class PerfumeCommentResponseDto {
     private boolean isWrited;
     private String createAt;
 
-    public PerfumeCommentResponseDto(PerfumeComment perfumeComment,boolean isLiked,Member member,String profileImg){
+    public PerfumeCommentResponseDto(PerfumeComment perfumeComment, boolean isLiked, Member member){
         this.id=perfumeComment.getId();
         this.content=perfumeComment.getContent();
         this.heartCount=perfumeComment.getHeartCount();
@@ -31,11 +31,7 @@ public class PerfumeCommentResponseDto {
         this.perfumeId=perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
         this.createAt=formateDateTime(perfumeComment.getCreatedAt());
-        if(perfumeComment.getMember().getMemberPhoto()==null){
-            this.profileImg=profileImg;
-        }else {
-            this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
-        }
+        this.profileImg = member.getMemberPhoto().getPhotoUrl();
         if (member==null){
             this.isWrited=false;
         }else{

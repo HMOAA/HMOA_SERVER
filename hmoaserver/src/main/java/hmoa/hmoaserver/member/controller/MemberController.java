@@ -340,7 +340,7 @@ public class MemberController {
         Member member = memberService.findByEmail(email);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false,member,DEFALUT_PROFILE_URL);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false, member);
             result.add(dto);
         }
         return ResponseEntity.ok(result);
@@ -415,7 +415,7 @@ public class MemberController {
         Member member = memberService.findByEmail(email);
         Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
         List<PerfumeCommentResponseDto> results = comments.stream()
-                .map(comment -> new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
+                .map(comment -> new PerfumeCommentResponseDto(comment,true, member)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 
@@ -461,8 +461,7 @@ public class MemberController {
     @ApiOperation(value = "회원 탈퇴")
     @DeleteMapping("/delete")
     public ResponseEntity<ResultDto<Object>> deleteMember(@RequestHeader("X-AUTH-TOKEN") String token){
-        String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMember(token);
         perfumeCommentService.deleteMemberComment(member);
         String code = memberService.delete(member);
         return ResponseEntity.status(200)
