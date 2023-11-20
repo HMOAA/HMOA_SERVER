@@ -57,6 +57,7 @@ public class Member extends BaseEntity implements UserDetails {
     private ProviderType providerType;
 
     private String refreshToken;
+    private String firebaseToken;
 
     @OneToMany(mappedBy = "member",  cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
