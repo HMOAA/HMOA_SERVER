@@ -20,7 +20,7 @@ public class CommunityDefaultResponseDto {
     private String profileImgUrl;
     private int imagesCount;
     private List<CommunityPhotoDefaultResponseDto> communityPhotos = new ArrayList<>();
-    private String myProfileImgUrl = DefaultValues.getDEFALUT_PROFILE_URL();
+    private String myProfileImgUrl = DefaultValues.getProfileUrl();
     private String time;
     private boolean writed = false;
 
@@ -32,7 +32,6 @@ public class CommunityDefaultResponseDto {
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
-
         if (community.getCommunityPhotos() != null) {
             List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
             this.imagesCount = communityPhotos.size();

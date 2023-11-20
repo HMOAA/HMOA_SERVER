@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
 public class TestService {
-    @Value("${defalut.maintest}")
+    @Value("${default.maintest}")
     private String DEFALUT_MAINTEST;
 
     private final MemberRepository memberRepository;

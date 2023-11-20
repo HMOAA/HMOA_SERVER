@@ -47,7 +47,7 @@ public class MemberController {
     private final MemberPhotoService memberPhotoService;
     private final PerfumeCommentService perfumeCommentService;
 
-    @Value("${defalut.profile}")
+    @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
 
 

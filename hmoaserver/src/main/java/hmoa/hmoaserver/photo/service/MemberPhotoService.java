@@ -24,7 +24,7 @@ public class MemberPhotoService {
     @Value("${cloud.aws.s3.bucket-name.member}")
     private String memberPhotoBucketName;
 
-    @Value("${defalut.profile}")
+    @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
 
     private final PhotoService photoService;

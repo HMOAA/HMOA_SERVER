@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional
 @Slf4j
 public class PerfumeCommentService {
-    @Value("${defalut.profile}")
+    @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
     private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";

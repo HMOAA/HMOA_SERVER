@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class TestController {
-    @Value("${defalut.main}")
+    @Value("${default.main}")
     private String DEFALUT_MAIN;
     private final TestService testService;
 

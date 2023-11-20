@@ -42,9 +42,6 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
-    @Value("${defalut.profile}")
-    private String DEFALUT_PROFILE_URL;
-
     private Long deleteId=0l;
 
     private final MemberRepository memberRepository;
