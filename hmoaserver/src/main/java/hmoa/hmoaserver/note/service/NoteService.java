@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.NOTE_NOT_FOUND;
 
 @Service
@@ -21,6 +23,10 @@ public class NoteService {
 
     public Note save(NoteSaveRequestDto requestDto) {
         return noteRepository.save(requestDto.toEntity());
+    }
+
+    public List<Note> findNote() {
+        return noteRepository.findAll();
     }
 
     public Note findById(Long noteId) {

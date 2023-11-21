@@ -18,7 +18,7 @@ public class Note extends BaseEntity {
     private long id;
 
     private String title;
-    private String subTitle;
+    private String subtitle;
 
     private String content;
     private boolean isDeleted = false;

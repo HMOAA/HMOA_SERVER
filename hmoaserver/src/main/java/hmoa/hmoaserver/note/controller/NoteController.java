@@ -3,6 +3,7 @@ package hmoa.hmoaserver.note.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
+import hmoa.hmoaserver.note.dto.NoteDetailResponseDto;
 import hmoa.hmoaserver.note.dto.NoteSaveRequestDto;
 import hmoa.hmoaserver.note.dto.NoteUpdateRequestDto;
 import hmoa.hmoaserver.note.service.NoteService;
@@ -11,6 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = {"노트"})
 @RestController
@@ -30,12 +34,27 @@ public class NoteController {
                         .build());
     }
 
+    @ApiOperation("노트 목록 조회")
+    @GetMapping
+    public ResponseEntity<ResultDto<Object>> findNote() {
+        List<Note> notes = noteService.findNote();
+
+        List<NoteDefaultResponseDto> responseDto = notes.stream()
+                .map(note -> new NoteDefaultResponseDto(note))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(responseDto)
+                        .build());
+    }
+
     @ApiOperation("노트 단건 조회")
     @GetMapping("/{noteId}")
     public ResponseEntity<ResultDto<Object>> findOneNote(@PathVariable Long noteId) {
         Note note = noteService.findById(noteId);
 
-        NoteDefaultResponseDto responseDto = new NoteDefaultResponseDto(note);
+        NoteDetailResponseDto responseDto = new NoteDetailResponseDto(note);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

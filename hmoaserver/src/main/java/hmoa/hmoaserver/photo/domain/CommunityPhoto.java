@@ -24,10 +24,15 @@ public class CommunityPhoto extends BaseEntity {
     private Community community;
 
     private String photoUrl;
+    private boolean isDeleted = false;
 
     @Builder
     public CommunityPhoto(Community community, String photoUrl) {
         this.community = community;
         this.photoUrl = photoUrl;
+    }
+
+    public void delete() {
+        isDeleted = true;
     }
 }

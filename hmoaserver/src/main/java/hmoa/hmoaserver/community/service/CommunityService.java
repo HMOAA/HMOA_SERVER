@@ -5,7 +5,10 @@ import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
 import hmoa.hmoaserver.community.dto.CommunityModifyRequestDto;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 
 public interface CommunityService {
@@ -13,6 +16,8 @@ public interface CommunityService {
     Page<Community> getAllCommunitysByCategory(int page, Category category);
     Page<Community> getCommunityByHome();
     Community getCommunityById(Long communityId);
-    Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto, Long communityId);
+    Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto, Long communityId, List<CommunityPhoto> deleteCommunityPhotos);
     String deleteCommunity(Member member, Long communityId);
+    List<CommunityPhoto> findAllCommunityPhotosFromCommunity(Community community);
+
 }

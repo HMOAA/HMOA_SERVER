@@ -9,6 +9,7 @@ import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
+import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import hmoa.hmoaserver.photo.service.CommunityPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
@@ -22,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,10 +103,31 @@ public class CommunityController {
     }
 
     @ApiOperation("커뮤니티 내용 수정")
-    @PutMapping("/{communityId}")
-    public ResponseEntity<CommunityDefaultResponseDto> modifyCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId, @RequestBody CommunityModifyRequestDto dto){
+    @PostMapping(value = "/{communityId}", consumes = "multipart/form-data")
+    public ResponseEntity<CommunityDefaultResponseDto> modifyCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId, CommunityModifyRequestDto dto){
         Member member = memberService.findByMember(token);
-        Community community = communityService.modifyCommunity(member,dto,communityId);
+        Community community = communityService.getCommunityById(communityId);
+
+        if (files == null) {
+            files = Collections.emptyList();
+        }
+
+        System.out.println("update=====================================================");
+        List<CommunityPhoto> savedCommunityPhotos = communityService.findAllCommunityPhotosFromCommunity(community);
+        List<CommunityPhoto> deleteCommunityPhotos = new ArrayList<>();
+
+        for (Long deleteCommunityPhotoId : dto.getDeleteCommunityPhotoIds()) {
+            deleteCommunityPhotos.add(communityPhotoService.findById(community.getId(), deleteCommunityPhotoId));
+        }
+
+        photoService.validateCommunityPhotoCountExceeded(savedCommunityPhotos.size() - deleteCommunityPhotos.size()
+                + files.size());
+
+        communityService.modifyCommunity(member,dto,communityId,deleteCommunityPhotos);
+
+        if (files.size() != 0)
+            communityPhotoService.saveCommunityPhotos(community, files);
+
         return ResponseEntity.ok(new CommunityDefaultResponseDto(community,true));
     }
 

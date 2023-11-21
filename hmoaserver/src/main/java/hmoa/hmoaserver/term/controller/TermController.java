@@ -3,6 +3,7 @@ package hmoa.hmoaserver.term.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.term.domain.Term;
 import hmoa.hmoaserver.term.dto.TermDefaultResponseDto;
+import hmoa.hmoaserver.term.dto.TermDetailResponseDto;
 import hmoa.hmoaserver.term.dto.TermSaveRequestDto;
 import hmoa.hmoaserver.term.dto.TermUpdateRequestDto;
 import hmoa.hmoaserver.term.service.TermService;
@@ -11,6 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = {"용어"})
 @RestController
@@ -30,12 +34,27 @@ public class TermController {
                         .build());
     }
 
+    @ApiOperation("용어 목록 조회")
+    @GetMapping
+    public ResponseEntity<ResultDto<Object>> findTerm() {
+        List<Term> terms = termService.findTerm();
+
+        List<TermDefaultResponseDto> responseDto = terms.stream()
+                .map(term -> new TermDefaultResponseDto(term))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(ResultDto.builder()
+                        .data(responseDto)
+                        .build());
+    }
+
     @ApiOperation("용어 단건 조회")
     @GetMapping("/{termId}")
     public ResponseEntity<ResultDto<Object>> findOneTerm(@PathVariable Long termId) {
         Term term = termService.findById(termId);
 
-        TermDefaultResponseDto responseDto = new TermDefaultResponseDto(term);
+        TermDetailResponseDto responseDto = new TermDetailResponseDto(term);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()

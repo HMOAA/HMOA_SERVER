@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static hmoa.hmoaserver.exception.Code.COMMUNITYPHOTO_NOT_FOUND;
 import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 
 @Service
@@ -69,5 +70,12 @@ public class CommunityPhotoService {
             savedPhotos.add(savedCommunityPhoto);
         }
         return savedPhotos;
+    }
+
+    public CommunityPhoto findById(Long communityId, Long photoId) {
+        return communityPhotoRepository.findByIdAndCommunityIdAndIsDeletedIsFalse(photoId, communityId)
+                .orElseThrow(() -> {
+                    throw new CustomException(null, COMMUNITYPHOTO_NOT_FOUND);
+                });
     }
 }

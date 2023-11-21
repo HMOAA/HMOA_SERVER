@@ -7,14 +7,16 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class NoteDefaultResponseDto {
+public class NoteDetailResponseDto {
     private Long noteId;
     private String noteTitle;
     private String noteSubtitle;
+    private String content;
 
-    public NoteDefaultResponseDto(Note note) {
+    public NoteDetailResponseDto(Note note) {
         this.noteId = note.getId();
         this.noteTitle = note.getTitle();
         this.noteSubtitle = note.getSubtitle();
+        this.content = note.getContent();
     }
 }
