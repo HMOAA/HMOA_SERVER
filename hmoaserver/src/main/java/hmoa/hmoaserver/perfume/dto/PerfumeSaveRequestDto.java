@@ -34,6 +34,9 @@ public class PerfumeSaveRequestDto {
     private String gBaseNote;
     @ApiModelProperty(position = 10)
     private List<String> hSingleNote;
+    @ApiModelProperty
+    private List<Integer> notePhotos;
+
     public Perfume toEntity(Brand brand) {
         if(sortType==0) {
             return Perfume.builder()
@@ -48,6 +51,7 @@ public class PerfumeSaveRequestDto {
                     .sortType(sortType)
                     .searchName(removeSpace(bKoreanName))
                     .brand(brand)
+                    .notePhotos(notePhotos)
                     .build();
         }else{
             return Perfume.builder()
@@ -60,6 +64,7 @@ public class PerfumeSaveRequestDto {
                     .sortType(sortType)
                     .searchName(removeSpace(bKoreanName))
                     .brand(brand)
+                    .notePhotos(notePhotos)
                     .build();
         }
     }

@@ -4,7 +4,6 @@ import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.common.DefaultValues;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
-import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import lombok.Data;
 
@@ -21,9 +20,7 @@ public class CommunityDefaultResponseDto {
     private String profileImgUrl;
     private int imagesCount;
     private List<CommunityPhotoDefaultResponseDto> communityPhotos = new ArrayList<>();
-
-    private String myProfileImgUrl = DefaultValues.getDEFALUT_PROFILE_URL();
-
+    private String myProfileImgUrl = DefaultValues.getProfileUrl();
     private String time;
     private boolean writed = false;
 
@@ -35,7 +32,6 @@ public class CommunityDefaultResponseDto {
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
-
         if (community.getCommunityPhotos() != null) {
             List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
             this.imagesCount = communityPhotos.size();
@@ -45,7 +41,7 @@ public class CommunityDefaultResponseDto {
             }
         }
     }
-    public CommunityDefaultResponseDto(Community community,boolean writed){
+    public CommunityDefaultResponseDto(Community community, boolean writed){
         this.id=community.getId();
         this.title=community.getTitle();
         this.category=community.getCategory();

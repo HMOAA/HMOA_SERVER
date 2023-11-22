@@ -56,11 +56,10 @@ public class PerfumeCommentController {
             )
     })
     @PostMapping("/{perfumeId}/comments")
-    public ResponseEntity<ResultDto<Object>> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
-        commentService.commentSave(token,perfumeId,dto);
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
-                        .build());
+    public ResponseEntity<PerfumeCommentResponseDto> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
+        Member member = memberService.findByMember(token);
+        PerfumeComment perfumeComment = commentService.commentSave(member, perfumeId, dto);
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(perfumeComment, false, member));
     }
 
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(최신순)")
@@ -225,7 +224,7 @@ public class PerfumeCommentController {
     public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto){
         Member member = memberService.findByMember(token);
         PerfumeComment comment = commentService.modifyComment(token,commentId,dto.getContent());
-        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, false, member, member.getMemberPhoto().getPhotoUrl()));
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, false, member));
 
     }
 

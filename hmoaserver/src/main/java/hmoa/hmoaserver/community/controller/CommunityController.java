@@ -15,6 +15,7 @@ import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @Api(tags = "커뮤니티")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/community")
 public class CommunityController {
     private final MemberService memberService;
@@ -53,7 +55,7 @@ public class CommunityController {
     @PostMapping(value = "/save", consumes = "multipart/form-data")
     public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
-        Community community = communityService.saveCommunity(member,dto);
+        Community community = communityService.saveCommunity(member, dto);
 
         System.out.println("*********************************************************");
         if(files != null) {
@@ -95,6 +97,7 @@ public class CommunityController {
         if(member==community.getMember()){
             result.setWrited(true);
             result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
+            log.info(member.getMemberPhoto().getPhotoUrl());
         }
         return ResponseEntity.ok(result);
     }

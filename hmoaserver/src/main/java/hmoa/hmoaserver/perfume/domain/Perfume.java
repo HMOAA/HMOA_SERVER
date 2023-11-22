@@ -33,6 +33,8 @@ public class Perfume extends BaseEntity {
     private List<Integer> volume;
     @ElementCollection
     private List<String> singleNote;
+    @ElementCollection
+    private List<Integer> notePhotos;
     private int priceVolume;
     private int sortType;
     private String topNote;
@@ -57,7 +59,7 @@ public class Perfume extends BaseEntity {
     private HomeMenu homeMenu;
 
     @Builder
-    public Perfume(String koreanName,int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
+    public Perfume(String koreanName, List<Integer> notePhotos, int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.price = price;
@@ -71,6 +73,7 @@ public class Perfume extends BaseEntity {
         this.searchName=searchName;
         this.sortType=sortType;
         this.singleNote=singleNote;
+        this.notePhotos = notePhotos;
     }
     public PerfumePhoto getPerfumePhoto() {
         int perfumePhotoSize = this.perfumePhotos.size();

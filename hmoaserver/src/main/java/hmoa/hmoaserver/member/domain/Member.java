@@ -3,9 +3,13 @@ package hmoa.hmoaserver.member.domain;
 import hmoa.hmoaserver.brand.domain.BrandLikedMember;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.photo.domain.MemberPhoto;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +57,11 @@ public class Member extends BaseEntity implements UserDetails {
     private ProviderType providerType;
 
     private String refreshToken;
+    private String firebaseToken;
 
     @OneToMany(mappedBy = "member",  cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<PerfumeComment> perfumeComments = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
@@ -75,6 +79,17 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Community> communities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<CommunityComment> communityComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<PerfumeAge> perfumeAges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<PerfumeGender> perfumeGenders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<PerfumeWeather> perfumeWeathers = new ArrayList<>();
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);

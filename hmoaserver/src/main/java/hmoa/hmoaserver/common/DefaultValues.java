@@ -1,12 +1,21 @@
 package hmoa.hmoaserver.common;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Slf4j
+@Component
 public class DefaultValues {
-    @Value("${defalut.profile}")
-    private static String DEFALUT_PROFILE_URL;
+    private static String profileUrl;
 
-    public static String getDEFALUT_PROFILE_URL() {
-        return DEFALUT_PROFILE_URL;
+    @Value("${default.profile}")
+    public void setProfileUrl(String profile) {
+        profileUrl = profile;
+    }
+
+    public static String getProfileUrl() {
+        log.info(profileUrl);
+        return profileUrl;
     }
 }

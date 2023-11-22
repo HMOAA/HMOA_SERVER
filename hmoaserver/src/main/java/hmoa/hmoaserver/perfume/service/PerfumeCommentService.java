@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional
 @Slf4j
 public class PerfumeCommentService {
-    @Value("${defalut.profile}")
+    @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
     private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
@@ -44,16 +43,12 @@ public class PerfumeCommentService {
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
-
     private final MemberService memberService;
-
     private final PerfumeService perfumeService;
 
-    public PerfumeComment commentSave(String token,Long id, PerfumeCommentRequestDto dto){
-        String email=jwtService.getEmail(token);
-        Member findMember = memberService.findByEmail(email);
+    public PerfumeComment commentSave(Member member, Long id, PerfumeCommentRequestDto dto){
         Perfume findPerfume = perfumeService.findById(id);
-        return commentRepository.save(dto.toEntity(findMember,findPerfume));
+        return commentRepository.save(dto.toEntity(member, findPerfume));
 
     }
 
@@ -110,7 +105,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -120,15 +115,15 @@ public class PerfumeCommentService {
     /**
      * 로그인 시 댓글 조회
      */
-    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page,Member member){
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member){
         try{
             Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL);
+                    return new PerfumeCommentResponseDto(comment,true, member);
                 }else{
-                    return new PerfumeCommentResponseDto(comment,false,member,DEFALUT_PROFILE_URL);
+                    return new PerfumeCommentResponseDto(comment,false, member);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -140,12 +135,12 @@ public class PerfumeCommentService {
     /**
      * 비 로그인시 댓글 조회 (좋아요순)
      */
-    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId,int page,int size){
+    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size){
         try{
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null,DEFALUT_PROFILE_URL)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -162,9 +157,9 @@ public class PerfumeCommentService {
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if(hasLike(comment,member)){
-                    return new PerfumeCommentResponseDto(comment,true,member,DEFALUT_PROFILE_URL);
+                    return new PerfumeCommentResponseDto(comment,true, member);
                 }else {
-                    return new PerfumeCommentResponseDto(comment,false,member,DEFALUT_PROFILE_URL);
+                    return new PerfumeCommentResponseDto(comment,false, member);
                 }
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -179,13 +174,12 @@ public class PerfumeCommentService {
         }
         commentRepository.delete(perfumeComment);
     }
+
     public void deleteMemberComment(Member member){
         Member deleteMember = memberRepository.findById(deleteMemberId).get();
         List<PerfumeComment> comments = commentRepository.findAllByMemberId(member.getId());
-        log.info("{}",comments.get(0).getMember().getId());
         for(PerfumeComment comment : comments){
             comment.modifyCommentMember(deleteMember);
         }
-        log.info("{}",comments.get(0).getMember().getId());
     }
 }
