@@ -11,7 +11,8 @@ import java.util.List;
 public class PerfumeAgeResponseDto {
     private boolean isWrited;
     private int age;
-    public PerfumeAgeResponseDto(Double age,boolean isWrited){
+
+    public PerfumeAgeResponseDto(Double age, boolean isWrited){
         this.isWrited=isWrited;
         if (age==0.0){
             this.age=0;

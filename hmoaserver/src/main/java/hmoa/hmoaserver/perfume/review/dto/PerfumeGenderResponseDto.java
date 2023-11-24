@@ -10,12 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 public class PerfumeGenderResponseDto {
     private boolean isWrited;
+    private int selected;
     private int man;
     private int woman;
     private int neuter;
 
-    public PerfumeGenderResponseDto(List<Double> genders,boolean isWrited){
+    public PerfumeGenderResponseDto(List<Double> genders, boolean isWrited, int selected){
         this.isWrited=isWrited;
+        this.selected = selected;
         if (genders.size()!=0){
             this.man=(int)Math.round(genders.get(0));
             this.woman=(int)Math.round(genders.get(1));

@@ -46,6 +46,7 @@ public class PerfumeCommentResponseDto {
         this.createAt = formateDateTime(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
     }
+
     private String formateDateTime(LocalDateTime time){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
         return time.format(formatter);

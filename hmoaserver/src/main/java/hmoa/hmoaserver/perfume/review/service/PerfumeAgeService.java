@@ -57,14 +57,14 @@ public class PerfumeAgeService {
                     .build();
             reflectAgeToReview(dto.getAge(),perfume);
             perfumeAgeRepository.save(perfumeAge);
-            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume),true);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume), true);
         }else {
             PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeAge.getAgeRange();
             modifyAgeToReview(idx,perfume);
             perfumeAge.updateAgeRange(dto.getAge());
             reflectAgeToReview(dto.getAge(),perfume);
-            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume),true);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume), true);
         }
     }
 
