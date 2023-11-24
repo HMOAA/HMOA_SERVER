@@ -12,11 +12,14 @@ public class PerfumeGenderResponseDto {
     private boolean isWrited;
     private int man;
     private int woman;
+    private int neuter;
+
     public PerfumeGenderResponseDto(List<Double> genders,boolean isWrited){
         this.isWrited=isWrited;
         if (genders.size()!=0){
             this.man=(int)Math.round(genders.get(0));
             this.woman=(int)Math.round(genders.get(1));
+            this.neuter = (int) Math.round(genders.get(2));
         }
     }
 }

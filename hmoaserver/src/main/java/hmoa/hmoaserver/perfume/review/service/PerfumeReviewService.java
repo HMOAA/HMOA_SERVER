@@ -3,9 +3,7 @@ package hmoa.hmoaserver.perfume.review.service;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.dto.PerfumeDetailSecondResponseDto;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
@@ -60,9 +58,9 @@ public class PerfumeReviewService {
      */
     public PerfumeReviewResponseDto getReview(Long perfumeId){
         Perfume perfume = perfumeService.findById(perfumeId);
-        List<Double> weather = calcurateWeather(perfume);
-        Double age = calcurateAge(perfume);
-        List<Double> gender = calcurateGender(perfume);
+        List<Double> weather = calculateWeather(perfume);
+        Double age = calculateAge(perfume);
+        List<Double> gender = calculateGender(perfume);
         PerfumeWeatherResponseDto weatherDto = new PerfumeWeatherResponseDto(weather,false);
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age,false);
         PerfumeGenderResponseDto genderDto = new PerfumeGenderResponseDto(gender,false);
@@ -77,9 +75,9 @@ public class PerfumeReviewService {
     public PerfumeReviewResponseDto getReview(Long perfumeId, Member member){
         Perfume perfume = perfumeService.findById(perfumeId);
         List<Boolean> isWritedList= isWritedReview(perfume,member);
-        List<Double> weather = calcurateWeather(perfume);
-        Double age = calcurateAge(perfume);
-        List<Double> gender = calcurateGender(perfume);
+        List<Double> weather = calculateWeather(perfume);
+        Double age = calculateAge(perfume);
+        List<Double> gender = calculateGender(perfume);
         PerfumeWeatherResponseDto weatherDto = new PerfumeWeatherResponseDto(weather,isWritedList.get(0));
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age,isWritedList.get(1));
         PerfumeGenderResponseDto genderDto = new PerfumeGenderResponseDto(gender,isWritedList.get(2));
@@ -98,7 +96,7 @@ public class PerfumeReviewService {
      * 계절감 백분율 구하기
      */
 
-    public List<Double> calcurateWeather(Perfume perfume){
+    public List<Double> calculateWeather(Perfume perfume){
         PerfumeReview perfumeReview = findPerfumeReview(perfume);
         List<Integer> weathers= List.of(perfumeReview.getSpring(),perfumeReview.getSummer(),perfumeReview.getAutumn(),perfumeReview.getWinter());
         return calcurateReview(weathers);
@@ -107,16 +105,16 @@ public class PerfumeReviewService {
     /**
      * 성별 백분율 구하기
      */
-    public List<Double> calcurateGender(Perfume perfume){
+    public List<Double> calculateGender(Perfume perfume){
         PerfumeReview perfumeReview = findPerfumeReview(perfume);
-        List<Integer> genders = List.of(perfumeReview.getMan(),perfumeReview.getWoman());
+        List<Integer> genders = List.of(perfumeReview.getMan(), perfumeReview.getWoman(), perfumeReview.getNeuter());
         return calcurateReview(genders);
     }
 
     /**
      * 나이 평균 구하기
      */
-    public Double calcurateAge(Perfume perfume){
+    public Double calculateAge(Perfume perfume){
         PerfumeReview perfumeReview = findPerfumeReview(perfume);
         List<Integer> ages = List.of(10*perfumeReview.getTen(),20*perfumeReview.getTwenty(),30*perfumeReview.getThirty(),40*perfumeReview.getFourty(),50*perfumeReview.getFifty());
 
@@ -140,7 +138,7 @@ public class PerfumeReviewService {
             if (review==0){
                 result.add(0.0);
             }else {
-                result.add(calcuratePercentage((double)sum,(double) review));
+                result.add(calcuratePercentage((double)sum, (double) review));
             }
         }
         return result;
