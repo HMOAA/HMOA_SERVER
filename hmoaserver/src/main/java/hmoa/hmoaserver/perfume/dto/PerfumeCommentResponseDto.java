@@ -19,26 +19,32 @@ public class PerfumeCommentResponseDto {
     private String nickname;
     private Long perfumeId;
     private String profileImg;
-    private boolean isLiked;
-    private boolean isWrited;
+    private boolean isLiked = false;
+    private boolean isWrited = false;
     private String createAt;
 
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment, boolean isLiked, Member member){
-        this.id=perfumeComment.getId();
-        this.content=perfumeComment.getContent();
-        this.heartCount=perfumeComment.getHeartCount();
-        this.nickname=perfumeComment.getMember().getNickname();
-        this.perfumeId=perfumeComment.getPerfume().getId();
+        this.id = perfumeComment.getId();
+        this.content = perfumeComment.getContent();
+        this.heartCount = perfumeComment.getHeartCount();
+        this.nickname = perfumeComment.getMember().getNickname();
+        this.perfumeId = perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
-        this.createAt=formateDateTime(perfumeComment.getCreatedAt());
-        this.profileImg = member.getMemberPhoto().getPhotoUrl();
-        if (member==null){
-            this.isWrited=false;
-        }else{
-            if(perfumeComment.getMember().getId()== member.getId()){
-                this.isWrited=true;
-            }else this.isWrited=false;
+        this.createAt = formateDateTime(perfumeComment.getCreatedAt());
+        this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
+        if (perfumeComment.getMember().getId().equals(member.getId())) {
+            this.isWrited = true;
         }
+    }
+
+    public PerfumeCommentResponseDto(PerfumeComment perfumeComment) {
+        this.id = perfumeComment.getId();
+        this.content = perfumeComment.getContent();
+        this.heartCount = perfumeComment.getHeartCount();
+        this.nickname = perfumeComment.getMember().getNickname();
+        this.perfumeId = perfumeComment.getPerfume().getId();
+        this.createAt = formateDateTime(perfumeComment.getCreatedAt());
+        this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
     }
     private String formateDateTime(LocalDateTime time){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");

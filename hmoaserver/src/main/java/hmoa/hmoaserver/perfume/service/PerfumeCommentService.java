@@ -105,7 +105,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -140,7 +140,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
