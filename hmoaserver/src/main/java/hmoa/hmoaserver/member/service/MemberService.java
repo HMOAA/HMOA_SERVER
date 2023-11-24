@@ -237,6 +237,11 @@ public class MemberService {
         memberPhotoService.saveMemberPhotos(member, file);
     }
 
+    @Transactional
+    public void updateFCMToken(Member member, String token) {
+        member.updateFCMToken(token);
+    }
+
     public Page<Community> findByMyCommunities(Member member, int page){
         List<Community> communities = member.getCommunities();
         return new PageUtil<Community>().convertListToPage(communities, page, 10);
