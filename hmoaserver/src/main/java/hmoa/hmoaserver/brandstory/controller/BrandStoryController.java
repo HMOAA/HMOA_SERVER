@@ -10,6 +10,7 @@ import hmoa.hmoaserver.common.ResultDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class BrandStoryController {
 
     @ApiOperation("브랜드스토리 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findBrandStory() {
-        List<BrandStory> brandStories = brandStoryService.findBrandStory();
+    public ResponseEntity<ResultDto<Object>> findBrandStory(@RequestParam int pageNum) {
+        Page<BrandStory> brandStories = brandStoryService.findBrandStory(pageNum);
 
         List<BrandStoryDefaultResponseDto> responseDto = brandStories.stream()
                 .map(brandStory -> new BrandStoryDefaultResponseDto(brandStory))
