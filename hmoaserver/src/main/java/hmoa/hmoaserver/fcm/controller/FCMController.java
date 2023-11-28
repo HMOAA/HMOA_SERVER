@@ -22,6 +22,7 @@ public class FCMController {
         return fcmNotificationService.sendNotificationByToken(dto);
     }
 
+
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveFcmToken(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTokenSaveRequestDto dto) {
         Member member = memberService.findByMember(token);

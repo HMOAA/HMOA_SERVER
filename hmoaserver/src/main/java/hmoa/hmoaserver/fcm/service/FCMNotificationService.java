@@ -27,6 +27,7 @@ public class FCMNotificationService {
                         .setTitle(requestDto.getTitle())
                         .setBody(requestDto.getContent())
                         .build();
+
                 Message message = Message.builder()
                         .setToken(member.get().getFirebaseToken())
                         .setNotification(notification)

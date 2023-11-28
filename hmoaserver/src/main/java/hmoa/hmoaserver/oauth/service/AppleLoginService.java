@@ -1,8 +1,6 @@
 package hmoa.hmoaserver.oauth.service;
 
 import hmoa.hmoaserver.common.TokenDecoder;
-import hmoa.hmoaserver.exception.Code;
-import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.oauth.apple.AppleAuthClient;
 import hmoa.hmoaserver.oauth.apple.AppleProperties;
 import hmoa.hmoaserver.oauth.userinfo.AppleOAuth2UserInfo;
@@ -22,8 +20,6 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
-import static hmoa.hmoaserver.exception.Code.*;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,13 +35,14 @@ public class AppleLoginService {
                 token
         ).getIdToken();
 
+        log.info("{}", idToken);
         return TokenDecoder.decodePayload(idToken, AppleOAuth2UserInfo.class);
     }
 
     private String generateClientSecret() {
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(5);
 
-        return Jwts.builder()
+        String jwts = Jwts.builder()
                 .setHeaderParam(JwsHeader.KEY_ID, appleProperties.getKeyId())
                 .setIssuer(appleProperties.getTeamId())
                 .setAudience(appleProperties.getAudience())
@@ -54,6 +51,8 @@ public class AppleLoginService {
                 .setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.ES256, getPrivateKey())
                 .compact();
+        log.info(jwts);
+        return jwts;
     }
 
     private PrivateKey getPrivateKey() {
@@ -66,7 +65,7 @@ public class AppleLoginService {
             PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKeyBytes);
             return converter.getPrivateKey(privateKeyInfo);
         } catch (Exception e) {
-            throw new CustomException(null, SERVER_ERROR);
+            throw new RuntimeException("Error converting private key from String", e);
         }
     }
 }
