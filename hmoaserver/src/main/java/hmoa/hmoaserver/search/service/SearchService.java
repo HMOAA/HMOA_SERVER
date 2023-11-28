@@ -89,10 +89,17 @@ public class SearchService {
         return dto;
     }
 
-    public Page<Community> communitySearch(Category category, String searchContent, int page) {
+    public Page<Community> communitySearchForCategory(Category category, String searchContent, int page) {
         Pageable pageable = PageRequest.of(page, 10);
         return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
                 category, searchContent, searchContent, pageable
+        );
+    }
+
+    public Page<Community> communitySearch(String searchContent, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                searchContent, searchContent, pageable
         );
     }
 }

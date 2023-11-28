@@ -14,4 +14,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
             Category category, String title, String content, Pageable pageable
     );
+    Page<Community> findByTitleContainingOrContentContainingOrderByCreatedAtDesc(
+            String title, String content, Pageable pageable
+    );
 }
