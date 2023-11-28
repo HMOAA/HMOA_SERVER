@@ -6,11 +6,9 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
-import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderRequestDto;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeAgeRepository;
 
 import hmoa.hmoaserver.perfume.service.PerfumeService;
@@ -43,7 +41,7 @@ public class PerfumeAgeService {
         PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
         modifyAgeToReview(perfumeAge.getAgeRange(),perfume);
         perfumeAgeRepository.delete(perfumeAge);
-        return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume), false);
+        return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume), false);
     }
 
     public PerfumeAgeResponseDto save(String token, Long perfumeId, PerfumeAgeRequestDto dto){
@@ -59,14 +57,14 @@ public class PerfumeAgeService {
                     .build();
             reflectAgeToReview(dto.getAge(),perfume);
             perfumeAgeRepository.save(perfumeAge);
-            return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume),true);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume), true);
         }else {
             PerfumeAge perfumeAge = perfumeAgeRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeAge.getAgeRange();
             modifyAgeToReview(idx,perfume);
             perfumeAge.updateAgeRange(dto.getAge());
             reflectAgeToReview(dto.getAge(),perfume);
-            return new PerfumeAgeResponseDto(perfumeReviewService.calcurateAge(perfume),true);
+            return new PerfumeAgeResponseDto(perfumeReviewService.calculateAge(perfume), true);
         }
     }
 

@@ -112,6 +112,10 @@ public class Member extends BaseEntity implements UserDetails {
         this.age=age;
     }
 
+    public void updateFCMToken(String token) {
+        this.firebaseToken = token;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();

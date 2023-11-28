@@ -7,4 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TermRepository  extends JpaRepository<Term, Long> {
     Page<Term> findAll(Pageable pageable);
+    Page<Term> findByTitleContainingOrEnglishTitleContainingOrContentContainingOrderByCreatedAtDesc(
+            String title, String englishTitle, String content, Pageable pageable
+    );
 }

@@ -94,11 +94,10 @@ public class CommunityController {
             return ResponseEntity.ok(result);
         }
         Member member = memberService.findByMember(token);
-        if(member==community.getMember()){
+        if(member == community.getMember()){
             result.setWrited(true);
-            result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
-            log.info(member.getMemberPhoto().getPhotoUrl());
         }
+        result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
         return ResponseEntity.ok(result);
     }
 
