@@ -9,6 +9,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
+import hmoa.hmoaserver.photo.service.CommunityPhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.List;
 public class CommunityServiceImpl implements CommunityService {
     private final static String DELETE_SUCCESS = "삭제 성공";
     private final CommunityRepository communityRepository;
+    private final CommunityPhotoService communityPhotoService;
 
     @Override
     @Transactional
@@ -68,6 +70,12 @@ public class CommunityServiceImpl implements CommunityService {
         }
 
         return community;
+    }
+
+    @Override
+    @Transactional
+    public List<CommunityPhoto> saveCommunityPhotos(Community community, List<MultipartFile> files) {
+        return communityPhotoService.saveCommunityPhotos(community, files);
     }
 
     @Override

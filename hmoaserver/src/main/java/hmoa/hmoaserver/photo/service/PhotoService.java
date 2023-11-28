@@ -76,6 +76,7 @@ public class PhotoService {
      * 파일을 전환하고 특정 파일 관련된 폴더에 파일을 저장하고 URL을 반환한다. |
      * 500(SERVER_ERROR)
      */
+    @Transactional
     public String insertFileToS3(String bucketName, String folderName, String fileName, MultipartFile file) {
 
         try {

@@ -60,4 +60,27 @@ public class CommunityDefaultResponseDto {
             }
         }
     }
+
+    public CommunityDefaultResponseDto(Community community, boolean writed, List<CommunityPhoto> communityPhotoList){
+        this.id=community.getId();
+        this.title=community.getTitle();
+        this.category=community.getCategory();
+        this.content=community.getContent();
+        this.author=community.getMember().getNickname();
+        this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
+        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.writed = writed;
+
+        if (communityPhotoList != null) {
+            List<CommunityPhoto> communityPhotos = new ArrayList<>();
+            for (CommunityPhoto communityPhoto : communityPhotoList) {
+                if (!communityPhoto.isDeleted()) {
+                    this.communityPhotos.add(new CommunityPhotoDefaultResponseDto(communityPhoto));
+                    this.imagesCount = communityPhotos.size();
+                }
+
+            }
+        }
+    }
+
 }
