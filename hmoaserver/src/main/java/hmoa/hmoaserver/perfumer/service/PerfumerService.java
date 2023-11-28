@@ -1,16 +1,15 @@
 package hmoa.hmoaserver.perfumer.service;
 
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.perfumer.domain.Perfumer;
 import hmoa.hmoaserver.perfumer.dto.PerfumerSaveRequestDto;
 import hmoa.hmoaserver.perfumer.dto.PerfumerUpdateRequestDto;
 import hmoa.hmoaserver.perfumer.repository.PerfumerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static hmoa.hmoaserver.exception.Code.PERFUMER_NOT_FOUND;
 
@@ -25,8 +24,8 @@ public class PerfumerService {
         return perfumerRepository.save(requestDto.toEntity());
     }
 
-    public List<Perfumer> findPerfumer() {
-        return perfumerRepository.findAll();
+    public Page<Perfumer> findPerfumer(int pageNum) {
+        return perfumerRepository.findAll(PageRequest.of(pageNum, 12));
     }
 
     public Perfumer findById(Long perfumerId) {
