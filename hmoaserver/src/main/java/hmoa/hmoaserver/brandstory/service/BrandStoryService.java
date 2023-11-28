@@ -7,6 +7,8 @@ import hmoa.hmoaserver.brandstory.repository.BrandStoryRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,8 @@ public class BrandStoryService {
         return brandStoryRepository.save(requestDto.toEntity());
     }
 
-    public List<BrandStory> findBrandStory() {
-        return brandStoryRepository.findAll();
+    public Page<BrandStory> findBrandStory(int pageNum) {
+        return brandStoryRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public BrandStory findById(Long brandStoryId) {

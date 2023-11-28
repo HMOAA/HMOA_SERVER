@@ -10,6 +10,7 @@ import hmoa.hmoaserver.term.service.TermService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class TermController {
 
     @ApiOperation("용어 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findTerm() {
-        List<Term> terms = termService.findTerm();
+    public ResponseEntity<ResultDto<Object>> findTerm(@RequestParam int pageNum) {
+        Page<Term> terms = termService.findTerm(pageNum);
 
         List<TermDefaultResponseDto> responseDto = terms.stream()
                 .map(term -> new TermDefaultResponseDto(term))

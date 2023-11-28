@@ -10,6 +10,7 @@ import hmoa.hmoaserver.perfumer.service.PerfumerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class PerfumerController {
 
     @ApiOperation("조향사 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findPerfumer() {
-        List<Perfumer> perfumers = perfumerService.findPerfumer();
+    public ResponseEntity<ResultDto<Object>> findPerfumer(@RequestParam int pageNum) {
+        Page<Perfumer> perfumers = perfumerService.findPerfumer(pageNum);
 
         List<PerfumerDefaultResponseDto> responseDto = perfumers.stream()
                 .map(perfumer -> new PerfumerDefaultResponseDto(perfumer))

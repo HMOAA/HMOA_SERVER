@@ -7,6 +7,8 @@ import hmoa.hmoaserver.note.dto.NoteSaveRequestDto;
 import hmoa.hmoaserver.note.dto.NoteUpdateRequestDto;
 import hmoa.hmoaserver.note.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,8 @@ public class NoteService {
         return noteRepository.save(requestDto.toEntity());
     }
 
-    public List<Note> findNote() {
-        return noteRepository.findAll();
+    public Page<Note> findNote(int pageNum) {
+        return noteRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public Note findById(Long noteId) {

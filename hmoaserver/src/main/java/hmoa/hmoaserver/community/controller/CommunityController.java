@@ -4,11 +4,9 @@ import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.*;
-import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
-import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import hmoa.hmoaserver.photo.service.CommunityPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -17,12 +15,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,12 +55,14 @@ public class CommunityController {
         Member member = memberService.findByMember(token);
         Community community = communityService.saveCommunity(member, dto);
 
-        System.out.println("*********************************************************");
-        if(files != null) {
-            System.out.println("=========================================" + files.size());
-            photoService.validateCommunityPhotoCountExceeded(files.size());
-            communityPhotoService.saveCommunityPhotos(community, files);
+        if (files == null) {
+            files = Collections.emptyList();
         }
+
+        photoService.validateCommunityPhotoCountExceeded(files.size());
+
+        if (files.size() != 0)
+            communityService.saveCommunityPhotos(community, files);
 
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
         result.setWrited(true);
@@ -124,10 +124,13 @@ public class CommunityController {
 
         communityService.modifyCommunity(member,dto,communityId,deleteCommunityPhotos);
 
-        if (files.size() != 0)
-            communityPhotoService.saveCommunityPhotos(community, files);
+        List<CommunityPhoto> communityPhotos = new ArrayList<>();
+        communityPhotos.addAll(community.getCommunityPhotos());
 
-        return ResponseEntity.ok(new CommunityDefaultResponseDto(community,true));
+        if (files.size() != 0)
+            communityPhotos.addAll(communityService.saveCommunityPhotos(community, files));
+
+        return ResponseEntity.ok(new CommunityDefaultResponseDto(community,true, communityPhotos));
     }
 
     @ApiOperation("커뮤니티 게시글 삭제")

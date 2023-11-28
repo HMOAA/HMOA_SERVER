@@ -72,6 +72,7 @@ public class CommunityPhotoService {
         return savedPhotos;
     }
 
+    @Transactional
     public CommunityPhoto findById(Long communityId, Long photoId) {
         return communityPhotoRepository.findByIdAndCommunityIdAndIsDeletedIsFalse(photoId, communityId)
                 .orElseThrow(() -> {
