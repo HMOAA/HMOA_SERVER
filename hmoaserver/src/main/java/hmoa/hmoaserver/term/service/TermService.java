@@ -6,6 +6,8 @@ import hmoa.hmoaserver.term.dto.TermSaveRequestDto;
 import hmoa.hmoaserver.term.dto.TermUpdateRequestDto;
 import hmoa.hmoaserver.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +26,8 @@ public class TermService {
         return termRepository.save(requestDto.toEntity());
     }
 
-    public List<Term> findTerm() {
-        return termRepository.findAll();
+    public Page<Term> findTerm(int pageNum) {
+        return termRepository.findAll(PageRequest.of(pageNum, 12));
     }
 
     public Term findById(Long termId) {
