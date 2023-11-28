@@ -28,7 +28,7 @@ public class BrandStoryService {
     }
 
     public Page<BrandStory> findBrandStory(int pageNum) {
-        return brandStoryRepository.findAll(PageRequest.of(pageNum, 12));
+        return brandStoryRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public BrandStory findById(Long brandStoryId) {

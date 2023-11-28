@@ -27,7 +27,7 @@ public class TermService {
     }
 
     public Page<Term> findTerm(int pageNum) {
-        return termRepository.findAll(PageRequest.of(pageNum, 12));
+        return termRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public Term findById(Long termId) {

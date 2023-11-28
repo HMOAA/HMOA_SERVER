@@ -28,7 +28,7 @@ public class NoteService {
     }
 
     public Page<Note> findNote(int pageNum) {
-        return noteRepository.findAll(PageRequest.of(pageNum, 12));
+        return noteRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public Note findById(Long noteId) {

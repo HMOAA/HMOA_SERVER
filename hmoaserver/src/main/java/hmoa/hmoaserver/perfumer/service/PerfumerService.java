@@ -25,7 +25,7 @@ public class PerfumerService {
     }
 
     public Page<Perfumer> findPerfumer(int pageNum) {
-        return perfumerRepository.findAll(PageRequest.of(pageNum, 12));
+        return perfumerRepository.findAll(PageRequest.of(pageNum, 15));
     }
 
     public Perfumer findById(Long perfumerId) {
