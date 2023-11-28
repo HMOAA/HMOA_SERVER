@@ -42,20 +42,14 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
-    private Long deleteId=0l;
+    private static final Long deleteId = 0L;
 
     private final MemberRepository memberRepository;
-
     private final JwtService jwtService;
-
     private final ProviderService providerService;
-
     private final PerfumeCommentRepository perfumeCommentRepository;
-
     private final PerfumeCommentLikedRepository perfumeCommentHeartRepository;
-
     private final MemberPhotoService memberPhotoService;
-
     private final CommunityCommentRepository communityCommentRepository;
 
     @Transactional
@@ -77,20 +71,19 @@ public class MemberService {
     }
     @Transactional
     public Token reIssue(String rememberedToken){
-        if(!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)){
+        if (!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)) {
             throw new CustomException(null, WRONG_TYPE_TOKEN);
         }
-        if (memberRepository.findByRefreshToken(rememberedToken).isPresent()){
+
+        if (memberRepository.findByRefreshToken(rememberedToken).isPresent()) {
             Member member=memberRepository.findByRefreshToken(rememberedToken).get();
             String accessToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String refreshToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(),refreshToken);
             return new Token(accessToken,refreshToken);
-        }else{
-            log.info("일치하는 회원이 없습니다.");
+        } else {
             throw new CustomException(null, MEMBER_NOT_FOUND);
         }
-
     }
 
     @Transactional
@@ -98,6 +91,7 @@ public class MemberService {
         member.authorizeUser();
         save(member);
     }
+
     /**
      * 닉네임 중복 검사
      */

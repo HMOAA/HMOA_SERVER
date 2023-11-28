@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AppleOAuth2UserInfo {
-    private String email;
+    private String sub;
     private String name;
 }
