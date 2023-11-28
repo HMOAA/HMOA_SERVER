@@ -10,6 +10,8 @@ import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
 import hmoa.hmoaserver.search.service.SearchService;
+import hmoa.hmoaserver.term.domain.Term;
+import hmoa.hmoaserver.term.dto.TermDefaultResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +73,12 @@ public class SearchController {
     public ResponseEntity<List<NoteDefaultResponseDto>> noteSearch(@RequestParam int page, @RequestParam String seachWord) {
         Page<Note> notes = searchService.noteSearch(seachWord, page);
         return ResponseEntity.ok(notes.stream().map(NoteDefaultResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 용어 불러오기", notes = "용어 검색")
+    @GetMapping("/term")
+    public ResponseEntity<List<TermDefaultResponseDto>> termSearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Term> terms = searchService.termSearch(seachWord, page);
+        return ResponseEntity.ok(terms.stream().map(TermDefaultResponseDto::new).collect(Collectors.toList()));
     }
 }
