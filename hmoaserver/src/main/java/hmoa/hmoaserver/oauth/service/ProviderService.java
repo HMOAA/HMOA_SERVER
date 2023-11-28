@@ -38,16 +38,17 @@ public class ProviderService {
     private final Gson gson;
 
     public OAuth2UserDto getProfile(String accessToken, ProviderType provider) {
+        if (provider.equals(ProviderType.APPLE)) {
+
+        }
         log.info("getProfile");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.add("Content-type", "application");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-
         String profileUrl = urlMapping(provider);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, httpHeaders);
-
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(profileUrl, request, String.class);
@@ -69,6 +70,7 @@ public class ProviderService {
         }
         return googleUrl;
     }
+
     private OAuth2UserDto extractProfile(ResponseEntity<String> response, ProviderType provider) {
         if (provider.equals(ProviderType.GOOGLE)) {
             GoogleOAuth2UserInfo googleOAuth2UserInfo = gson.fromJson(response.getBody(), GoogleOAuth2UserInfo.class);

@@ -178,17 +178,17 @@ public class MemberService {
     public MemberLoginResponseDto loginMember(String accessToken, ProviderType provider){
         OAuth2UserDto profile = providerService.getProfile(accessToken,provider);
         Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(),provider);
-        if(findMember.isPresent()){
+        if (findMember.isPresent()){
             Member member = findMember.get();
             String xAuthToken = jwtService.createAccessToken(member.getEmail(), member.getRole());
             String rememberedToken = jwtService.createRefreshToken(member.getEmail(), member.getRole());
             jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
-            if(findMember.get().getRole()!=Role.GUEST) {
+            if (findMember.get().getRole()!=Role.GUEST) {
                 return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),true);
-            }else{
+            } else {
                 return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
             }
-        }else{
+        } else {
             Member member = Member.builder()
                     .email(profile.getEmail())
                     .nickname(profile.getName())
