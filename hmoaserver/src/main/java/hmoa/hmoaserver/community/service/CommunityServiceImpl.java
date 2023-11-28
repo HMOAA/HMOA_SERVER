@@ -42,7 +42,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 5));
+        return communityRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10));
     }
 
     @Override
