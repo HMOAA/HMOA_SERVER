@@ -4,6 +4,8 @@ import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
+import hmoa.hmoaserver.note.domain.Note;
+import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
@@ -62,5 +64,12 @@ public class SearchController {
     public ResponseEntity<List<CommunityByCategoryResponseDto>> communitySearch(@RequestParam int page, @RequestParam String seachWord) {
         Page<Community> communities = searchService.communitySearch(seachWord, page);
         return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 노트 불러오기", notes = "노트 검색")
+    @GetMapping("/note")
+    public ResponseEntity<List<NoteDefaultResponseDto>> noteSearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Note> notes = searchService.noteSearch(seachWord, page);
+        return ResponseEntity.ok(notes.stream().map(NoteDefaultResponseDto::new).collect(Collectors.toList()));
     }
 }
