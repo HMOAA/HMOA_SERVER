@@ -223,7 +223,7 @@ public class MemberService {
         Member member = findByEmail(findEmail);
         PageRequest pageRequest = PageRequest.of(page,10);
         List<PerfumeCommentLiked> hearts= perfumeCommentHeartRepository.findAllByMemberId(member.getId());
-        List<PerfumeComment> comments = hearts.stream().map(heart->heart.getPerfumeComment()).collect(Collectors.toList());
+        List<PerfumeComment> comments = hearts.stream().map(heart -> heart.getPerfumeComment()).collect(Collectors.toList());
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start+pageRequest.getPageSize()), comments.size());
         return new PageImpl<>(comments.subList(start,end),pageRequest,comments.size());
