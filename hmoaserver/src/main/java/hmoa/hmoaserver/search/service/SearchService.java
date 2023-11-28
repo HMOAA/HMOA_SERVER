@@ -7,11 +7,15 @@ import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.repository.CommunityRepository;
+import hmoa.hmoaserver.note.domain.Note;
+import hmoa.hmoaserver.note.repository.NoteRepository;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
+import hmoa.hmoaserver.term.domain.Term;
+import hmoa.hmoaserver.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +37,8 @@ public class SearchService {
     private final PerfumeRepository perfumeRepository;
     private final CommunityRepository communityRepository;
     private final UnicodeService unicodeService;
+    private final NoteRepository noteRepository;
+    private final TermRepository termRepository;
 
     public List<BrandDefaultResponseDto> brandSearchAll(int consonant){
         List<Brand> brands= brandRepository.findAllByConsonant(consonant);
@@ -89,10 +95,31 @@ public class SearchService {
         return dto;
     }
 
-    public Page<Community> communitySearch(Category category, String searchContent, int page) {
+    public Page<Community> communitySearchForCategory(Category category, String searchContent, int page) {
         Pageable pageable = PageRequest.of(page, 10);
         return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
                 category, searchContent, searchContent, pageable
+        );
+    }
+
+    public Page<Community> communitySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
+        );
+    }
+
+    public Page<Note> noteSearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return noteRepository.findByTitleContainingOrSubtitleContainingOrContentContainingOrderByCreatedAtDesc(
+                keyword, keyword, keyword, pageable
+        );
+    }
+
+    public Page<Term> termSearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return termRepository.findByTitleContainingOrEnglishTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                keyword, keyword, keyword, pageable
         );
     }
 }

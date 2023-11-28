@@ -9,14 +9,11 @@ import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherRequestDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherResponseDto;
-import hmoa.hmoaserver.perfume.review.repository.PerfumeReviewRepository;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeWeatherRepository;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -51,14 +48,14 @@ public class PerfumeWeatherService {
                     .build();
             reflectWeatherToReview(dto.getWeather(),perfume);
             perfumeWeatherRepository.save(perfumeWeather);
-            return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume),true);
+            return new PerfumeWeatherResponseDto(perfumeReviewService.calculateWeather(perfume), true, dto.getWeather());
         }else {
             PerfumeWeather perfumeWeather = perfumeWeatherRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeWeather.getWeatherIndex();
             modifyWeatherToReview(idx,perfume);
             perfumeWeather.updateWeatherIndex(dto.getWeather());
             reflectWeatherToReview(dto.getWeather(),perfume);
-            return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume),true);
+            return new PerfumeWeatherResponseDto(perfumeReviewService.calculateWeather(perfume), true, dto.getWeather());
         }
     }
 
@@ -66,7 +63,7 @@ public class PerfumeWeatherService {
         PerfumeWeather perfumeWeather = perfumeWeatherRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
         modifyWeatherToReview(perfumeWeather.getWeatherIndex(), perfume);
         perfumeWeatherRepository.delete(perfumeWeather);
-        return new PerfumeWeatherResponseDto(perfumeReviewService.calcurateWeather(perfume), false);
+        return new PerfumeWeatherResponseDto(perfumeReviewService.calculateWeather(perfume), false, 0);
     }
 
     public void reflectWeatherToReview(int weather,Perfume perfume){

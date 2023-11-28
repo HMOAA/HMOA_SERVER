@@ -47,14 +47,14 @@ public class PerfumeGenderService {
                     .build();
             reflectGenderToReview(dto.getGender(),perfume);
             perfumeGenderRepository.save(perfumeGender);
-            return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume),true);
+            return new PerfumeGenderResponseDto(perfumeReviewService.calculateGender(perfume), true, dto.getGender());
         }else {
             PerfumeGender perfumeGender = perfumeGenderRepository.findByMemberAndPerfume(member,perfume).get();
             int idx = perfumeGender.getGender();
             modifyGenderToReview(idx,perfume);
             perfumeGender.updateGender(dto.getGender());
             reflectGenderToReview(dto.getGender(),perfume);
-            return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume),true);
+            return new PerfumeGenderResponseDto(perfumeReviewService.calculateGender(perfume), true, dto.getGender());
         }
     }
 
@@ -62,7 +62,7 @@ public class PerfumeGenderService {
         PerfumeGender perfumeGender = perfumeGenderRepository.findByMemberAndPerfume(member, perfume).orElseThrow(() -> new CustomException(null, REVIEW_NOT_FOUND));
         modifyGenderToReview(perfumeGender.getGender(), perfume);
         perfumeGenderRepository.delete(perfumeGender);
-        return new PerfumeGenderResponseDto(perfumeReviewService.calcurateGender(perfume), false);
+        return new PerfumeGenderResponseDto(perfumeReviewService.calculateGender(perfume), false, 0);
     }
 
     public void reflectGenderToReview(int gender,Perfume perfume){

@@ -4,10 +4,14 @@ import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
+import hmoa.hmoaserver.note.domain.Note;
+import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
 import hmoa.hmoaserver.search.service.SearchService;
+import hmoa.hmoaserver.term.domain.Term;
+import hmoa.hmoaserver.term.dto.TermDefaultResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +55,30 @@ public class SearchController {
     }
 
     @ApiOperation(value = "검색어가 포함된 게시글 불러오기 (카테고리별)", notes = "게시글 검색")
-    @GetMapping("/community")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> communitySearch(@RequestParam Category category, @RequestParam int page, @RequestParam String seachWord) {
-        Page<Community> communities = searchService.communitySearch(category, seachWord, page);
+    @GetMapping("/community/category")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> communitySearchForCategory(@RequestParam Category category, @RequestParam int page, @RequestParam String seachWord) {
+        Page<Community> communities = searchService.communitySearchForCategory(category, seachWord, page);
         return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 게시글 불러오기 (전체)", notes = "게시글 검색")
+    @GetMapping("/community")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> communitySearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Community> communities = searchService.communitySearch(seachWord, page);
+        return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 노트 불러오기", notes = "노트 검색")
+    @GetMapping("/note")
+    public ResponseEntity<List<NoteDefaultResponseDto>> noteSearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Note> notes = searchService.noteSearch(seachWord, page);
+        return ResponseEntity.ok(notes.stream().map(NoteDefaultResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 용어 불러오기", notes = "용어 검색")
+    @GetMapping("/term")
+    public ResponseEntity<List<TermDefaultResponseDto>> termSearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Term> terms = searchService.termSearch(seachWord, page);
+        return ResponseEntity.ok(terms.stream().map(TermDefaultResponseDto::new).collect(Collectors.toList()));
     }
 }

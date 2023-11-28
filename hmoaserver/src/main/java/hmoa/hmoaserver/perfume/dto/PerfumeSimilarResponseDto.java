@@ -2,6 +2,7 @@ package hmoa.hmoaserver.perfume.dto;
 
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 public class PerfumeSimilarResponseDto {
@@ -10,6 +11,7 @@ public class PerfumeSimilarResponseDto {
     private Long perfumeId;
     private String perfumeImgUrl;
     private String perfumeName;
+
     public PerfumeSimilarResponseDto(Perfume perfume){
         this.brandId = perfume.getBrand().getId();
         this.perfumeId = perfume.getId();

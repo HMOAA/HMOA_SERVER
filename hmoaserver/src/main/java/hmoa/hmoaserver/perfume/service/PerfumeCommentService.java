@@ -105,7 +105,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -140,7 +140,7 @@ public class PerfumeCommentService {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
-            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> new PerfumeCommentResponseDto(comment,false,null)).collect(Collectors.toList());
+            List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
@@ -167,6 +167,7 @@ public class PerfumeCommentService {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
+
     public void deleteComment(Member member, Long commentId) {
         PerfumeComment perfumeComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(null,COMMENT_NOT_FOUND));
         if(member.getId() != perfumeComment.getMember().getId()) {
