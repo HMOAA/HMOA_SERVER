@@ -10,6 +10,7 @@ import hmoa.hmoaserver.note.service.NoteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class NoteController {
 
     @ApiOperation("노트 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findNote() {
-        List<Note> notes = noteService.findNote();
+    public ResponseEntity<ResultDto<Object>> findNote(@RequestParam int pageNum) {
+        Page<Note> notes = noteService.findNote(pageNum);
 
         List<NoteDefaultResponseDto> responseDto = notes.stream()
                 .map(note -> new NoteDefaultResponseDto(note))
