@@ -242,6 +242,11 @@ public class MemberService {
         member.updateFCMToken(token);
     }
 
+    @Transactional
+    public void deleteFCMToken(Member member) {
+        memberRepository.updateFirebaseTokenToNull(member.getId());
+    }
+
     public Page<Community> findByMyCommunities(Member member, int page){
         List<Community> communities = member.getCommunities();
         return new PageUtil<Community>().convertListToPage(communities, page, 10);
