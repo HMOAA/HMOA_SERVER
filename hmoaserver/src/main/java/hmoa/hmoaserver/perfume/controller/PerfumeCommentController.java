@@ -3,18 +3,19 @@ package hmoa.hmoaserver.perfume.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.dto.MemberResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
-import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class PerfumeCommentController {
     private final PerfumeCommentService commentService;
     private final MemberService memberService;
-    private final JwtService jwtService;
 
     @ApiOperation(value = "향수 댓글 저장")
     @ApiResponses({
@@ -56,7 +56,7 @@ public class PerfumeCommentController {
             )
     })
     @PostMapping("/{perfumeId}/comments")
-    public ResponseEntity<PerfumeCommentResponseDto> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<PerfumeCommentResponseDto> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         PerfumeComment perfumeComment = commentService.commentSave(member, perfumeId, dto);
         return ResponseEntity.ok(new PerfumeCommentResponseDto(perfumeComment, false, member));
@@ -90,8 +90,8 @@ public class PerfumeCommentController {
             )
     })
     @GetMapping("/{perfumeId}/comments")
-    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        if(token==null || token.equals("")){
+    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token) {
+        if (memberService.isTokenNullOrEmpty(token)) {
             PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
             return ResponseEntity.ok(result);
         }
@@ -127,16 +127,14 @@ public class PerfumeCommentController {
             )
     })
     @GetMapping("/{perfumeId}/comments/top")
-    public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
-        if(token==null || token.equals("")){
+    public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token) {
+        if (memberService.isTokenNullOrEmpty(token)) {
             PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10);
             return ResponseEntity.ok(result);
-        }else {
-            String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
-            PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10,member);
-            return ResponseEntity.ok(result);
         }
+        Member member = memberService.findByMember(token);
+        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10,member);
+        return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value = "향수 댓글 하트")
@@ -172,7 +170,7 @@ public class PerfumeCommentController {
             )
     })
     @PutMapping("comments/{commentId}/like")
-    public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> saveHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
         commentService.saveLike(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
@@ -212,7 +210,7 @@ public class PerfumeCommentController {
             )
     })
     @DeleteMapping("comments/{commentId}/like")
-    public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
         commentService.deleteLike(token,commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
@@ -221,7 +219,7 @@ public class PerfumeCommentController {
 
     @ApiOperation(value = "향수 댓글 수정")
     @PutMapping("comments/{commentId}/modify")
-    public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto){
+    public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto) {
         Member member = memberService.findByMember(token);
         PerfumeComment comment = commentService.modifyComment(token,commentId,dto.getContent());
         return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, false, member));
