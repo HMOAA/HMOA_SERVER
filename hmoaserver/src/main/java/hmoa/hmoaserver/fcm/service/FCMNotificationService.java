@@ -25,13 +25,12 @@ public class FCMNotificationService {
 
     public String sendNotification(FCMNotificationRequestDto requestDto) {
         Optional<Member> member = memberRepository.findById(requestDto.getId());
-        String status = "";
 
         if (member.isEmpty()) {
-            return "멤버가 존재하지 않습니다.";
+            return NOT_FOUND_MEMBER;
         }
         if (member.get().getFirebaseToken() == null) {
-            return "멤버의 토큰이 없습니다.";
+            return NOT_FOUND_TOKEN;
         }
 
         if (requestDto.getType() == COMMENT_LIKE) {
@@ -65,11 +64,11 @@ public class FCMNotificationService {
     private String send(Message message) {
         try {
             firebaseMessaging.send(message);
-            return "알림 전송 성공";
+            return SUCCESS_SEND;
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
-        return "알림 전송 실패";
+        return FAIL_SEND;
     }
 
 //    public String sendNotificationByToken(FCMNotificationRequestDto requestDto) {
