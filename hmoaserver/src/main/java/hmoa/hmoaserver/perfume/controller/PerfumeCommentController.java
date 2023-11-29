@@ -2,6 +2,8 @@ package hmoa.hmoaserver.perfume.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
@@ -99,6 +101,7 @@ public class PerfumeCommentController {
         PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
         return ResponseEntity.ok(result);
     }
+
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
     @ApiResponses({
             @ApiResponse(

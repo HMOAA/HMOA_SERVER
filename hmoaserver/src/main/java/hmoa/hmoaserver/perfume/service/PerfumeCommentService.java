@@ -2,6 +2,7 @@ package hmoa.hmoaserver.perfume.service;
 
 
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.fcm.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -68,6 +69,7 @@ public class PerfumeCommentService {
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
+            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), NotificationType.COMMENT_LIKE));
             return CREATE_LIKE_SUCCESS;
         }
 

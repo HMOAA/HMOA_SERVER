@@ -9,6 +9,8 @@ import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -29,6 +31,7 @@ public class CommunityCommentController {
     private final MemberService memberService;
     private final CommunityCommentService commentService;
     private final CommunityService communityService;
+    private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("답변 저장")
     @PostMapping("/{communityId}/save")

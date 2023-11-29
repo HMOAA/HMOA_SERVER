@@ -9,15 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FCMNotificationRequestDto {
     private Long id;
+    private String sender;
     private NotificationType type;
-    private String title;
-    private String content;
 
     @Builder
-    public FCMNotificationRequestDto(Long id, String title, String content, NotificationType notificationType) {
+    public FCMNotificationRequestDto(Long id,String sender, NotificationType notificationType) {
         this.id = id;
-        this.title = title;
-        this.content = content;
+        this.sender = sender;
         this.type = notificationType;
     }
 }
