@@ -17,6 +17,7 @@ public class FCMController {
     private final FCMNotificationService fcmNotificationService;
     private final MemberService memberService;
 
+
 //    @PostMapping("/test")
 //    public String test(@RequestBody FCMNotificationRequestDto dto) {
 //        return fcmNotificationService.sendNotificationByToken(dto);

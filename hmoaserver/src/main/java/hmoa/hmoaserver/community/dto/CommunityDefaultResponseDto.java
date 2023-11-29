@@ -41,6 +41,7 @@ public class CommunityDefaultResponseDto {
             }
         }
     }
+
     public CommunityDefaultResponseDto(Community community, boolean writed){
         this.id=community.getId();
         this.title=community.getTitle();
