@@ -6,16 +6,17 @@ import lombok.*;
 public class KakaoOAuth2UserInfo {
     private KakaoAccount kakao_account;
     private Properties properties;
+
     @Getter
     @ToString
-    public class KakaoAccount{
+    public class KakaoAccount {
         private String email;
 
     }
 
     @Getter
     @ToString
-    public class Properties{
+    public class Properties {
         private String nickname;
     }
 

@@ -60,7 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/swagger-resources/**",
                 "/v2/api-docs",
                 "/v3/api-docs",
-                "/fcm/**"
+                "/fcm/**",
+                "/appleTest/**"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
@@ -99,6 +100,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-
 }
