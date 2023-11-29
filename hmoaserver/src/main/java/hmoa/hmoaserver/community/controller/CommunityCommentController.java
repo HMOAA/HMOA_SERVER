@@ -9,6 +9,9 @@ import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
+import hmoa.hmoaserver.fcm.NotificationType;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static hmoa.hmoaserver.fcm.NotificationType.*;
+
 @Api(tags = "커뮤니티 답변")
 @RestController
 @RequiredArgsConstructor
@@ -29,13 +34,16 @@ public class CommunityCommentController {
     private final MemberService memberService;
     private final CommunityCommentService commentService;
     private final CommunityService communityService;
+    private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("답변 저장")
     @PostMapping("/{communityId}/save")
     public ResponseEntity<CommunityCommentDefaultResponseDto> saveCommunityComment(@RequestHeader("X-AUTH-TOKEN")String token, @PathVariable Long communityId, @RequestBody CommunityCommentDefaultRequestDto dto){
         Member member = memberService.findByMember(token);
         Community community = communityService.getCommunityById(communityId);
-        CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(commentService.saveCommunityComment(member,dto,community),true);
+        CommunityComment comment = commentService.saveCommunityComment(member, dto, community);
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), COMMUNITY_COMMENT));
+        CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment,true);
         return ResponseEntity.ok(result);
     }
 

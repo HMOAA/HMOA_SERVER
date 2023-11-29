@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.fcm.dto;
 
+import hmoa.hmoaserver.fcm.NotificationType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,13 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FCMNotificationRequestDto {
     private Long id;
-    private String title;
-    private String content;
+    private String sender;
+    private NotificationType type;
 
     @Builder
-    public FCMNotificationRequestDto(Long id, String title, String content) {
+    public FCMNotificationRequestDto(Long id,String sender, NotificationType notificationType) {
         this.id = id;
-        this.title = title;
-        this.content = content;
+        this.sender = sender;
+        this.type = notificationType;
     }
 }

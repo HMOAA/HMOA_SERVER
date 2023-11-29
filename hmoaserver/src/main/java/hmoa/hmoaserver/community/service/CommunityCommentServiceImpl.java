@@ -9,6 +9,7 @@ import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,7 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     @Transactional
-    public CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto,Community community) {
+    public CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto, Community community) {
         return commentRepository.save(dto.toEntity(member,community));
     }
 
