@@ -111,15 +111,15 @@ public class SearchService {
 
     public Page<Note> noteSearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return noteRepository.findByTitleContainingOrSubtitleContainingOrContentContainingOrderByCreatedAtDesc(
-                keyword, keyword, keyword, pageable
+        return noteRepository.findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
         );
     }
 
     public Page<Term> termSearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return termRepository.findByTitleContainingOrEnglishTitleContainingOrContentContainingOrderByCreatedAtDesc(
-                keyword, keyword, keyword, pageable
+        return termRepository.findByTitleContainingOrEnglishTitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
         );
     }
 }
