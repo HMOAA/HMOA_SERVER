@@ -4,6 +4,7 @@ package hmoa.hmoaserver.search.service;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
+import hmoa.hmoaserver.brandstory.domain.BrandStory;
 import hmoa.hmoaserver.brandstory.repository.BrandStoryRepository;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
@@ -130,7 +131,14 @@ public class SearchService {
 
     public Page<Perfumer> perfumerSearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return perfumerRepository.findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
+        return perfumerRepository.findByTitleContainingOrSubTitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
+        );
+    }
+
+    public Page<BrandStory> brandStorySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return brandStoryRepository.findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
                 keyword, keyword, pageable
         );
     }

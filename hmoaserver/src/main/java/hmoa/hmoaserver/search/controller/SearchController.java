@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.search.controller;
 
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
+import hmoa.hmoaserver.brandstory.domain.BrandStory;
+import hmoa.hmoaserver.brandstory.dto.BrandStoryDefaultResponseDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
@@ -89,5 +91,12 @@ public class SearchController {
     public ResponseEntity<List<PerfumerDefaultResponseDto>> perfumerSearch(@RequestParam int page, @RequestParam String seachWord) {
         Page<Perfumer> perfumers = searchService.perfumerSearch(seachWord, page);
         return ResponseEntity.ok(perfumers.stream().map(PerfumerDefaultResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "브랜드 검색")
+    @GetMapping("/brandStory")
+    public ResponseEntity<List<BrandStoryDefaultResponseDto>> brandStorySearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<BrandStory> brandStorys = searchService.brandStorySearch(seachWord, page);
+        return ResponseEntity.ok(brandStorys.stream().map(BrandStoryDefaultResponseDto::new).collect(Collectors.toList()));
     }
 }
