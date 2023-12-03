@@ -340,7 +340,8 @@ public class MemberController {
         Member member = memberService.findByEmail(email);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false, member);
+            boolean isLiked = perfumeCommentService.hasLike(pc, member);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc, isLiked, member);
             result.add(dto);
         }
         return ResponseEntity.ok(result);

@@ -88,17 +88,17 @@ public class PerfumeCommentService {
         return DELETE_LIKE_SUCCESS;
     }
 
-    public boolean hasLike(final PerfumeComment perfumeComment, final Member member){
+    public boolean hasLike(final PerfumeComment perfumeComment, final Member member) {
         return commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment, member).isPresent();
     }
 
-    public PerfumeComment modifyComment(String token, Long commentId,String content){
+    public PerfumeComment modifyComment(String token, Long commentId,String content) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new CustomException(null, COMMENT_NOT_FOUND));
         if (findComment.getMember().getId() != findMember.getId()) {
-            throw new CustomException(null,UNAUTHORIZED_COMMENT);
+            throw new CustomException(null, UNAUTHORIZED_COMMENT);
         }
         findComment.modifyComment(content);
         return findComment;
