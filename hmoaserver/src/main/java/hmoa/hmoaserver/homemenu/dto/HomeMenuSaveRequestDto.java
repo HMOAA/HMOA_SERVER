@@ -1,6 +1,6 @@
-package hmoa.hmoaserver.admin.dto;
+package hmoa.hmoaserver.homemenu.dto;
 
-import hmoa.hmoaserver.admin.domain.HomeMenu;
+import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import lombok.Data;
 
 @Data

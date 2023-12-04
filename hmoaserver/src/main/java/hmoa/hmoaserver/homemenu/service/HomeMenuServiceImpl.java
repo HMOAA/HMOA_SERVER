@@ -1,8 +1,8 @@
-package hmoa.hmoaserver.admin.service;
+package hmoa.hmoaserver.homemenu.service;
 
-import hmoa.hmoaserver.admin.domain.HomeMenu;
-import hmoa.hmoaserver.admin.dto.HomeMenuSaveRequestDto;
-import hmoa.hmoaserver.admin.repository.HomeMenuRepository;
+import hmoa.hmoaserver.homemenu.domain.HomeMenu;
+import hmoa.hmoaserver.homemenu.dto.HomeMenuSaveRequestDto;
+import hmoa.hmoaserver.homemenu.repository.HomeMenuRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.perfume.domain.Perfume;
@@ -44,12 +44,16 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     }
 
     @Override
-    public List<Perfume> findPerfumesByHomeMenu(Long homeId) {
-        HomeMenu homeMenu = findHomeById(homeId);
+    public List<Perfume> findPerfumesByHomeMenu(HomeMenu homeMenu) {
         return homeMenu.getPerfumeList();
     }
 
-    private HomeMenu findHomeById(Long homeId){
+    @Override
+    public HomeMenu findHomeMenuById(Long homeId) {
+        return homeMenuRepository.findById(homeId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
+    }
+
+    public HomeMenu findHomeById(Long homeId){
         return homeMenuRepository.findById(homeId).orElseThrow(()-> new CustomException(null,Code.HOMEMENU_NOT_FOUND));
     }
 }

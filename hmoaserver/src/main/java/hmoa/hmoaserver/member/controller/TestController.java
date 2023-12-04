@@ -74,9 +74,9 @@ public class TestController {
         Page<Perfume> perfumes = testService.perfumeFindTest2();
         List<MainTestDto> results = perfumes.stream()
                 .map(perfume -> new MainTestDto(perfume)).collect(Collectors.toList());
-        TestDto test1= TestDto.builder().title("향모아 사용자들이 사랑한").perfumeList(results).build();
-        TestDto test2= TestDto.builder().title("향모아 사용자들이 즐겨찾는").perfumeList(results).build();
-        TestDto test3= TestDto.builder().title("향모아 사용자들이 즐기는").perfumeList(results).build();
+        TestDto test1 = TestDto.builder().title("향모아 사용자들이 사랑한").perfumeList(results).build();
+        TestDto test2 = TestDto.builder().title("향모아 사용자들이 즐겨찾는").perfumeList(results).build();
+        TestDto test3 = TestDto.builder().title("향모아 사용자들이 즐기는").perfumeList(results).build();
         List<TestDto> dtos = new ArrayList<>();
         dtos.add(test1);
         dtos.add(test2);
