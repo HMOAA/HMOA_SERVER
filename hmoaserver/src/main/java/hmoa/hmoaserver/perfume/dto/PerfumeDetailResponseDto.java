@@ -30,6 +30,7 @@ public class PerfumeDetailResponseDto {
     private String topNote;
     private String heartNote;
     private String baseNote;
+    private List<Integer> notePhotos;
     private List<String> singleNote;
     private int sortType;
     private boolean isLiked = false;
@@ -47,6 +48,7 @@ public class PerfumeDetailResponseDto {
         this.englishName = perfume.getEnglishName();
         this.volume = perfume.getVolume();
         this.isLiked = isLiked;
+        this.notePhotos = perfume.getNotePhotos();
         if(perfume.getSortType()==0) {
             this.topNote = perfume.getTopNote();
             this.heartNote = perfume.getHeartNote();

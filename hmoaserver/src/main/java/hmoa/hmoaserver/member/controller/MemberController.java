@@ -84,7 +84,7 @@ public class MemberController {
             )
     })
     @GetMapping()
-    public ResponseEntity<MemberResponseDto> findOneMember(HttpServletRequest request, @RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<MemberResponseDto> findOneMember(@RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         if (findMember.getRole() == Role.GUEST) {
