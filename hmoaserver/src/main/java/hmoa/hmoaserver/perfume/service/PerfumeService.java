@@ -96,4 +96,9 @@ public class PerfumeService {
         }
     }
 
+    public boolean isExistPerfume(PerfumeSaveRequestDto dto) {
+        Brand brand = brandRepository.findByBrandName(dto.getABrandName())
+                .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
+        return perfumeRepository.findByBrandIdAndKoreanName(brand.getId(), dto.getBKoreanName()).isPresent();
+    }
 }

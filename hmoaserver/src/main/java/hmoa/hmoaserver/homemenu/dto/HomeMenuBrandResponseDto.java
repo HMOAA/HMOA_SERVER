@@ -1,17 +1,17 @@
 package hmoa.hmoaserver.homemenu.dto;
 
-import hmoa.hmoaserver.brand.domain.Brand;
+import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.Data;
 
 @Data
 public class HomeMenuBrandResponseDto {
-    private Long brandId;
+    private Long perfumeId;
     private String brandName;
     private String imgUrl;
 
-    public HomeMenuBrandResponseDto(Brand brand) {
-        this.brandId = brand.getId();
-        this.brandName = brand.getEnglishName();
-        this.imgUrl = brand.getBrandPhoto().getPhotoUrl();
+    public HomeMenuBrandResponseDto(Perfume perfume) {
+        this.perfumeId = perfume.getId();
+        this.brandName = perfume.getBrand().getEnglishName();
+        this.imgUrl = perfume.getPerfumePhoto().getPhotoUrl();
     }
 }

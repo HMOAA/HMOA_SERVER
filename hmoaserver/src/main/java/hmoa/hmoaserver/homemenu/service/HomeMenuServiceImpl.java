@@ -32,7 +32,7 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     @Override
     public HomeMenu addPerfumeForHomeMenu(Long perfumeId, Long homeId) {
         Perfume perfume = perfumeService.findById(perfumeId);
-        HomeMenu homeMenu = findHomeById(homeId);
+        HomeMenu homeMenu = findHomeMenuById(homeId);
         perfume.setHomeMenu(homeMenu);
         return homeMenu;
     }
@@ -51,9 +51,5 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     @Override
     public HomeMenu findHomeMenuById(Long homeId) {
         return homeMenuRepository.findById(homeId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
-    }
-
-    public HomeMenu findHomeById(Long homeId){
-        return homeMenuRepository.findById(homeId).orElseThrow(()-> new CustomException(null,Code.HOMEMENU_NOT_FOUND));
     }
 }
