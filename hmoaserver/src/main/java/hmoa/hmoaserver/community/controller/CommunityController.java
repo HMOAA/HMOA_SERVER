@@ -66,6 +66,7 @@ public class CommunityController {
 
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
         result.setWrited(true);
+        result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
         return ResponseEntity.ok(result);
     }
 
@@ -122,7 +123,7 @@ public class CommunityController {
         photoService.validateCommunityPhotoCountExceeded(savedCommunityPhotos.size() - deleteCommunityPhotos.size()
                 + files.size());
 
-        communityService.modifyCommunity(member,dto,communityId,deleteCommunityPhotos);
+        communityService.modifyCommunity(member, dto, communityId, deleteCommunityPhotos);
 
         List<CommunityPhoto> communityPhotos = new ArrayList<>();
         communityPhotos.addAll(community.getCommunityPhotos());
@@ -130,7 +131,10 @@ public class CommunityController {
         if (files.size() != 0)
             communityPhotos.addAll(communityService.saveCommunityPhotos(community, files));
 
-        return ResponseEntity.ok(new CommunityDefaultResponseDto(community,true, communityPhotos));
+        CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community, true, communityPhotos);
+        result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
+
+        return ResponseEntity.ok(result);
     }
 
     @ApiOperation("커뮤니티 게시글 삭제")

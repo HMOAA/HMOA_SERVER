@@ -42,26 +42,6 @@ public class CommunityDefaultResponseDto {
         }
     }
 
-    public CommunityDefaultResponseDto(Community community, boolean writed){
-        this.id=community.getId();
-        this.title=community.getTitle();
-        this.category=community.getCategory();
-        this.content=community.getContent();
-        this.author=community.getMember().getNickname();
-        this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
-        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
-        this.writed = writed;
-
-        if (community.getCommunityPhotos() != null) {
-            List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
-            this.imagesCount = communityPhotos.size();
-
-            for (CommunityPhoto communityPhoto : communityPhotos) {
-                this.communityPhotos.add(new CommunityPhotoDefaultResponseDto(communityPhoto));
-            }
-        }
-    }
-
     public CommunityDefaultResponseDto(Community community, boolean writed, List<CommunityPhoto> communityPhotoList){
         this.id=community.getId();
         this.title=community.getTitle();
