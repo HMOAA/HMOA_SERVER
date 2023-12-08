@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
     /**
      * 한글 이름 , 영어 이름 포함하여 검색
@@ -22,4 +24,5 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
 
     Page<Perfume> findAllByBrandIdOrderByHeartCountDesc(Long brandId, Pageable pageable);
 
+    Optional<Perfume> findByBrandIdAndKoreanName(Long brandId, String koreanName);
 }

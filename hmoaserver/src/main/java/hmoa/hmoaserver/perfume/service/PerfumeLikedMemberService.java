@@ -28,7 +28,8 @@ public class PerfumeLikedMemberService {
             return perfumeLikedMemberRepository.findByMemberAndPerfume(member, perfume).isPresent();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
-        }    }
+        }
+    }
 
     public PerfumeLikedMember save(Member member, Perfume perfume) {
 

@@ -7,5 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PerfumerRepository extends JpaRepository<Perfumer, Long> {
     Page<Perfumer> findAll(Pageable pageable);
+
+    Page<Perfumer> findByTitleContainingOrSubTitleContainingOrderByCreatedAtDesc(
+            String title, String subtitle, Pageable pageable
+    );
 }
 

@@ -4,12 +4,16 @@ package hmoa.hmoaserver.search.service;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
+import hmoa.hmoaserver.brandstory.domain.BrandStory;
+import hmoa.hmoaserver.brandstory.repository.BrandStoryRepository;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.repository.CommunityRepository;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.repository.NoteRepository;
 import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfumer.domain.Perfumer;
+import hmoa.hmoaserver.perfumer.repository.PerfumerRepository;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
@@ -39,6 +43,8 @@ public class SearchService {
     private final UnicodeService unicodeService;
     private final NoteRepository noteRepository;
     private final TermRepository termRepository;
+    private final PerfumerRepository perfumerRepository;
+    private final BrandStoryRepository brandStoryRepository;
 
     public List<BrandDefaultResponseDto> brandSearchAll(int consonant){
         List<Brand> brands= brandRepository.findAllByConsonant(consonant);
@@ -111,15 +117,29 @@ public class SearchService {
 
     public Page<Note> noteSearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return noteRepository.findByTitleContainingOrSubtitleContainingOrContentContainingOrderByCreatedAtDesc(
-                keyword, keyword, keyword, pageable
+        return noteRepository.findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
         );
     }
 
     public Page<Term> termSearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return termRepository.findByTitleContainingOrEnglishTitleContainingOrContentContainingOrderByCreatedAtDesc(
-                keyword, keyword, keyword, pageable
+        return termRepository.findByTitleContainingOrEnglishTitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
+        );
+    }
+
+    public Page<Perfumer> perfumerSearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return perfumerRepository.findByTitleContainingOrSubTitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
+        );
+    }
+
+    public Page<BrandStory> brandStorySearch(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return brandStoryRepository.findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
+                keyword, keyword, pageable
         );
     }
 }

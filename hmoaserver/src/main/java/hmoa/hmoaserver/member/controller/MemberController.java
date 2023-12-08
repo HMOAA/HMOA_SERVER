@@ -4,6 +4,7 @@ import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
+import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -83,7 +84,7 @@ public class MemberController {
             )
     })
     @GetMapping()
-    public ResponseEntity<MemberResponseDto> findOneMember(HttpServletRequest request, @RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<MemberResponseDto> findOneMember(@RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         if (findMember.getRole() == Role.GUEST) {
@@ -340,7 +341,8 @@ public class MemberController {
         Member member = memberService.findByEmail(email);
         List<PerfumeCommentResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc,false, member);
+            boolean isLiked = perfumeCommentService.hasLike(pc, member);
+            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc, isLiked, member);
             result.add(dto);
         }
         return ResponseEntity.ok(result);
@@ -375,9 +377,9 @@ public class MemberController {
             )
     })
     @GetMapping("/communityComments")
-    public ResponseEntity<List<CommunityCommentDefaultResponseDto>> findMyCommunityComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public ResponseEntity<List<CommunityCommentByMemberResponseDto>> findMyCommunityComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<CommunityComment> comments = memberService.findCommunityCommentByMe(token, page);
-        List<CommunityCommentDefaultResponseDto> result = comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment, true)).collect(Collectors.toList());
+        List<CommunityCommentByMemberResponseDto> result = comments.stream().map(comment -> new CommunityCommentByMemberResponseDto(comment, true)).collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
 

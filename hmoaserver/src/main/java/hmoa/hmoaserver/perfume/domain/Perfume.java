@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.perfume.domain;
 
-import hmoa.hmoaserver.admin.domain.HomeMenu;
+import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;

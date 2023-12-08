@@ -2,6 +2,9 @@ package hmoa.hmoaserver.perfume.service;
 
 
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.fcm.NotificationType;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -36,8 +39,8 @@ import static hmoa.hmoaserver.exception.Code.*;
 public class PerfumeCommentService {
     @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
-    private final static String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
-    private final static String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
+    private static final String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
+    private static final String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
     private Long deleteMemberId= 0l;
     private final MemberRepository memberRepository;
     private final PerfumeCommentRepository commentRepository;
@@ -45,53 +48,57 @@ public class PerfumeCommentService {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final PerfumeService perfumeService;
+    private final FCMNotificationService fcmNotificationService;
 
-    public PerfumeComment commentSave(Member member, Long id, PerfumeCommentRequestDto dto){
+    public PerfumeComment commentSave(Member member, Long id, PerfumeCommentRequestDto dto) {
         Perfume findPerfume = perfumeService.findById(id);
         return commentRepository.save(dto.toEntity(member, findPerfume));
 
     }
 
-    public String saveLike(String token,Long commentId){
+    public String saveLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
-        if (!hasLike(findComment,findMember)){
+
+        if (!hasLike(findComment,findMember)) {
             findComment.increaseHeartCount();
             PerfumeCommentLiked heart = PerfumeCommentLiked.builder()
                     .member(findMember)
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
+            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), NotificationType.COMMENT_LIKE));
             return CREATE_LIKE_SUCCESS;
         }
+
         throw new CustomException(null,DUPLICATE_LIKED);
     }
-    public String deleteLike(String token,Long commentId){
+
+    public String deleteLike(String token,Long commentId) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
         PerfumeCommentLiked perfumeCommentLiked = commentHeartRepository.findByPerfumeCommentAndMember(findComment,findMember)
-                .orElseThrow(()-> new CustomException(null,HEART_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null,HEART_NOT_FOUND));
         commentHeartRepository.delete(perfumeCommentLiked);
         findComment.decreaseHeartCount();
         return DELETE_LIKE_SUCCESS;
-
     }
 
-    public boolean hasLike(final PerfumeComment perfumeComment, final Member member){
+    public boolean hasLike(final PerfumeComment perfumeComment, final Member member) {
         return commentHeartRepository.findByPerfumeCommentAndMember(perfumeComment, member).isPresent();
     }
 
-    public PerfumeComment modifyComment(String token, Long commentId,String content){
+    public PerfumeComment modifyComment(String token, Long commentId,String content) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new CustomException(null, COMMENT_NOT_FOUND));
-        if(findComment.getMember().getId() != findMember.getId()){
-            throw new CustomException(null,UNAUTHORIZED_COMMENT);
+        if (findComment.getMember().getId() != findMember.getId()) {
+            throw new CustomException(null, UNAUTHORIZED_COMMENT);
         }
         findComment.modifyComment(content);
         return findComment;
@@ -100,8 +107,8 @@ public class PerfumeCommentService {
     /**
      * 비로그인시 댓글 조회
      */
-    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page){
-        try{
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page) {
+        try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
@@ -115,19 +122,18 @@ public class PerfumeCommentService {
     /**
      * 로그인 시 댓글 조회
      */
-    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member){
-        try{
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
+        try {
             Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if(hasLike(comment,member)){
+                if (hasLike(comment,member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
-                }else{
-                    return new PerfumeCommentResponseDto(comment,false, member);
                 }
+                return new PerfumeCommentResponseDto(comment,false, member);
             }).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
-        }catch (DataAccessException | ConstraintViolationException e){
+        }catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
     }
@@ -135,13 +141,13 @@ public class PerfumeCommentService {
     /**
      * 비 로그인시 댓글 조회 (좋아요순)
      */
-    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size){
-        try{
+    public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size) {
+        try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,size));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page, size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+            return new PerfumeCommentGetResponseDto(commentCount, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -151,14 +157,14 @@ public class PerfumeCommentService {
      * 로그인 시 댓글 조회 (좋아요순)
      */
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size, Member member){
-        try{
+        try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if(hasLike(comment,member)){
+                if (hasLike(comment,member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
-                }else {
+                } else {
                     return new PerfumeCommentResponseDto(comment,false, member);
                 }
             }).collect(Collectors.toList());

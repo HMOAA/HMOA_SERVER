@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.admin.domain;
+package hmoa.hmoaserver.homemenu.domain;
 
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.AccessLevel;
@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HomeMenu {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "home_menu_id")

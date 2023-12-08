@@ -13,8 +13,8 @@ public class MemberLoginResponseDto {
     private Boolean existedMember;
 
     public MemberLoginResponseDto(Token token, boolean exist){
-        this.authToken=token.getAuthToken();
-        this.rememberedToken=token.getRememberedToken();
-        this.existedMember=exist;
+        this.authToken = token.getAuthToken();
+        this.rememberedToken = token.getRememberedToken();
+        this.existedMember = exist;
     }
 }

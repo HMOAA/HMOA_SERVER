@@ -1,11 +1,15 @@
 package hmoa.hmoaserver.search.controller;
 
 import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
+import hmoa.hmoaserver.brandstory.domain.BrandStory;
+import hmoa.hmoaserver.brandstory.dto.BrandStoryDefaultResponseDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
+import hmoa.hmoaserver.perfumer.domain.Perfumer;
+import hmoa.hmoaserver.perfumer.dto.PerfumerDefaultResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeSearchResponseDto;
 import hmoa.hmoaserver.search.dto.BrandSearchResponseDto;
@@ -80,5 +84,19 @@ public class SearchController {
     public ResponseEntity<List<TermDefaultResponseDto>> termSearch(@RequestParam int page, @RequestParam String seachWord) {
         Page<Term> terms = searchService.termSearch(seachWord, page);
         return ResponseEntity.ok(terms.stream().map(TermDefaultResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 조향사 불러오기", notes = "조향사 검색")
+    @GetMapping("/perfumer")
+    public ResponseEntity<List<PerfumerDefaultResponseDto>> perfumerSearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<Perfumer> perfumers = searchService.perfumerSearch(seachWord, page);
+        return ResponseEntity.ok(perfumers.stream().map(PerfumerDefaultResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "브랜드 검색")
+    @GetMapping("/brandStory")
+    public ResponseEntity<List<BrandStoryDefaultResponseDto>> brandStorySearch(@RequestParam int page, @RequestParam String seachWord) {
+        Page<BrandStory> brandStorys = searchService.brandStorySearch(seachWord, page);
+        return ResponseEntity.ok(brandStorys.stream().map(BrandStoryDefaultResponseDto::new).collect(Collectors.toList()));
     }
 }

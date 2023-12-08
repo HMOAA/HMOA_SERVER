@@ -7,4 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BrandStoryRepository extends JpaRepository<BrandStory, Long> {
     Page<BrandStory> findAll(Pageable pageable);
+
+    Page<BrandStory> findByTitleContainingOrSubtitleContainingOrderByCreatedAtDesc(
+            String title, String subtitle, Pageable pageable
+    );
 }

@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.community.domain;
 
+import hmoa.hmoaserver.admin.domain.CommunityReport;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
@@ -36,6 +37,9 @@ public class Community extends BaseEntity {
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL , orphanRemoval = true)
     List<CommunityComment> communityComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityReport> communityReports = new ArrayList<>();
 
     @Builder
     public Community(String title, String content, Member member, Category category){

@@ -1,7 +1,7 @@
 package hmoa.hmoaserver.admin.controller;
 
-import hmoa.hmoaserver.admin.dto.HomeMenuSaveRequestDto;
-import hmoa.hmoaserver.admin.service.HomeMenuService;
+import hmoa.hmoaserver.homemenu.dto.HomeMenuSaveRequestDto;
+import hmoa.hmoaserver.homemenu.service.HomeMenuService;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = {"관리자 API"})
 @RestController

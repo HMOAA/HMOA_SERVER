@@ -38,5 +38,5 @@ out/
 application-jwt.yml
 application-local.yml
 application-oauth2.yml
-firebase/hmoa-firebase.json
+firebase/
 

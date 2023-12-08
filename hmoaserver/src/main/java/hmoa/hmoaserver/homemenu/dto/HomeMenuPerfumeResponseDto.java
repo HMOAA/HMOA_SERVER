@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.perfume.dto;
+package hmoa.hmoaserver.homemenu.dto;
 
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.Data;
@@ -9,7 +9,8 @@ public class HomeMenuPerfumeResponseDto {
     private String brandName;
     private String perfumeName;
     private String imgUrl;
-    public HomeMenuPerfumeResponseDto(Perfume perfume){
+
+    public HomeMenuPerfumeResponseDto(Perfume perfume) {
         this.perfumeId = perfume.getId();
         this.brandName = perfume.getBrand().getBrandName();
         this.perfumeName = perfume.getKoreanName();

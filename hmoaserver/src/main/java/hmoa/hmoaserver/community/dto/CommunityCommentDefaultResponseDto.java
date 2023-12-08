@@ -14,7 +14,7 @@ public class CommunityCommentDefaultResponseDto {
     private String time;
     private boolean writed;
 
-    public CommunityCommentDefaultResponseDto(CommunityComment comment,boolean writed){
+    public CommunityCommentDefaultResponseDto(CommunityComment comment, boolean writed){
         this.commentId = comment.getId();
         this.content = comment.getContent();
         this.author = comment.getMember().getNickname();

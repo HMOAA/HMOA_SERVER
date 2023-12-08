@@ -78,6 +78,7 @@ public class JwtService {
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(SignatureAlgorithm.HS256,secretKey)
                 .compact();
+        log.info("{}", refreshToken);
         return refreshToken;
     }
 

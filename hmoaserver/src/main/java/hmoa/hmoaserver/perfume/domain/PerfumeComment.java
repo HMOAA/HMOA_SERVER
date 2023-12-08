@@ -57,9 +57,8 @@ public class PerfumeComment extends BaseEntity {
         this.content=content;
     }
 
-    public PerfumeComment modifyCommentMember(Member member)
-    {
-        this.member=member;
+    public PerfumeComment modifyCommentMember(Member member) {
+        this.member = member;
         return null;
     }
 
