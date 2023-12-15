@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.brandstory.controller;
 
+import hmoa.hmoaserver.brand.domain.Brand;
+import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.brandstory.dto.BrandStoryDefaultResponseDto;
 import hmoa.hmoaserver.brandstory.service.BrandStoryService;
 import hmoa.hmoaserver.brandstory.domain.BrandStory;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class BrandStoryController {
 
     private final BrandStoryService brandStoryService;
+    private final BrandRepository brandRepository;
 
     @ApiOperation("브랜드스토리 저장")
     @PostMapping("/new")
@@ -81,5 +84,13 @@ public class BrandStoryController {
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation("브랜드 내용 없이 저장")
+    @PostMapping("/testSave")
+    public ResponseEntity<ResultDto<Object>> testSave() {
+        List<Brand> brands = brandRepository.findAll();
+        brands.forEach(brandStoryService::testSave);
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

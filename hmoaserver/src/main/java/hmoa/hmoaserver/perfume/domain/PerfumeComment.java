@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.domain;
 
+import hmoa.hmoaserver.admin.domain.PerfumeCommentReport;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
@@ -27,6 +28,9 @@ public class PerfumeComment extends BaseEntity {
 
     @OneToMany(mappedBy = "perfumeComment", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeCommentLiked> perfumeCommentLikeds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfumeComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeCommentReport> perfumeCommentReports = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

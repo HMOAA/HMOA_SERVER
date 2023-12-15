@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface HomeMenuService {
     HomeMenu save(HomeMenuSaveRequestDto dto);
-    HomeMenu addPerfumeForHomeMenu(Long perfumeId, Long homeId);
-    void deleteHomeMenu(Long perfumeId);
-    List<Perfume> findPerfumesByHomeMenu(HomeMenu homeMenu);
+    void modifyHomeMenu(HomeMenu homeMenu, String title);
     HomeMenu findHomeMenuById(Long homeId);
 }

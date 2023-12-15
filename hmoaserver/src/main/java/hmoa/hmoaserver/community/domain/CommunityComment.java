@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.community.domain;
 
+import hmoa.hmoaserver.admin.domain.CommunityCommentReport;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +30,9 @@ public class CommunityComment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "community_id")
     private Community community;
+
+    @OneToMany(mappedBy = "communityComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityCommentReport> communityCommentReports = new ArrayList<>();
 
     @Builder
     public CommunityComment(Member member, String content,Community community){

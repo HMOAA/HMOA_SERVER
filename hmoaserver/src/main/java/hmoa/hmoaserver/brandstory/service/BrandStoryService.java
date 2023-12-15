@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.brandstory.service;
 
+import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brandstory.domain.BrandStory;
 import hmoa.hmoaserver.brandstory.dto.BrandStorySaveRequestDto;
 import hmoa.hmoaserver.brandstory.dto.BrandStoryUpdateRequestDto;
@@ -53,5 +54,13 @@ public class BrandStoryService {
 
         brandStory.delete();
         brandStoryRepository.save(brandStory);
+    }
+
+    public void testSave(Brand brand) {
+        brandStoryRepository.save(BrandStory.builder()
+                .title(brand.getBrandName())
+                .subtitle(brand.getEnglishName())
+                .content(null)
+                .build());
     }
 }

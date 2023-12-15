@@ -18,7 +18,6 @@ import java.util.List;
 @Transactional
 public class HomeMenuServiceImpl implements HomeMenuService {
     private final HomeMenuRepository homeMenuRepository;
-    private final PerfumeService perfumeService;
 
     @Override
     public HomeMenu save(HomeMenuSaveRequestDto dto) {
@@ -30,26 +29,12 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     }
 
     @Override
-    public HomeMenu addPerfumeForHomeMenu(Long perfumeId, Long homeId) {
-        Perfume perfume = perfumeService.findById(perfumeId);
-        HomeMenu homeMenu = findHomeMenuById(homeId);
-        perfume.setHomeMenu(homeMenu);
-        return homeMenu;
-    }
-
-    @Override
-    public void deleteHomeMenu(Long perfumeId) {
-        Perfume perfume = perfumeService.findById(perfumeId);
-        perfume.deleteHomeMenu();
-    }
-
-    @Override
-    public List<Perfume> findPerfumesByHomeMenu(HomeMenu homeMenu) {
-        return homeMenu.getPerfumeList();
-    }
-
-    @Override
     public HomeMenu findHomeMenuById(Long homeId) {
         return homeMenuRepository.findById(homeId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
+    }
+
+    @Override
+    public void modifyHomeMenu(HomeMenu homeMenu, String title) {
+        homeMenu.updateTitle(title);
     }
 }

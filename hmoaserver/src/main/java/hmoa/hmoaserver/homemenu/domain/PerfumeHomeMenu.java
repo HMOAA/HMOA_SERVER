@@ -7,27 +7,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HomeMenu {
+public class PerfumeHomeMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "home_menu_id")
+    @Column(name = "perfume_home_menu_id")
     private Long id;
-    private String title;
-    @OneToMany(mappedBy = "homeMenu", cascade = CascadeType.ALL , orphanRemoval = true)
-    private List<PerfumeHomeMenu> perfumeHomeMenuList =new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfume_id")
+    private Perfume perfume;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "home_menu_id")
+    private HomeMenu homeMenu;
 
     @Builder
-    public HomeMenu(String title){
-        this.title = title;
-    }
-
-    public void updateTitle(String title) {
-        this.title = title;
+    public PerfumeHomeMenu(Perfume perfume, HomeMenu homeMenu) {
+        this.perfume = perfume;
+        this.homeMenu = homeMenu;
     }
 }
