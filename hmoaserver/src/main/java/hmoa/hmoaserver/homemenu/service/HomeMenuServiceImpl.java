@@ -52,4 +52,15 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     public HomeMenu findHomeMenuById(Long homeId) {
         return homeMenuRepository.findById(homeId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
     }
+
+    @Override
+    public void resetHomeMenu(HomeMenu homeMenu) {
+        List<Perfume> perfumes = homeMenu.getPerfumeList();
+        perfumes.forEach(Perfume::deleteHomeMenu);
+    }
+
+    @Override
+    public void modifyHomeMenu(HomeMenu homeMenu, String title) {
+        homeMenu.updateTitle(title);
+    }
 }

@@ -12,4 +12,6 @@ public interface HomeMenuService {
     void deleteHomeMenu(Long perfumeId);
     List<Perfume> findPerfumesByHomeMenu(HomeMenu homeMenu);
     HomeMenu findHomeMenuById(Long homeId);
+    void resetHomeMenu(HomeMenu homeMenu);
+    void modifyHomeMenu(HomeMenu homeMenu, String title);
 }

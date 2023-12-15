@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.admin.controller;
 
+import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuSaveRequestDto;
 import hmoa.hmoaserver.homemenu.service.HomeMenuService;
 import hmoa.hmoaserver.common.ResultDto;
@@ -30,7 +31,7 @@ public class AdminController {
     }
 
 
-    @ApiOperation("해당 타이틀에 추가할 향수")
+    @ApiOperation("홈 메뉴 타이틀에 추가할 향수")
     @PostMapping("/homePerfume/add")
     public ResponseEntity<ResultDto> addHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long perfumeId, @RequestParam Long homeId){
         Member member = memberService.findByMember(token);
@@ -38,10 +39,18 @@ public class AdminController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
-    @ApiOperation("해당 타이틀에서 향수 제거")
+    @ApiOperation("홈 메뉴 타이틀에서 향수 제거")
     @DeleteMapping("/homePerfume/delete")
     public ResponseEntity<ResultDto> deleteHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long perfumeId){
         homeMenuService.deleteHomeMenu(perfumeId);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("홈 메뉴 타이틀 내용 수정")
+    @PostMapping("/{homeMenuId}/modify")
+    public ResponseEntity<ResultDto> modifyHomeMenu(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long homeMenuId, @RequestBody HomeMenuSaveRequestDto homeMenuSaveRequestDto) {
+        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeMenuId);
+        homeMenuService.modifyHomeMenu(homeMenu, homeMenuSaveRequestDto.getTitle());
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

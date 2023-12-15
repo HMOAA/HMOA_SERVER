@@ -1,6 +1,7 @@
 package hmoa.hmoaserver.homemenu.controller;
 
 import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuAllResponseDto;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuDefaultResponseDto;
@@ -103,6 +104,14 @@ public class MainPageController {
         Member member = memberService.findByMember(token);
         List<HomeMenuAllResponseDto> result = getResultForMember(perfumes, member);
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation("향수 홈 메뉴 초기화")
+    @DeleteMapping("/{homeMenuId}/reset")
+    public ResponseEntity<ResultDto<Object>> resetHomeMenu(@PathVariable Long homeMenuId) {
+        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeMenuId);
+        homeMenuService.resetHomeMenu(homeMenu);
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     private List<HomeMenuAllResponseDto> getResultForMember(List<Perfume> perfumes, Member member) {
