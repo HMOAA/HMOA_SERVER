@@ -3,10 +3,12 @@ package hmoa.hmoaserver.homemenu.controller;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.homemenu.domain.HomeMenu;
+import hmoa.hmoaserver.homemenu.domain.PerfumeHomeMenu;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuAllResponseDto;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuDefaultResponseDto;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuFirstResponseDto;
 import hmoa.hmoaserver.homemenu.service.HomeMenuService;
+import hmoa.hmoaserver.homemenu.service.PerfumeHomeMenuService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
@@ -37,14 +39,15 @@ public class MainPageController {
     private final HomeMenuService homeMenuService;
     private final MemberService memberService;
     private final PerfumeLikedMemberService perfumeLikedMemberService;
+    private final PerfumeHomeMenuService perfumeHomeMenuService;
 
     @ApiOperation("메인 페이지 첫 번째")
     @GetMapping("/first")
     public ResponseEntity<HomeMenuFirstResponseDto> getHomePerfumeList() {
         HomeMenu homeMenu = homeMenuService.findHomeMenuById(BRAND_HOME_ID);
-        List<Perfume> perfumes = homeMenuService.findPerfumesByHomeMenu(homeMenu);
-        Page<Perfume> perfumePage = new PageUtil<Perfume>().convertListToPage(perfumes, 0, 5);
-        List<HomeMenuPerfumeResponseDto> perfumeResponseDtos = perfumePage.stream().map(HomeMenuPerfumeResponseDto::new).collect(Collectors.toList());
+        List<PerfumeHomeMenu> perfumeHomeMenus = perfumeHomeMenuService.findPerfumeHomeMenuByHomeMenu(homeMenu);
+        List<Perfume> perfumes = getPerfumes(perfumeHomeMenus);
+        List<HomeMenuPerfumeResponseDto> perfumeResponseDtos = perfumes.stream().map(HomeMenuPerfumeResponseDto::new).collect(Collectors.toList());
         HomeMenuFirstResponseDto result = new HomeMenuFirstResponseDto(new HomeMenuDefaultResponseDto(homeMenu.getTitle(), perfumeResponseDtos));
         return ResponseEntity.ok(result);
     }
@@ -56,9 +59,9 @@ public class MainPageController {
         HomeMenu secondMenu = homeMenuService.findHomeMenuById(SECOND_HOME_ID);
         HomeMenu thirdMenu = homeMenuService.findHomeMenuById(THIRD_HOME_ID);
 
-        List<HomeMenuPerfumeResponseDto> firstPerfumesInfo = getPerfumeResponseDto(firstMenu.getPerfumeList());
-        List<HomeMenuPerfumeResponseDto> secondPerfumesInfo = getPerfumeResponseDto(secondMenu.getPerfumeList());
-        List<HomeMenuPerfumeResponseDto> thirdPefumesInfo = getPerfumeResponseDto(thirdMenu.getPerfumeList());
+        List<HomeMenuPerfumeResponseDto> firstPerfumesInfo = getPerfumeResponseDto(getPerfumes(firstMenu.getPerfumeHomeMenuList()));
+        List<HomeMenuPerfumeResponseDto> secondPerfumesInfo = getPerfumeResponseDto(getPerfumes(secondMenu.getPerfumeHomeMenuList()));
+        List<HomeMenuPerfumeResponseDto> thirdPefumesInfo = getPerfumeResponseDto(getPerfumes(thirdMenu.getPerfumeHomeMenuList()));
 
         HomeMenuDefaultResponseDto firstDto = new HomeMenuDefaultResponseDto(firstMenu.getTitle(), firstPerfumesInfo);
         HomeMenuDefaultResponseDto secondDto = new HomeMenuDefaultResponseDto(secondMenu.getTitle(), secondPerfumesInfo);
@@ -71,7 +74,7 @@ public class MainPageController {
     @GetMapping("/firstMenu")
     public ResponseEntity<List<HomeMenuAllResponseDto>> getFirstMenuAllPerfumeList(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         HomeMenu homeMenu = homeMenuService.findHomeMenuById(FIRST_HOME_ID);
-        List<Perfume> perfumes = homeMenu.getPerfumeList();
+        List<Perfume> perfumes = getPerfumes(homeMenu.getPerfumeHomeMenuList());
         if (memberService.isTokenNullOrEmpty(token)) {
             return ResponseEntity.ok(perfumes.stream().map(HomeMenuAllResponseDto::new).collect(Collectors.toList()));
         }
@@ -84,7 +87,7 @@ public class MainPageController {
     @GetMapping("/secondMenu")
     public ResponseEntity<List<HomeMenuAllResponseDto>> getSecondMenuAllPerfumeList(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         HomeMenu homeMenu = homeMenuService.findHomeMenuById(SECOND_HOME_ID);
-        List<Perfume> perfumes = homeMenu.getPerfumeList();
+        List<Perfume> perfumes = getPerfumes(homeMenu.getPerfumeHomeMenuList());
         if (memberService.isTokenNullOrEmpty(token)) {
             return ResponseEntity.ok(perfumes.stream().map(HomeMenuAllResponseDto::new).collect(Collectors.toList()));
         }
@@ -97,7 +100,7 @@ public class MainPageController {
     @GetMapping("/thirdMenu")
     public ResponseEntity<List<HomeMenuAllResponseDto>> getThirdMenuAllPerfumeList(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         HomeMenu homeMenu = homeMenuService.findHomeMenuById(THIRD_HOME_ID);
-        List<Perfume> perfumes = homeMenu.getPerfumeList();
+        List<Perfume> perfumes = getPerfumes(homeMenu.getPerfumeHomeMenuList());
         if (memberService.isTokenNullOrEmpty(token)) {
             return ResponseEntity.ok(perfumes.stream().map(HomeMenuAllResponseDto::new).collect(Collectors.toList()));
         }
@@ -106,19 +109,15 @@ public class MainPageController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation("향수 홈 메뉴 초기화")
-    @DeleteMapping("/{homeMenuId}/reset")
-    public ResponseEntity<ResultDto<Object>> resetHomeMenu(@PathVariable Long homeMenuId) {
-        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeMenuId);
-        homeMenuService.resetHomeMenu(homeMenu);
-        return ResponseEntity.ok(ResultDto.builder().build());
-    }
-
     private List<HomeMenuAllResponseDto> getResultForMember(List<Perfume> perfumes, Member member) {
         return perfumes.stream().map(perfume -> {
             boolean isLiked = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
             return new HomeMenuAllResponseDto(perfume, isLiked);
         }).collect(Collectors.toList());
+    }
+
+    private static List<Perfume> getPerfumes(List<PerfumeHomeMenu> perfumeHomeMenus) {
+        return perfumeHomeMenus.stream().map(PerfumeHomeMenu::getPerfume).collect(Collectors.toList());
     }
 
     private static List<HomeMenuPerfumeResponseDto> getPerfumeResponseDto(List<Perfume> perfumes) {

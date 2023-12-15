@@ -3,6 +3,7 @@ package hmoa.hmoaserver.perfume.domain;
 import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
+import hmoa.hmoaserver.homemenu.domain.PerfumeHomeMenu;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -54,9 +55,8 @@ public class Perfume extends BaseEntity {
     @JoinColumn
     private Brand brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "home_menu_id")
-    private HomeMenu homeMenu;
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeHomeMenu> perfumeHomeMenuList = new ArrayList<>();
 
     @Builder
     public Perfume(String koreanName, List<Integer> notePhotos, int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
@@ -105,13 +105,5 @@ public class Perfume extends BaseEntity {
 
     public void decreaseHeartCount(){
         this.heartCount -= 1;
-    }
-
-    public void setHomeMenu(HomeMenu homeMenu){
-        this.homeMenu = homeMenu;
-    }
-
-    public void deleteHomeMenu(){
-        this.homeMenu = null;
     }
 }
