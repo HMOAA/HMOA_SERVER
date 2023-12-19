@@ -42,8 +42,6 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
-    private static final Long deleteId = 0L;
-
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
     private final ProviderService providerService;
@@ -69,6 +67,7 @@ public class MemberService {
             throw new CustomException(null,SERVER_ERROR);
         }
     }
+
     @Transactional
     public Token reIssue(String rememberedToken){
         if (!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)) {

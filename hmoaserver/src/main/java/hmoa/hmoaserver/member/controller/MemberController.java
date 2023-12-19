@@ -464,7 +464,6 @@ public class MemberController {
     @DeleteMapping("/delete")
     public ResponseEntity<ResultDto<Object>> deleteMember(@RequestHeader("X-AUTH-TOKEN") String token){
         Member member = memberService.findByMember(token);
-        perfumeCommentService.deleteMemberComment(member);
         String code = memberService.delete(member);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder().data(code).build());
