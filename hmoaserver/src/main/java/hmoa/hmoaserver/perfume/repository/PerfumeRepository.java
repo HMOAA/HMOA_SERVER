@@ -18,11 +18,11 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
     )
     Page<Perfume> findAllSearch(@Param("koreanName") String koreanName, @Param("englishName") String englishName, Pageable pageable);
 
-    Page<Perfume> findAllByBrandIdOrderByCreatedAtDesc(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdOrderByCreatedAtDescIdAsc(Long brandId, Pageable pageable);
 
-    Page<Perfume> findAllByBrandIdOrderByKoreanName(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdOrderByKoreanNameAscIdAsc(Long brandId, Pageable pageable);
 
-    Page<Perfume> findAllByBrandIdOrderByHeartCountDesc(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdOrderByHeartCountDescIdAsc(Long brandId, Pageable pageable);
 
     Optional<Perfume> findByBrandIdAndKoreanName(Long brandId, String koreanName);
 }

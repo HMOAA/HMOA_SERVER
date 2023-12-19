@@ -110,7 +110,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -124,7 +124,7 @@ public class PerfumeCommentService {
      */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
         try {
-            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
+            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if (hasLike(comment,member)) {
@@ -144,7 +144,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page, size));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page, size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount, dto);
@@ -159,7 +159,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size, Member member){
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
+                    commentRepository.findAllByPerfumeIdOrderByHeartCountDescIdAsc(perfumeId,PageRequest.of(page,size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if (hasLike(comment,member)) {

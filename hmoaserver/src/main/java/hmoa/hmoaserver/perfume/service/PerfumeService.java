@@ -54,7 +54,7 @@ public class PerfumeService {
     public Page<Perfume> findUpdatePerfumesByBrand(Long brandId, int pageNum) {
         try {
             Page<Perfume> foundPerfumes =
-                    perfumeRepository.findAllByBrandIdOrderByCreatedAtDesc(
+                    perfumeRepository.findAllByBrandIdOrderByCreatedAtDescIdAsc(
                             brandId,
                             PageRequest.of(pageNum, 6)
                     );
@@ -70,7 +70,7 @@ public class PerfumeService {
     public Page<Perfume> findPerfumesByBrand(Long brandId, int pageNum) {
         try {
             Page<Perfume> foundPerfumes =
-                    perfumeRepository.findAllByBrandIdOrderByKoreanName(
+                    perfumeRepository.findAllByBrandIdOrderByKoreanNameAscIdAsc(
                             brandId,
                             PageRequest.of(pageNum, 6)
                     );
@@ -86,7 +86,7 @@ public class PerfumeService {
     public Page<Perfume> findTopPerfumesByBrand(Long brandId, int pageNum) {
         try {
             Page<Perfume> foundPerfumes =
-                    perfumeRepository.findAllByBrandIdOrderByHeartCountDesc(
+                    perfumeRepository.findAllByBrandIdOrderByHeartCountDescIdAsc(
                             brandId,
                             PageRequest.of(pageNum, 6)
                     );

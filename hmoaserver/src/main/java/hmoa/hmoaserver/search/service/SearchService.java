@@ -103,14 +103,14 @@ public class SearchService {
 
     public Page<Community> communitySearchForCategory(Category category, String searchContent, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
                 category, searchContent, searchContent, pageable
         );
     }
 
     public Page<Community> communitySearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
                 keyword, keyword, pageable
         );
     }

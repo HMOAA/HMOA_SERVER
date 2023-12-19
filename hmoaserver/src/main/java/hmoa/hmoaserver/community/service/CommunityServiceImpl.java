@@ -39,12 +39,12 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getAllCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByCreatedAtDesc(category, PageRequest.of(page,10));
+        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdAsc(category, PageRequest.of(page,10));
     }
 
     @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10));
+        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, 10));
     }
 
     @Override

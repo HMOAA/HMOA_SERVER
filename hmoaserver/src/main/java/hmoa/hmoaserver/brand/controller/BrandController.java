@@ -66,6 +66,7 @@ public class BrandController {
                 .body(ResultDto.builder()
                         .build());
     }
+
     @ApiOperation(value = "브랜드 저장")
     @PostMapping(value = "/new")
     public ResponseEntity<ResultDto<Object>> saveBrand(HttpServletRequest request, @RequestPart(value="image",required = false) MultipartFile file, BrandSaveRequestDto requestDto) {
