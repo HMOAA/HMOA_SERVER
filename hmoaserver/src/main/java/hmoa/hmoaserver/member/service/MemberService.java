@@ -248,6 +248,7 @@ public class MemberService {
     public boolean isTokenNullOrEmpty(String token){
         if(token == null || token == ""){
             return true;
-        }return false;
+        }
+        return false;
     }
 }

@@ -6,8 +6,12 @@ import hmoa.hmoaserver.brandstory.dto.BrandStoryDefaultResponseDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
+import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
+import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfumer.domain.Perfumer;
 import hmoa.hmoaserver.perfumer.dto.PerfumerDefaultResponseDto;
 import hmoa.hmoaserver.search.dto.PerfumeNameSearchResponseDto;
@@ -34,27 +38,44 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchController {
     private final SearchService searchService;
+    private final MemberService memberService;
+    private final PerfumeLikedMemberService perfumeLikedMemberService;
+
     @ApiOperation(value = "브랜드 전부 불러오기",notes = "consonant ㄱ부터 1로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ 순 입니다.")
     @GetMapping("/brandAll")
-    public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(@RequestParam int consonant){
+    public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(@RequestParam int consonant) {
         return ResponseEntity.ok(searchService.brandSearchAll(consonant));
     }
 
     @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "자음은 ㄱ부터 1으로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ순입니다. 예외 경우는 0으로 , 영어 검색시 한글 브랜드 이름 기준으로")
     @GetMapping("/brand")
-    public ResponseEntity<List<BrandSearchResponseDto>> brandSearch(@RequestParam String searchWord){
+    public ResponseEntity<List<BrandSearchResponseDto>> brandSearch(@RequestParam String searchWord) {
         return ResponseEntity.ok(searchService.brandSearch(searchWord));
     }
 
     @ApiOperation(value = "검색어가 포함된 향수 불러오기 (향수 정보)", notes = "향수 정보가 포함된 내용을 리턴")
     @GetMapping("/perfume")
-    public ResponseEntity<List<PerfumeSearchResponseDto>> perfumeSearch(@RequestParam int page, @RequestParam String searchWord){
-        return ResponseEntity.ok(searchService.perfumeSearch(searchWord,searchWord,page));
+    public ResponseEntity<List<PerfumeSearchResponseDto>> perfumeSearch(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @RequestParam int page, @RequestParam String searchWord) {
+        Page<Perfume> perfumePage = searchService.perfumeSearch(searchWord, searchWord, page);
+
+        if (memberService.isTokenNullOrEmpty(token)) {
+            List<PerfumeSearchResponseDto> perfumes = perfumePage.stream().map(perfume -> new PerfumeSearchResponseDto(perfume, false)).collect(Collectors.toList());
+            return ResponseEntity.ok(perfumes);
+        }
+
+        Member member = memberService.findByMember(token);
+        List<PerfumeSearchResponseDto> perfumes = perfumePage.stream().map(perfume -> {
+            boolean isLiked = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+            log.info("{}", isLiked);
+            return new PerfumeSearchResponseDto(perfume, isLiked);
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(perfumes);
     }
 
     @ApiOperation(value = "검색어가 포함된 향수 불러오기 (Name만)", notes = "향수 이름만 String 배열로 리턴")
     @GetMapping("/perfumeName")
-    public ResponseEntity<List<PerfumeNameSearchResponseDto>> perfumeStringSearch(@RequestParam int page, @RequestParam String searchWord){
+    public ResponseEntity<List<PerfumeNameSearchResponseDto>> perfumeStringSearch(@RequestParam int page, @RequestParam String searchWord) {
         return ResponseEntity.ok(searchService.perfumeNameSearch(searchWord,page));
     }
 
@@ -93,7 +114,7 @@ public class SearchController {
         return ResponseEntity.ok(perfumers.stream().map(PerfumerDefaultResponseDto::new).collect(Collectors.toList()));
     }
 
-    @ApiOperation(value = "검색어가 포함된 브랜드 불러오기", notes = "브랜드 검색")
+    @ApiOperation(value = "검색어가 포함된 브랜드(H-Pedia) 불러오기", notes = "브랜드 검색")
     @GetMapping("/brandStory")
     public ResponseEntity<List<BrandStoryDefaultResponseDto>> brandStorySearch(@RequestParam int page, @RequestParam String seachWord) {
         Page<BrandStory> brandStorys = searchService.brandStorySearch(seachWord, page);

@@ -87,11 +87,9 @@ public class SearchService {
         return searchBrandList;
     }
 
-    public List<PerfumeSearchResponseDto> perfumeSearch(String perfumeName, String englishName,int page){
+    public Page<Perfume> perfumeSearch(String perfumeName, String englishName,int page) {
         Pageable pageable = PageRequest.of(page,6);
-        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,englishName,pageable);
-        List<PerfumeSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeSearchResponseDto(perfume)).collect(Collectors.toList());
-        return dto;
+        return perfumeRepository.findAllSearch(perfumeName,englishName,pageable);
     }
 
     public List<PerfumeNameSearchResponseDto> perfumeNameSearch(String perfumeName, int page){
