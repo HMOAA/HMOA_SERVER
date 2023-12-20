@@ -181,12 +181,4 @@ public class PerfumeCommentService {
         }
         commentRepository.delete(perfumeComment);
     }
-
-    public void deleteMemberComment(Member member){
-        Member deleteMember = memberRepository.findById(deleteMemberId).get();
-        List<PerfumeComment> comments = commentRepository.findAllByMemberId(member.getId());
-        for(PerfumeComment comment : comments){
-            comment.modifyCommentMember(deleteMember);
-        }
-    }
 }

@@ -225,7 +225,7 @@ public class PerfumeCommentController {
     public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto) {
         Member member = memberService.findByMember(token);
         PerfumeComment comment = commentService.modifyComment(token,commentId,dto.getContent());
-        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, false, member));
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, true, member));
 
     }
 
