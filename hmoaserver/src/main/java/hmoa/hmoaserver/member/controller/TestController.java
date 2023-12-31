@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,6 @@ public class TestController {
     @Value("${default.main}")
     private String DEFALUT_MAIN;
     private final TestService testService;
-
 
     @PostMapping("/member/testcreate")
     public void testCreate(){
@@ -83,6 +83,14 @@ public class TestController {
         dtos.add(test3);
         return ResponseEntity.ok(ResultDto.builder()
                 .data(dtos)
+                .build());
+    }
+
+    @GetMapping("/perfume/testTime")
+    public ResponseEntity<ResultDto<Object>> timeTest() {
+        LocalDateTime now = LocalDateTime.now();
+        return ResponseEntity.ok(ResultDto.builder()
+                .data(now)
                 .build());
     }
 }

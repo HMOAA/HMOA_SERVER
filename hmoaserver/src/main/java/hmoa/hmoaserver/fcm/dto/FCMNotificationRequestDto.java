@@ -13,7 +13,7 @@ public class FCMNotificationRequestDto {
     private NotificationType type;
 
     @Builder
-    public FCMNotificationRequestDto(Long id,String sender, NotificationType notificationType) {
+    public FCMNotificationRequestDto(Long id, String sender, NotificationType notificationType) {
         this.id = id;
         this.sender = sender;
         this.type = notificationType;

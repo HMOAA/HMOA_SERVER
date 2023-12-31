@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CommunityCommentByMemberResponseDto {
     private Long communityId;
+    private Long commentId;
     private String content;
     private String author;
     private String profileImg;
@@ -15,6 +16,7 @@ public class CommunityCommentByMemberResponseDto {
 
     public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean writed){
         this.communityId = comment.getCommunity().getId();
+        this.commentId = comment.getId();
         this.content = comment.getContent();
         this.author = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
