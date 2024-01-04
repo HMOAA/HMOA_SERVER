@@ -25,7 +25,9 @@ public class FCMNotificationService {
 
     public String sendNotification(FCMNotificationRequestDto requestDto) {
         Optional<Member> member = memberRepository.findById(requestDto.getId());
-
+        if (isSameMember(requestDto.getId(), requestDto.getSenderId())) {
+            return SEND_NOT_REQUIRED;
+        }
         if (member.isEmpty()) {
             return NOT_FOUND_MEMBER;
         }
@@ -68,7 +70,11 @@ public class FCMNotificationService {
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
-        return FAIL_SEND;
+        return FAILE_SEND;
+    }
+
+    private static boolean isSameMember(Long id, Long senderId) {
+        return id.equals(senderId);
     }
 
 //    public String sendNotificationByToken(FCMNotificationRequestDto requestDto) {

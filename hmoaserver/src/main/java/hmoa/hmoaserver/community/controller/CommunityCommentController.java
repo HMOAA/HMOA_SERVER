@@ -42,7 +42,7 @@ public class CommunityCommentController {
         Member member = memberService.findByMember(token);
         Community community = communityService.getCommunityById(communityId);
         CommunityComment comment = commentService.saveCommunityComment(member, dto, community);
-        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), COMMUNITY_COMMENT));
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_COMMENT));
         CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment,true);
         return ResponseEntity.ok(result);
     }
