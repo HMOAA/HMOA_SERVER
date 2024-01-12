@@ -228,11 +228,11 @@ public class PerfumeController {
         return ResponseEntity.ok(perfumeAgeService.deletePerfumeAge(member, perfume));
     }
 
-    @ApiOperation(value = "향수 단건조회 2",notes = "댓글 정보와 같은 브랜드 향수 조회")
+    @ApiOperation(value = "향수 단건조회 2", notes = "댓글 정보와 같은 브랜드 향수 조회")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeDetailSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
         Perfume perfume = perfumeService.findById(perfumeId);
-        Page<Perfume> similarPerfumes = perfumeService.findPerfumesByBrand(perfume.getBrand().getId(),0);
+        Page<Perfume> similarPerfumes = perfumeService.findSameBrandPerfume(perfume.getBrand().getId(), perfumeId);
         List<PerfumeSimilarResponseDto> similarDto = similarPerfumes.stream().map(PerfumeSimilarResponseDto::new).collect(Collectors.toList());
         PerfumeDetailSecondResponseDto result = null;
         if(memberService.isTokenNullOrEmpty(token)) {

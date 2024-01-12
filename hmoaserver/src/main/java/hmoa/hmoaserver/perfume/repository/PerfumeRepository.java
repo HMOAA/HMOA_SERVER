@@ -23,6 +23,7 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
     Page<Perfume> findAllByBrandIdOrderByKoreanNameAscIdAsc(Long brandId, Pageable pageable);
 
     Page<Perfume> findAllByBrandIdOrderByHeartCountDescIdAsc(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdAndIdNot(Long brandId, Long excludedId, Pageable pageable);
 
     Optional<Perfume> findByBrandIdAndKoreanName(Long brandId, String koreanName);
 }

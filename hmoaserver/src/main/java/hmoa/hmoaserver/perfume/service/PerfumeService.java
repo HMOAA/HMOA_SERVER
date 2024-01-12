@@ -96,6 +96,14 @@ public class PerfumeService {
         }
     }
 
+    public Page<Perfume> findSameBrandPerfume(Long brandId, Long perfumeId) {
+        try {
+            return perfumeRepository.findAllByBrandIdAndIdNot(brandId, perfumeId, PageRequest.of(0, 6));
+        } catch (DataAccessException | ConstraintViolationException e) {
+            throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
     public boolean isExistPerfume(PerfumeSaveRequestDto dto) {
         Brand brand = brandRepository.findByBrandName(dto.getABrandName())
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
