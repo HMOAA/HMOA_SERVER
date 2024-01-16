@@ -14,7 +14,12 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
      * 한글 이름 , 영어 이름 포함하여 검색
      */
     @Query(
-            value = "SELECT p FROM Perfume p WHERE p.koreanName LIKE %:koreanName% OR p.englishName LIKE %:englishName% ORDER BY p.koreanName ASC"
+            value = "SELECT p FROM Perfume p" +
+                    " WHERE p.koreanName LIKE %:koreanName% OR" +
+                    " p.englishName LIKE %:englishName% OR" +
+                    " p.brand.brandName LIKE %:koreanName% OR" +
+                    " p.brand.englishName LIKE %:englishName%" +
+                    " ORDER BY p.koreanName ASC"
     )
     Page<Perfume> findAllSearch(@Param("koreanName") String koreanName, @Param("englishName") String englishName, Pageable pageable);
 

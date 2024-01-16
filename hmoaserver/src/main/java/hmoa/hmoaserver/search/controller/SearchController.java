@@ -66,7 +66,6 @@ public class SearchController {
         Member member = memberService.findByMember(token);
         List<PerfumeSearchResponseDto> perfumes = perfumePage.stream().map(perfume -> {
             boolean isLiked = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
-            log.info("{}", isLiked);
             return new PerfumeSearchResponseDto(perfume, isLiked);
         }).collect(Collectors.toList());
 

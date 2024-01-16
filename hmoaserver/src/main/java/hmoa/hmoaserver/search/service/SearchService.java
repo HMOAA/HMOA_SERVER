@@ -94,9 +94,8 @@ public class SearchService {
 
     public List<PerfumeNameSearchResponseDto> perfumeNameSearch(String perfumeName, int page){
         Pageable pageable = PageRequest.of(page,20);
-        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,perfumeName,pageable);
-        List<PerfumeNameSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeNameSearchResponseDto(perfume)).collect(Collectors.toList());
-        return dto;
+        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName, perfumeName, pageable);
+        return perfumes.stream().map(PerfumeNameSearchResponseDto::new).collect(Collectors.toList());
     }
 
     public Page<Community> communitySearchForCategory(Category category, String searchContent, int page) {
