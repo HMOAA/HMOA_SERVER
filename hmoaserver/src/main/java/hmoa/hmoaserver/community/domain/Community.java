@@ -41,17 +41,21 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityReport> communityReports = new ArrayList<>();
 
+    private int heartCount;
+
     @Builder
     public Community(String title, String content, Member member, Category category){
         this.title = title;
         this.content = content;
         this.category = category;
         this.member = member;
+        this.heartCount = 0;
     }
 
     public void modifyContent(String content){
         this.content = content;
     }
+
     public void modifyTitle(String title){this.title = title;}
 
     public boolean isWrited(Member member){
@@ -76,4 +80,11 @@ public class Community extends BaseEntity {
         return count;
     }
 
+    public void increaseHeartCount() {
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount() {
+        this.heartCount -= 1;
+    }
 }
