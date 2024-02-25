@@ -70,6 +70,7 @@ public class MemberService {
 
     @Transactional
     public Token reIssue(String rememberedToken){
+        log.info("{}", rememberedToken);
         if (!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)) {
             throw new CustomException(null, WRONG_TYPE_TOKEN);
         }
