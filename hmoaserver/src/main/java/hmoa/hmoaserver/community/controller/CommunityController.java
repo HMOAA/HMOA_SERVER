@@ -4,6 +4,7 @@ import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.*;
+import hmoa.hmoaserver.community.service.CommunityLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -36,18 +37,7 @@ public class CommunityController {
     private final PhotoService photoService;
     private final CommunityPhotoService communityPhotoService;
     private final CommunityService communityService;
-
-    @ApiOperation(value = "사진 저장 test")
-    @PostMapping(value = "/photosSave", consumes = "multipart/form-data")
-    public void savePhoto(@RequestPart(value = "image", required = false) List<MultipartFile> files) {
-        System.out.println(files.size());
-    }
-
-    @ApiOperation(value = "단일 사진 저장 test")
-    @PostMapping(value = "/photoSave")
-    public void savePhoto(@RequestPart(value = "file") MultipartFile file) {
-        System.out.println(file.getSize());
-    }
+    private final CommunityLikedMemberService communityLikedMemberService;
 
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save", consumes = "multipart/form-data")
@@ -139,11 +129,33 @@ public class CommunityController {
 
     @ApiOperation("커뮤니티 게시글 삭제")
     @DeleteMapping("/{communityId}")
-    public ResponseEntity<ResultDto> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId){
+    public ResponseEntity<ResultDto> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
         Member member = memberService.findByMember(token);
         return ResponseEntity.ok(ResultDto
                 .builder()
                 .data(communityService.deleteCommunity(member,communityId))
                 .build());
+    }
+
+    @ApiOperation("커뮤니티 좋아요")
+    @PutMapping("/{communityId}/like")
+    public ResponseEntity<ResultDto> saveCommunityLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
+        Member member = memberService.findByMember(token);
+        Community community = communityService.getCommunityById(communityId);
+
+        communityLikedMemberService.save(member, community);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("커뮤니티 좋아요 취소")
+    @DeleteMapping("/{communityId}/like")
+    public ResponseEntity<ResultDto> deleteCommunityLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
+        Member member = memberService.findByMember(token);
+        Community community = communityService.getCommunityById(communityId);
+
+        communityLikedMemberService.delete(member, community);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

@@ -87,15 +87,6 @@ public class PerfumeController {
                         .build());
     }
 
-//    @ApiOperation("향수 저장 테스트")
-//    @PostMapping("/test")
-//    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
-//        Perfume perfume = perfumeService.testSave(dto);
-//        Brand brand = perfume.getBrand();
-//        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume, false);
-//        return ResponseEntity.ok(result);
-//    }
-
     @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @GetMapping("/{perfumeId}")
     public ResponseEntity<PerfumeDetailResponseDto> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
@@ -116,9 +107,7 @@ public class PerfumeController {
 
     @ApiOperation(value = "향수 공감하기")
     @PutMapping("/{perfumeId}/like")
-    public ResponseEntity<ResultDto<Object>> savePerfumeLikes(
-            @PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token
-    ) {
+    public ResponseEntity<ResultDto<Object>> savePerfumeLikes(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
 
