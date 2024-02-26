@@ -62,9 +62,16 @@ public class CommunityController {
 
     @ApiOperation("카테고리 별 게시글 조회")
     @GetMapping("/category")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestParam Category category,@RequestParam int page) {
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token, @RequestParam Category category, @RequestParam int page) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(page,category);
-        List<CommunityByCategoryResponseDto> result = communities.stream().map(community -> new CommunityByCategoryResponseDto(community)).collect(Collectors.toList());
+        if (memberService.isTokenNullOrEmpty(token)) {
+            List<CommunityByCategoryResponseDto> result = communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList());
+            return ResponseEntity.ok(result);
+        }
+        Member member = memberService.findByMember(token);
+        List<CommunityByCategoryResponseDto> result = communities.stream().map(
+                community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
 

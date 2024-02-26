@@ -21,17 +21,15 @@ public class CommunityLikedMemberServiceImpl implements CommunityLikedMemberServ
     private final CommunityLikedMemberRepository communityLikedMemberRepository;
 
     @Override
-    public void isCommunityLikedMember(Member member, Community community) {
-        boolean communityLiked = communityLikedMemberRepository.findByMemberAndCommunity(member, community).isPresent();
-
-        if (communityLiked) {
-            throw new CustomException(null, DUPLICATE_LIKED);
-        }
+    public boolean isCommunityLikedMember(Member member, Community community) {
+        return communityLikedMemberRepository.findByMemberAndCommunity(member, community).isPresent();
     }
 
     @Override
     public CommunityLikedMember save(Member member, Community community) {
-        isCommunityLikedMember(member, community);
+        if (isCommunityLikedMember(member, community)) {
+            throw new CustomException(null, DUPLICATE_LIKED);
+        }
 
         try {
             CommunityLikedMember communityLikedMember = CommunityLikedMember.builder()
