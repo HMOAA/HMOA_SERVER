@@ -64,14 +64,17 @@ public class CommunityController {
     @GetMapping("/category")
     public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token, @RequestParam Category category, @RequestParam int page) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(page,category);
+
         if (memberService.isTokenNullOrEmpty(token)) {
-            List<CommunityByCategoryResponseDto> result = communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
         }
+
         Member member = memberService.findByMember(token);
-        List<CommunityByCategoryResponseDto> result = communities.stream().map(
-                community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
+        List<CommunityByCategoryResponseDto> result = communities
+                .stream()
+                .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(result);
     }
 
@@ -85,16 +88,15 @@ public class CommunityController {
 
     @ApiOperation("커뮤니티 게시글 단건 조회")
     @GetMapping("/{communityId}")
-    public ResponseEntity<CommunityDefaultResponseDto> findOneCommunity(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token,@PathVariable Long communityId){
+    public ResponseEntity<CommunityDefaultResponseDto> findOneCommunity(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token, @PathVariable Long communityId) {
         Community community = communityService.getCommunityById(communityId);
-        CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
+
         if(memberService.isTokenNullOrEmpty(token)){
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(new CommunityDefaultResponseDto(community));
         }
+
         Member member = memberService.findByMember(token);
-        if(member == community.getMember()){
-            result.setWrited(true);
-        }
+        CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community, community.isWrited(member), communityLikedMemberService.isCommunityLikedMember(member, community));
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
         return ResponseEntity.ok(result);
     }

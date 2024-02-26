@@ -23,6 +23,8 @@ public class CommunityDefaultResponseDto {
     private String myProfileImgUrl = DefaultValues.getProfileUrl();
     private String time;
     private boolean writed = false;
+    private int heartCount;
+    private boolean isLiked = false;
 
     public CommunityDefaultResponseDto(Community community){
         this.id=community.getId();
@@ -32,6 +34,28 @@ public class CommunityDefaultResponseDto {
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.heartCount = community.getHeartCount();
+        if (community.getCommunityPhotos() != null) {
+            List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
+            this.imagesCount = communityPhotos.size();
+
+            for (CommunityPhoto communityPhoto : communityPhotos) {
+                this.communityPhotos.add(new CommunityPhotoDefaultResponseDto(communityPhoto));
+            }
+        }
+    }
+
+    public CommunityDefaultResponseDto(Community community, boolean isWrited, boolean isLiked){
+        this.id=community.getId();
+        this.title=community.getTitle();
+        this.category=community.getCategory();
+        this.content=community.getContent();
+        this.author=community.getMember().getNickname();
+        this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
+        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.heartCount = community.getHeartCount();
+        this.writed = isWrited;
+        this.isLiked = isLiked;
         if (community.getCommunityPhotos() != null) {
             List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
             this.imagesCount = communityPhotos.size();

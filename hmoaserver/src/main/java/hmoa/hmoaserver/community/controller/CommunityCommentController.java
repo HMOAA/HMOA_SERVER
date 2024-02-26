@@ -38,7 +38,7 @@ public class CommunityCommentController {
 
     @ApiOperation("답변 저장")
     @PostMapping("/{communityId}/save")
-    public ResponseEntity<CommunityCommentDefaultResponseDto> saveCommunityComment(@RequestHeader("X-AUTH-TOKEN")String token, @PathVariable Long communityId, @RequestBody CommunityCommentDefaultRequestDto dto){
+    public ResponseEntity<CommunityCommentDefaultResponseDto> saveCommunityComment(@RequestHeader("X-AUTH-TOKEN")String token, @PathVariable Long communityId, @RequestBody CommunityCommentDefaultRequestDto dto) {
         Member member = memberService.findByMember(token);
         Community community = communityService.getCommunityById(communityId);
         CommunityComment comment = commentService.saveCommunityComment(member, dto, community);
@@ -49,7 +49,7 @@ public class CommunityCommentController {
 
     @ApiOperation("답변 조회")
     @PostMapping("/{communityId}/findAll")
-    public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN",required = false) String token, @PathVariable Long communityId,@RequestParam int page){
+    public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam int page) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId,page);
         Member member = null;
         if(!memberService.isTokenNullOrEmpty(token)){

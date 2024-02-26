@@ -2,9 +2,12 @@ package hmoa.hmoaserver.community.repository;
 
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.member.domain.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findAllByCategoryOrderByCreatedAtDescIdAsc(Category category, Pageable pageable);
