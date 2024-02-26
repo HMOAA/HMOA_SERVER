@@ -6,6 +6,8 @@ import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.*;
 import hmoa.hmoaserver.community.service.CommunityLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityService;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
@@ -27,6 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static hmoa.hmoaserver.fcm.NotificationType.COMMENT_LIKE;
+import static hmoa.hmoaserver.fcm.NotificationType.COMMUNITY_LIKE;
+
 @Api(tags = "커뮤니티")
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +43,7 @@ public class CommunityController {
     private final CommunityPhotoService communityPhotoService;
     private final CommunityService communityService;
     private final CommunityLikedMemberService communityLikedMemberService;
+    private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save", consumes = "multipart/form-data")
@@ -153,6 +159,7 @@ public class CommunityController {
         Community community = communityService.getCommunityById(communityId);
 
         communityLikedMemberService.save(member, community);
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_LIKE));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }

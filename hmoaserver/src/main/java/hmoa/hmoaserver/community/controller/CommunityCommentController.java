@@ -98,6 +98,7 @@ public class CommunityCommentController {
         CommunityComment comment = commentService.findOneComunityComment(commentId);
 
         commentLikedMemberService.save(member, comment);
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(comment.getMember().getId(), member.getNickname(), member.getId(), COMMENT_LIKE));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }

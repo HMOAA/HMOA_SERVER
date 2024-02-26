@@ -6,7 +6,6 @@ import hmoa.hmoaserver.fcm.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
@@ -42,7 +41,6 @@ public class PerfumeCommentService {
     private static final String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private static final String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
     private Long deleteMemberId= 0l;
-    private final MemberRepository memberRepository;
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;

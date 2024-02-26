@@ -25,12 +25,15 @@ public class FCMNotificationService {
 
     public String sendNotification(FCMNotificationRequestDto requestDto) {
         Optional<Member> member = memberRepository.findById(requestDto.getId());
+
         if (isSameMember(requestDto.getId(), requestDto.getSenderId())) {
             return SEND_NOT_REQUIRED;
         }
+
         if (member.isEmpty()) {
             return NOT_FOUND_MEMBER;
         }
+
         if (member.get().getFirebaseToken() == null) {
             return NOT_FOUND_TOKEN;
         }
@@ -38,11 +41,21 @@ public class FCMNotificationService {
         if (requestDto.getType() == COMMENT_LIKE) {
             return sendCommentLike(member.get(), requestDto.getSender());
         }
+
+        if (requestDto.getType() == COMMUNITY_LIKE) {
+            return sendCommunityLike(member.get(), requestDto.getSender());
+        }
+
         return sendAddComment(member.get(), requestDto.getSender());
     }
 
     private String sendCommentLike(Member member, String sender) {
         Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMENT_ALARM_MESSAGE);
+        return send(message);
+    }
+
+    private String sendCommunityLike(Member member, String sender) {
+        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE);
         return send(message);
     }
 
@@ -77,29 +90,4 @@ public class FCMNotificationService {
         return id.equals(senderId);
     }
 
-//    public String sendNotificationByToken(FCMNotificationRequestDto requestDto) {
-//        Optional<Member> member = memberRepository.findById(requestDto.getId());
-//
-//        if (member.isPresent()) {
-//            if (member.get().getFirebaseToken() != null) {
-//                Notification notification = Notification.builder()
-//                        .setTitle(requestDto.getTitle())
-//                        .setBody(requestDto.getContent())
-//                        .build();
-//
-//                Message message = Message.builder()
-//                        .setToken(member.get().getFirebaseToken())
-//                        .setNotification(notification)
-//                        .build();
-//
-//                try {
-//                    firebaseMessaging.send(message);
-//                    return "알림 전송 완료";
-//                } catch (FirebaseMessagingException e) {
-//                    e.printStackTrace();
-//                    return "알림 전송 실패";
-//                }
-//            } return "서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다.";
-//        } return "해당 유저가 존재하지 않습니다.";
-//    }
 }

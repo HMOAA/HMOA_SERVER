@@ -3,7 +3,6 @@ package hmoa.hmoaserver.community.service;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityLikedMember;
 import hmoa.hmoaserver.community.repository.CommunityLikedMemberRepository;
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
