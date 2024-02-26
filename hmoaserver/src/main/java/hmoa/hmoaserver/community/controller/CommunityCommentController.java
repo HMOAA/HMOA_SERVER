@@ -7,6 +7,7 @@ import hmoa.hmoaserver.community.dto.CommunityCommentAllResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
+import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.fcm.NotificationType;
@@ -34,6 +35,7 @@ public class CommunityCommentController {
     private final MemberService memberService;
     private final CommunityCommentService commentService;
     private final CommunityService communityService;
+    private final CommunityCommentLikedMemberService commentLikedMemberService;
     private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("답변 저장")
@@ -43,7 +45,8 @@ public class CommunityCommentController {
         Community community = communityService.getCommunityById(communityId);
         CommunityComment comment = commentService.saveCommunityComment(member, dto, community);
         fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_COMMENT));
-        CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment,true);
+        CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment, true, false);
+
         return ResponseEntity.ok(result);
     }
 
@@ -51,14 +54,19 @@ public class CommunityCommentController {
     @PostMapping("/{communityId}/findAll")
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam int page) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId,page);
-        Member member = null;
-        if(!memberService.isTokenNullOrEmpty(token)){
-            member = memberService.findByMember(token);
+
+        if(memberService.isTokenNullOrEmpty(token)){
+            List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDto));
         }
-        Member finalMember = member;
-        List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(comment -> new CommunityCommentDefaultResponseDto(comment,comment.isWrited(finalMember))).collect(Collectors.toList());
-        CommunityCommentAllResponseDto result = new CommunityCommentAllResponseDto(comments.getTotalElements(),commentDto);
-        return ResponseEntity.ok(result);
+
+        Member member = memberService.findByMember(token);
+        List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(
+                comment -> new CommunityCommentDefaultResponseDto(
+                        comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
+                )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDto));
     }
 
     @ApiOperation("답변 수정")
@@ -66,7 +74,10 @@ public class CommunityCommentController {
     public ResponseEntity<CommunityCommentDefaultResponseDto> modifyCommunityComment(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long commentId, @RequestBody CommunityCommentModifyRequestDto dto){
         Member member = memberService.findByMember(token);
         CommunityComment comment = commentService.modifyCommunityComment(member,dto,commentId);
-        return ResponseEntity.ok(new CommunityCommentDefaultResponseDto(comment,true));
+
+        return ResponseEntity.ok(new CommunityCommentDefaultResponseDto(
+                        comment, true, commentLikedMemberService.isCommentLikedMember(member, comment)
+                ));
     }
 
     @ApiOperation("답변 삭제")
@@ -74,8 +85,31 @@ public class CommunityCommentController {
     public ResponseEntity<ResultDto> modifyCommunityComment(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long commentId){
         Member member = memberService.findByMember(token);
         String code = commentService.deleteCommunityComment(member,commentId);
+
         return ResponseEntity.ok(ResultDto.builder()
                 .data(code)
                 .build());
+    }
+
+    @ApiOperation("답변 좋아요 하기")
+    @PutMapping("/{commentId}/like")
+    public ResponseEntity<ResultDto> saveCommentLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long commentId) {
+        Member member = memberService.findByMember(token);
+        CommunityComment comment = commentService.findOneComunityComment(commentId);
+
+        commentLikedMemberService.save(member, comment);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("답변 좋아요 취소하기")
+    @DeleteMapping("/{commentId}/like")
+    public ResponseEntity<ResultDto> deleteCommentLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long commentId) {
+        Member member = memberService.findByMember(token);
+        CommunityComment comment = commentService.findOneComunityComment(commentId);
+
+        commentLikedMemberService.delete(member, comment);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

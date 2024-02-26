@@ -24,7 +24,7 @@ public class CommunityDefaultResponseDto {
     private String time;
     private boolean writed = false;
     private int heartCount;
-    private boolean isLiked = false;
+    private boolean liked = false;
 
     public CommunityDefaultResponseDto(Community community){
         this.id=community.getId();
@@ -55,7 +55,7 @@ public class CommunityDefaultResponseDto {
         this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
         this.heartCount = community.getHeartCount();
         this.writed = isWrited;
-        this.isLiked = isLiked;
+        this.liked = isLiked;
         if (community.getCommunityPhotos() != null) {
             List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
             this.imagesCount = communityPhotos.size();

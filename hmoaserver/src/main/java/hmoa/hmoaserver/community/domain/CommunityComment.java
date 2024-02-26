@@ -23,6 +23,8 @@ public class CommunityComment extends BaseEntity {
 
     private String content;
 
+    private int heartCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "member_id")
     private Member member;
@@ -39,6 +41,7 @@ public class CommunityComment extends BaseEntity {
         this.content=content;
         this.member=member;
         this.community=community;
+        this.heartCount = 0;
     }
 
     public boolean isWrited(Member member){
@@ -47,5 +50,13 @@ public class CommunityComment extends BaseEntity {
 
     public void modifyComment(String content){
         this.content = content;
+    }
+
+    public void increaseHeartCount() {
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount() {
+        this.heartCount -= 1;
     }
 }

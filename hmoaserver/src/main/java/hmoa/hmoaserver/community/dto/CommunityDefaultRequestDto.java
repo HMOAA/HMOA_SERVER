@@ -17,7 +17,7 @@ import java.util.List;
 public class CommunityDefaultRequestDto {
     private String title;
     private String content;
-//    private Long viewCount;
+
     @NotBlank(message = "카테고리 선택 필수")
     private Category category;
 

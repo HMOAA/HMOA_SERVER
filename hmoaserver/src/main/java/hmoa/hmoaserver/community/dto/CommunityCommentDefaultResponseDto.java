@@ -2,7 +2,7 @@ package hmoa.hmoaserver.community.dto;
 
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.member.domain.Member;
+
 import lombok.Data;
 
 @Data
@@ -12,14 +12,26 @@ public class CommunityCommentDefaultResponseDto {
     private String author;
     private String profileImg;
     private String time;
-    private boolean writed;
+    private boolean writed = false;
+    private boolean liked = false;
+    private int heartCount;
 
-    public CommunityCommentDefaultResponseDto(CommunityComment comment, boolean writed){
+    public CommunityCommentDefaultResponseDto(CommunityComment comment){
         this.commentId = comment.getId();
         this.content = comment.getContent();
         this.author = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
         this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.heartCount = comment.getHeartCount();
+    }
+
+    public CommunityCommentDefaultResponseDto(CommunityComment comment, boolean writed, boolean liked){
+        this.commentId = comment.getId();
+        this.content = comment.getContent();
+        this.author = comment.getMember().getNickname();
+        this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
+        this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.liked = liked;
         this.writed = writed;
     }
 }

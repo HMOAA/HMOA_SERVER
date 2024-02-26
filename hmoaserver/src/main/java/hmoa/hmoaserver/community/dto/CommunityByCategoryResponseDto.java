@@ -11,7 +11,7 @@ public class CommunityByCategoryResponseDto {
     private String title;
     private int commentCount;
     private int heartCount;
-    private boolean isLiked = false;
+    private boolean liked = false;
 
     public CommunityByCategoryResponseDto(Community community){
         this.communityId = community.getId();
@@ -21,12 +21,12 @@ public class CommunityByCategoryResponseDto {
         this.heartCount = community.getHeartCount();
     }
 
-    public CommunityByCategoryResponseDto(Community community, boolean isLiked){
+    public CommunityByCategoryResponseDto(Community community, boolean liked){
         this.communityId = community.getId();
         this.category = community.getCategory();
         this.title = community.getTitle();
         this.commentCount = community.getCommunityComments().size();
         this.heartCount = community.getHeartCount();
-        this.isLiked = isLiked;
+        this.liked = liked;
     }
 }
