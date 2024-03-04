@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Magazine extends BaseEntity {
     @Id
-    @Column(name = "magazine_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "magazine_id")
     private long id;
     private int viewCount;
     private int likeCount;
@@ -28,5 +28,9 @@ public class Magazine extends BaseEntity {
         this.tags = tags;
         this.viewCount = 0;
         this.likeCount = 0;
+    }
+
+    public void setContents(List<ContentRequest> contents) {
+        this.contents = contents;
     }
 }

@@ -63,6 +63,7 @@ public class CommunityController {
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
         result.setWrited(true);
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
+
         return ResponseEntity.ok(result);
     }
 
@@ -89,6 +90,7 @@ public class CommunityController {
     public ResponseEntity<List<CommunityByCategoryResponseDto>> findCommunitByHome() {
         Page<Community> communities = communityService.getCommunityByHome();
         List<CommunityByCategoryResponseDto> result = communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList());
+
         return ResponseEntity.ok(result);
     }
 
@@ -104,6 +106,7 @@ public class CommunityController {
         Member member = memberService.findByMember(token);
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community, community.isWrited(member), communityLikedMemberService.isCommunityLikedMember(member, community));
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
+
         return ResponseEntity.ok(result);
     }
 
@@ -146,6 +149,7 @@ public class CommunityController {
     @DeleteMapping("/{communityId}")
     public ResponseEntity<ResultDto> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
         Member member = memberService.findByMember(token);
+
         return ResponseEntity.ok(ResultDto
                 .builder()
                 .data(communityService.deleteCommunity(member,communityId))
