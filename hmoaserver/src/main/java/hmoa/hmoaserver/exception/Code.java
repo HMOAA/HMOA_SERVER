@@ -52,6 +52,7 @@ public enum Code {
     HOMEMENU_NOT_FOUND(NOT_FOUND, "등록된 홈 메뉴가 없습니다."),
     COMMUNITYLIKEDMEMEBER_NOT_FOUND(NOT_FOUND, "등록된 커뮤니티 좋아요가 없습니다."),
     COMMUNITYCOMMENTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "등록된 커뮤니티 댓글 좋아요가 없습니다."),
+    MAGAZINE_NOT_FOUND(NOT_FOUND, "등록된 매거진이 없습니다"),
 
     /**
      * 409 CONFLICT
