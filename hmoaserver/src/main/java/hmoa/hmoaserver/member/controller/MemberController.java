@@ -6,6 +6,7 @@ import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
+import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
@@ -15,6 +16,7 @@ import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.dto.PerfumeCommentByMemberResponseDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 import hmoa.hmoaserver.photo.service.MemberPhotoService;
@@ -47,6 +49,7 @@ public class MemberController {
     private final PhotoService photoService;
     private final MemberPhotoService memberPhotoService;
     private final PerfumeCommentService perfumeCommentService;
+    private final CommunityCommentLikedMemberService commentLikedMemberService;
 
     @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
@@ -335,15 +338,14 @@ public class MemberController {
             )
     })
     @GetMapping("/perfumeComments")
-    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyPerfumeComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public ResponseEntity<List<PerfumeCommentByMemberResponseDto>> findMyPerfumeComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<PerfumeComment> comments = memberService.findPerfumeCommentByMe(token, page);
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
-        List<PerfumeCommentResponseDto> result = new ArrayList<>();
+        List<PerfumeCommentByMemberResponseDto> result = new ArrayList<>();
         for (PerfumeComment pc : comments) {
             boolean isLiked = perfumeCommentService.hasLike(pc, member);
-            PerfumeCommentResponseDto dto = new PerfumeCommentResponseDto(pc, isLiked, member);
-            result.add(dto);
+            result.add(new PerfumeCommentByMemberResponseDto(pc, isLiked, member));
         }
         return ResponseEntity.ok(result);
     }
@@ -379,11 +381,16 @@ public class MemberController {
     @GetMapping("/communityComments")
     public ResponseEntity<List<CommunityCommentByMemberResponseDto>> findMyCommunityComments(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         Page<CommunityComment> comments = memberService.findCommunityCommentByMe(token, page);
-        List<CommunityCommentByMemberResponseDto> result = comments.stream().map(comment -> new CommunityCommentByMemberResponseDto(comment, true)).collect(Collectors.toList());
+        Member member = memberService.findByMember(token);
+        List<CommunityCommentByMemberResponseDto> result = new ArrayList<>();
+        comments.forEach(comment -> {
+            boolean isLiked = commentLikedMemberService.isCommentLikedMember(member, comment);
+            result.add(new CommunityCommentByMemberResponseDto(comment, isLiked, member));
+        });
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "좋아요한 댓글")
+    @ApiOperation(value = "좋아요한 향수 댓글")
     @ApiResponses({
             @ApiResponse(
                     code = 200,
@@ -411,13 +418,51 @@ public class MemberController {
                     response = ExceptionResponseDto.class
             )
     })
-    @GetMapping("/hearts")
-    public ResponseEntity<List<PerfumeCommentResponseDto>> findMyHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+    @GetMapping("/perfumeHearts")
+    public ResponseEntity<List<PerfumeCommentByMemberResponseDto>> findMyPerfumeHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
         Page<PerfumeComment> comments = memberService.findByHeartComment(token, page);
-        List<PerfumeCommentResponseDto> results = comments.stream()
-                .map(comment -> new PerfumeCommentResponseDto(comment,true, member)).collect(Collectors.toList());
+        List<PerfumeCommentByMemberResponseDto> results = comments.stream()
+                .map(comment -> new PerfumeCommentByMemberResponseDto(comment,true, member)).collect(Collectors.toList());
+        return ResponseEntity.ok(results);
+    }
+
+    @ApiOperation(value = "좋아요한 커뮤니티 댓글")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "성공 응답",
+                    response = PerfumeCommentResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "토큰이 없거나 잘못됐습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 403,
+                    message = "접근 권한이 없습니다",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 404,
+                    message = "일치하는 회원이 없습니다.",
+                    response = ExceptionResponseDto.class
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "서버 에러입니다.",
+                    response = ExceptionResponseDto.class
+            )
+    })
+    @GetMapping("/communityHearts")
+    public ResponseEntity<List<CommunityCommentByMemberResponseDto>> findMyCommunityHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
+        Page<CommunityComment> comments = memberService.findCommunityCommentByMe(token, page);
+        List<CommunityCommentByMemberResponseDto> results = comments.stream()
+                .map(comment -> new CommunityCommentByMemberResponseDto(comment,true, member)).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
 

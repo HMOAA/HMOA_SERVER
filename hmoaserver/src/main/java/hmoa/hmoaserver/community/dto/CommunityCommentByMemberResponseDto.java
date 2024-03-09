@@ -2,25 +2,34 @@ package hmoa.hmoaserver.community.dto;
 
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.community.domain.CommunityComment;
+import hmoa.hmoaserver.member.domain.Member;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommunityCommentByMemberResponseDto {
-    private Long communityId;
-    private Long commentId;
+    private Long parentId;
+    private Long id;
     private String content;
-    private String author;
+    private int heartCount;
+    private String nickname;
     private String profileImg;
-    private String time;
-    private boolean writed;
+    private String createAt;
+    private boolean isLiked = false;
+    private boolean isWrited = false;
 
-    public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean writed){
-        this.communityId = comment.getCommunity().getId();
-        this.commentId = comment.getId();
+    public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean isLiked, Member member){
+        this.parentId = comment.getCommunity().getId();
+        this.id = comment.getId();
         this.content = comment.getContent();
-        this.author = comment.getMember().getNickname();
+        this.heartCount = comment.getHeartCount();
+        this.nickname = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
-        this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
-        this.writed = writed;
+        this.createAt = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.isLiked = isLiked;
+        this.isWrited = comment.getMember().getId().equals(member.getId());
     }
 }
