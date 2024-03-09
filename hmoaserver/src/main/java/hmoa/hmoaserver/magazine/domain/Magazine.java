@@ -15,6 +15,7 @@ public class Magazine extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "magazine_id")
     private long id;
+    private String title;
     private int viewCount;
     private int likeCount;
     @ElementCollection
@@ -23,7 +24,8 @@ public class Magazine extends BaseEntity {
     private List<ContentRequest> contents = new ArrayList<>();
 
     @Builder
-    public Magazine(List<ContentRequest> contents, List<String> tags) {
+    public Magazine(String title, List<ContentRequest> contents, List<String> tags) {
+        this.title = title;
         this.contents = contents;
         this.tags = tags;
         this.viewCount = 0;
