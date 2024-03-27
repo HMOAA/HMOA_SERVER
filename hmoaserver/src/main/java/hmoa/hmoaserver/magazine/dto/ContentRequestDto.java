@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.magazine.dto;
 
-import hmoa.hmoaserver.magazine.domain.ContentRequest;
+import hmoa.hmoaserver.magazine.domain.MagazineContent;
 import hmoa.hmoaserver.magazine.domain.Magazine;
 import lombok.Data;
 
@@ -9,8 +9,8 @@ public class ContentRequestDto {
     private String type;
     private String data;
 
-    public ContentRequest toEntity(Magazine magazine) {
-        return ContentRequest.builder()
+    public MagazineContent toEntity(Magazine magazine) {
+        return MagazineContent.builder()
                 .type(type)
                 .data(data)
                 .magazine(magazine)

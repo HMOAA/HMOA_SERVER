@@ -3,10 +3,7 @@ package hmoa.hmoaserver.community.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.community.dto.CommunityCommentAllResponseDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
+import hmoa.hmoaserver.community.dto.*;
 import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
@@ -48,6 +45,17 @@ public class CommunityCommentController {
         CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment, true, false);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation("답변 단 건 조회")
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommunityCommentDefaultResponseDto> findOneCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long commentId) {
+        CommunityComment comment = commentService.findOneComunityComment(commentId);
+        if (memberService.isTokenNullOrEmpty(token)) {
+            return ResponseEntity.ok(new CommunityCommentDefaultResponseDto(comment));
+        }
+        Member member = memberService.findByMember(token);
+        return ResponseEntity.ok(new CommunityCommentDefaultResponseDto(comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)));
     }
 
     @ApiOperation("답변 조회")

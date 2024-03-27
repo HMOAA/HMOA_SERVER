@@ -22,7 +22,12 @@ public class CommunityCommentByMemberResponseDto {
     private boolean isWrited = false;
 
     public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean isLiked, Member member){
-        this.parentId = comment.getCommunity().getId();
+        if (comment.getCommunity() == null) {
+            this.parentId = -1L;
+        }
+        else {
+            this.parentId = comment.getCommunity().getId();
+        }
         this.id = comment.getId();
         this.content = comment.getContent();
         this.heartCount = comment.getHeartCount();

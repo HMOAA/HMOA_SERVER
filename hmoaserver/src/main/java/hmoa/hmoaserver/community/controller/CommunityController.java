@@ -69,7 +69,7 @@ public class CommunityController {
 
     @ApiOperation("카테고리 별 게시글 조회")
     @GetMapping("/category")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestHeader(name = "X-AUTH-TOKEN",required = false) String token, @RequestParam Category category, @RequestParam int page) {
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunity(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam int page) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(page,category);
 
         if (memberService.isTokenNullOrEmpty(token)) {
@@ -87,9 +87,17 @@ public class CommunityController {
 
     @ApiOperation("커뮤니티 홈 조회")
     @GetMapping("/home")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> findCommunitByHome() {
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findCommunitByHome(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token) {
         Page<Community> communities = communityService.getCommunityByHome();
-        List<CommunityByCategoryResponseDto> result = communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList());
+        if (memberService.isTokenNullOrEmpty(token)) {
+            return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+        }
+
+        Member member = memberService.findByMember(token);
+        List<CommunityByCategoryResponseDto> result = communities
+                .stream()
+                .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
     }

@@ -40,7 +40,6 @@ public class PerfumeCommentService {
     private String DEFALUT_PROFILE_URL;
     private static final String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private static final String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
-    private Long deleteMemberId= 0l;
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
@@ -105,7 +104,7 @@ public class PerfumeCommentService {
     /**
      * 비로그인시 댓글 조회
      */
-    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page) {
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page) {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page,10));
@@ -172,11 +171,19 @@ public class PerfumeCommentService {
         }
     }
 
+    public PerfumeComment findOnePerfumeComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
+    }
+
     public void deleteComment(Member member, Long commentId) {
         PerfumeComment perfumeComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(null,COMMENT_NOT_FOUND));
         if(member.getId() != perfumeComment.getMember().getId()) {
             throw new CustomException(null, FORBIDDEN_AUTHORIZATION);
         }
         commentRepository.delete(perfumeComment);
+    }
+
+    public boolean isPerfumeCommentLiked(PerfumeComment comment, Member member) {
+        return commentHeartRepository.findByPerfumeCommentAndMember(comment, member).isPresent();
     }
 }

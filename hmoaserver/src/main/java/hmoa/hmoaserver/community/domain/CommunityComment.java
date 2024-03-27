@@ -36,6 +36,9 @@ public class CommunityComment extends BaseEntity {
     @OneToMany(mappedBy = "communityComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityCommentReport> communityCommentReports = new ArrayList<>();
 
+    @OneToMany(mappedBy = "communityComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityCommentLikedMember> commentLikedMembers = new ArrayList<>();
+
     @Builder
     public CommunityComment(Member member, String content,Community community){
         this.content=content;
@@ -58,5 +61,9 @@ public class CommunityComment extends BaseEntity {
 
     public void decreaseHeartCount() {
         this.heartCount -= 1;
+    }
+
+    public void setCommunityIsNull() {
+        this.community = null;
     }
 }

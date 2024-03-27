@@ -2,6 +2,7 @@ package hmoa.hmoaserver.community.service;
 
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
 import hmoa.hmoaserver.community.dto.CommunityModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityRepository;
@@ -85,6 +86,8 @@ public class CommunityServiceImpl implements CommunityService {
         if(!community.isWrited(member)){
             throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
         }
+        List<CommunityComment> comments = community.getCommunityComments();
+        comments.forEach(CommunityComment::setCommunityIsNull);
         communityRepository.delete(community);
         return DELETE_SUCCESS;
     }

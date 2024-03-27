@@ -1,8 +1,7 @@
 package hmoa.hmoaserver.magazine.service;
 
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.magazine.domain.ContentRequest;
+import hmoa.hmoaserver.magazine.domain.MagazineContent;
 import hmoa.hmoaserver.magazine.domain.Magazine;
 import hmoa.hmoaserver.magazine.dto.ContentRequestDto;
 import hmoa.hmoaserver.magazine.dto.MagazineSaveRequestDto;
@@ -39,12 +38,12 @@ public class MagazineService {
     }
 
     public Magazine saveImages(Magazine magazine, List<MagazinePhoto> magazinePhotos) {
-        List<ContentRequest> contentRequests = magazine.getContents();
-        List<Integer> imageTypeIndexs = extractContentImageIndex(contentRequests);
+        List<MagazineContent> magazineContents = magazine.getContents();
+        List<Integer> imageTypeIndexs = extractContentImageIndex(magazineContents);
         int photoIndex = 0;
         if (imageTypeIndexs.size() == magazinePhotos.size()) {
             for(int index : imageTypeIndexs) {
-                contentRequests.get(index).setData(magazinePhotos.get(photoIndex++).getPhotoUrl());
+                magazineContents.get(index).setData(magazinePhotos.get(photoIndex++).getPhotoUrl());
             }
             return magazine;
         }
@@ -55,16 +54,20 @@ public class MagazineService {
         return magazineRepository.findById(magazineId).orElseThrow(() -> new CustomException(null, MAGAZINE_NOT_FOUND));
     }
 
-    private static List<ContentRequest> extractContentRequests(Magazine magazine, List<ContentRequestDto> contentRequestDtos) {
+    public void increaseViewCount(Magazine magazine) {
+        magazine.increaseViewCount();
+    }
+
+    private static List<MagazineContent> extractContentRequests(Magazine magazine, List<ContentRequestDto> contentRequestDtos) {
         return contentRequestDtos.stream()
                 .map(contentRequestDto -> contentRequestDto.toEntity(magazine))
                 .collect(Collectors.toList());
     }
 
-    private static List<Integer> extractContentImageIndex(List<ContentRequest> contentRequests) {
+    private static List<Integer> extractContentImageIndex(List<MagazineContent> magazineContents) {
         List<Integer> imageIndexs = new ArrayList<>();
-        for(int i = 0; i < contentRequests.size(); i++) {
-            if (contentRequests.get(i).getType().equals(IMAGE_TYPE)) {
+        for(int i = 0; i < magazineContents.size(); i++) {
+            if (magazineContents.get(i).getType().equals(IMAGE_TYPE)) {
                 imageIndexs.add(i);
             }
         }

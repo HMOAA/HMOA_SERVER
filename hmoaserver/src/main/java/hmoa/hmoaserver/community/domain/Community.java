@@ -35,11 +35,14 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPhoto> communityPhotos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.PERSIST)
     List<CommunityComment> communityComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityReport> communityReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityLikedMember> communityLikedMembers = new ArrayList<>();
 
     private int heartCount;
 

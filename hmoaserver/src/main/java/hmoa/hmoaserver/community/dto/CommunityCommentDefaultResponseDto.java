@@ -33,5 +33,6 @@ public class CommunityCommentDefaultResponseDto {
         this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
         this.liked = liked;
         this.writed = writed;
+        this.heartCount = comment.getHeartCount();
     }
 }

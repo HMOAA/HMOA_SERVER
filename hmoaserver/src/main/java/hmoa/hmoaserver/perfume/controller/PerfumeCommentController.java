@@ -64,6 +64,17 @@ public class PerfumeCommentController {
         return ResponseEntity.ok(new PerfumeCommentResponseDto(perfumeComment, false, member));
     }
 
+    @ApiOperation(value = "향수 댓글 단 건 조회")
+    @GetMapping("/comments/{commentId}")
+    public ResponseEntity<PerfumeCommentResponseDto> findOnePerfumeComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long commentId) {
+        PerfumeComment comment = commentService.findOnePerfumeComment(commentId);
+        if (memberService.isTokenNullOrEmpty(token)) {
+            return ResponseEntity.ok(new PerfumeCommentResponseDto(comment));
+        }
+        Member member = memberService.findByMember(token);
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, commentService.isPerfumeCommentLiked(comment, member), member));
+    }
+
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(최신순)")
     @ApiResponses({
             @ApiResponse(
@@ -132,11 +143,11 @@ public class PerfumeCommentController {
     @GetMapping("/{perfumeId}/comments/top")
     public ResponseEntity<PerfumeCommentGetResponseDto> findTopCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token) {
         if (memberService.isTokenNullOrEmpty(token)) {
-            PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10);
+            PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId, page,10);
             return ResponseEntity.ok(result);
         }
         Member member = memberService.findByMember(token);
-        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId,page,10,member);
+        PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId, page,10, member);
         return ResponseEntity.ok(result);
     }
 

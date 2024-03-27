@@ -61,6 +61,10 @@ public class PerfumeComment extends BaseEntity {
         this.content=content;
     }
 
+    public boolean isWrited(Member member) {
+        return this.member.getId().equals(member.getId());
+    }
+
     public PerfumeComment modifyCommentMember(Member member) {
         this.member = member;
         return null;

@@ -2,6 +2,8 @@ package hmoa.hmoaserver.common;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class DateUtils {
     public static String calcurateDaysAgo(LocalDateTime past){
@@ -19,5 +21,11 @@ public class DateUtils {
             long yearsAgo = daysAgo / 365;
             return yearsAgo + "년 전";
         }
+    }
+
+    public static String extractDate(LocalDateTime createAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+
+        return createAt.format(formatter);
     }
 }

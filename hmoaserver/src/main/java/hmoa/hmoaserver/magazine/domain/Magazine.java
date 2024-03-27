@@ -21,10 +21,10 @@ public class Magazine extends BaseEntity {
     @ElementCollection
     private List<String> tags;
     @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentRequest> contents = new ArrayList<>();
+    private List<MagazineContent> contents = new ArrayList<>();
 
     @Builder
-    public Magazine(String title, List<ContentRequest> contents, List<String> tags) {
+    public Magazine(String title, List<MagazineContent> contents, List<String> tags) {
         this.title = title;
         this.contents = contents;
         this.tags = tags;
@@ -32,7 +32,11 @@ public class Magazine extends BaseEntity {
         this.likeCount = 0;
     }
 
-    public void setContents(List<ContentRequest> contents) {
+    public void setContents(List<MagazineContent> contents) {
         this.contents = contents;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 }

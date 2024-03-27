@@ -2,6 +2,7 @@ package hmoa.hmoaserver.magazine.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.magazine.domain.Magazine;
+import hmoa.hmoaserver.magazine.dto.MagazineResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineSaveRequestDto;
 import hmoa.hmoaserver.magazine.service.MagazineService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -43,5 +44,16 @@ public class MagazineController {
         magazineService.saveImages(magazine, photos);
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("매거진 단건 조회")
+    @GetMapping("/{magazineId}")
+    public ResponseEntity<MagazineResponseDto> findOneMagazine(@PathVariable Long magazineId) {
+        Magazine magazine = magazineService.findById(magazineId);
+        magazineService.increaseViewCount(magazine);
+
+        MagazineResponseDto result = new MagazineResponseDto(magazine);
+
+        return ResponseEntity.ok(result);
     }
 }

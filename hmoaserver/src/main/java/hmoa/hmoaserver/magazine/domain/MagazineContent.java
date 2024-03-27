@@ -7,9 +7,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ContentRequest {
+public class MagazineContent {
     @Id
-    @Column(name = "content_request_id")
+    @Column(name = "magazine_content_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String type;
@@ -20,7 +20,7 @@ public class ContentRequest {
     private Magazine magazine;
 
     @Builder
-    public ContentRequest(String type, String data, Magazine magazine) {
+    public MagazineContent(String type, String data, Magazine magazine) {
         this.type = type;
         this.data = data;
         this.magazine = magazine;
