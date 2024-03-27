@@ -63,18 +63,37 @@ public class CommunityCommentController {
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam int page) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId,page);
 
-        if(memberService.isTokenNullOrEmpty(token)){
-            List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDto));
+        if (memberService.isTokenNullOrEmpty(token)) {
+            List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
         }
 
         Member member = memberService.findByMember(token);
-        List<CommunityCommentDefaultResponseDto> commentDto = comments.stream().map(
+        List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(
                 comment -> new CommunityCommentDefaultResponseDto(
                         comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
                 )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDto));
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+    }
+
+    @ApiOperation(value = "답변 조회 (커서 페이징)", notes = "처음 Cursor는 0으로 보내기, 다음 Cursor는 마지막 Comment의 id 값 보내기.")
+    @GetMapping("/{communityId}/findAll/cursor")
+    public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam Long cursor) {
+        Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId, cursor);
+
+        if (memberService.isTokenNullOrEmpty(token)) {
+            List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+        }
+
+        Member member = memberService.findByMember(token);
+        List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(
+                comment -> new CommunityCommentDefaultResponseDto(
+                        comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
+                )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
     }
 
     @ApiOperation("답변 수정")

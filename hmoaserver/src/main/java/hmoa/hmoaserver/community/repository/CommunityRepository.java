@@ -21,10 +21,11 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
             String title, String content, Pageable pageable
     );
 
+    // 커뮤니티의 카테고리별 최신순 lastCommentId보다 낮은 게시글을 조회
     @Query("SELECT c " +
             "FROM Community c " +
             "WHERE c.id < ?1 AND " +
             "c.category = ?2 " +
-            "ORDER BY c.createdAt DESC")
+            "ORDER BY c.createdAt DESC, c.id ASC")
     Page<Community> findCommunityNextPage(Long lastCommentId, Category category, PageRequest pageRequest);
 }

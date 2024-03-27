@@ -41,7 +41,7 @@ public class SearchController {
     private final MemberService memberService;
     private final PerfumeLikedMemberService perfumeLikedMemberService;
 
-    @ApiOperation(value = "브랜드 전부 불러오기",notes = "consonant ㄱ부터 1로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ 순 입니다.")
+    @ApiOperation(value = "브랜드 전부 불러오기", notes = "consonant ㄱ부터 1로 ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㄲㄸㅃㅆㅉ 순 입니다.")
     @GetMapping("/brandAll")
     public ResponseEntity<List<BrandDefaultResponseDto>> brandSearchAll(@RequestParam int consonant) {
         return ResponseEntity.ok(searchService.brandSearchAll(consonant));

@@ -2,31 +2,24 @@ package hmoa.hmoaserver.community.service;
 
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.community.dto.CommunityCommentAllResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommunityCommentServiceImpl implements CommunityCommentService{
-    private final static String DELETE_COMMENT = "답변 삭제 성공";
+    private static final String DELETE_COMMENT = "답변 삭제 성공";
+    private static final PageRequest pageReqeust = PageRequest.of(0, 10);
     private final CommunityCommentRepository commentRepository;
 
     @Override
@@ -36,7 +29,15 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, int pageNum) {
-        return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 6));
+        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdAsc(communityId, PageRequest.of(pageNum, 6));
+    }
+
+    @Override
+    public Page<CommunityComment> findAllCommunityComment(Long communityId, Long cursor) {
+        if (isFirstCursor(cursor)) {
+            return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdAsc(communityId, pageReqeust);
+        }
+        return commentRepository.findCommunityCommentNextPage(communityId, cursor, pageReqeust);
     }
 
 
@@ -68,4 +69,7 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         return DELETE_COMMENT;
     }
 
+    private static boolean isFirstCursor(Long cursor) {
+        return cursor == 0;
+    }
 }

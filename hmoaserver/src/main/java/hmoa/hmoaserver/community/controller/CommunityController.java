@@ -85,7 +85,7 @@ public class CommunityController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation("카테고리 별 게시글 조회 (커서 페이징)")
+    @ApiOperation(value = "카테고리 별 게시글 조회 (커서 페이징)", notes = "처음 Cursor는 0으로 보내기, 다음 Cursor는 마지막 Comment의 id 값 보내기.")
     @GetMapping("/category/cursor")
     public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunityByCursor(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam Long cursor) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(cursor, category);
