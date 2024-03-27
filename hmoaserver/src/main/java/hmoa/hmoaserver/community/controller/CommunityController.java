@@ -85,6 +85,24 @@ public class CommunityController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiOperation("카테고리 별 게시글 조회 (커서 페이징)")
+    @GetMapping("/category/cursor")
+    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunityByCursor(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam Long cursor) {
+        Page<Community> communities = communityService.getAllCommunitysByCategory(cursor, category);
+
+        if (memberService.isTokenNullOrEmpty(token)) {
+            return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+        }
+
+        Member member = memberService.findByMember(token);
+        List<CommunityByCategoryResponseDto> result = communities
+                .stream()
+                .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
     @ApiOperation("커뮤니티 홈 조회")
     @GetMapping("/home")
     public ResponseEntity<List<CommunityByCategoryResponseDto>> findCommunitByHome(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token) {

@@ -15,6 +15,7 @@ import java.util.List;
 public interface CommunityService {
     Community saveCommunity(Member member, CommunityDefaultRequestDto communityDefaultRequestDto);
     Page<Community> getAllCommunitysByCategory(int page, Category category);
+    Page<Community> getAllCommunitysByCategory(Long cursor, Category category);
     Page<Community> getCommunityByHome();
     Community getCommunityById(Long communityId);
     Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto, Long communityId, List<CommunityPhoto> deleteCommunityPhotos);
