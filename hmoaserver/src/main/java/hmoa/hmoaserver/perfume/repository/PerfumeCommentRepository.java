@@ -16,15 +16,20 @@ public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, 
     Page<PerfumeComment> findAllByMember(Member member, Pageable pageable);
     List<PerfumeComment> findAllByMemberId(Long memberId);
     Optional<PerfumeComment> findById(Long id);
-
     Page<PerfumeComment> findAllByPerfumeId(Long perfumeId, Pageable pageable);
 
     /**
      * 최신순
      */
-    Page<PerfumeComment> findAllByPerfumeIdOrderByCreatedAtDescIdAsc(Long perfumeId, Pageable pageable);
+    Page<PerfumeComment> findAllByPerfumeIdOrderByCreatedAtDescIdDesc(Long perfumeId, Pageable pageable);
 
-
+    @Query("SELECT pc " +
+            "FROM PerfumeComment pc " +
+            "WHERE pc.perfume.id = ?1 " +
+            "AND pc.id < ?2 " +
+            "ORDER BY pc.createdAt DESC, pc.id DESC")
+    Page<PerfumeComment> findPerfumeCommentOrderByCreatedAtNextCursor(Long perfumeId, Long cursor, Pageable pageable);
+    Long countByPerfumeId(Long perfumeId);
     /**
      * 좋아요순
      */

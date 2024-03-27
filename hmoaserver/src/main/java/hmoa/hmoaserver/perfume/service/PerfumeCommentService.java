@@ -40,6 +40,7 @@ public class PerfumeCommentService {
     private String DEFALUT_PROFILE_URL;
     private static final String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private static final String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
+    private static final PageRequest pageRequest = PageRequest.of(0, 10);
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
@@ -107,7 +108,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page,10));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount,dto);
@@ -116,12 +117,22 @@ public class PerfumeCommentService {
         }
     }
 
+    public Page<PerfumeComment> findCommentsByPerfume(Long perfumeId, Long cursor) {
+        if (isFirstCursor(cursor)) {
+            return commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, pageRequest);
+        }
+        return commentRepository.findPerfumeCommentOrderByCreatedAtNextCursor(perfumeId, cursor, pageRequest);
+    }
+
+    public Long totalCountsByPerfume(Long perfumeId) {
+        return commentRepository.countByPerfumeId(perfumeId);
+    }
     /**
      * 로그인 시 댓글 조회
      */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
         try {
-            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page,10));
+            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page,10));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
                 if (hasLike(comment,member)) {
@@ -141,7 +152,7 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdAsc(perfumeId,PageRequest.of(page, size));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page, size));
             Long commentCount = foundComments.getTotalElements();
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
             return new PerfumeCommentGetResponseDto(commentCount, dto);
@@ -185,5 +196,9 @@ public class PerfumeCommentService {
 
     public boolean isPerfumeCommentLiked(PerfumeComment comment, Member member) {
         return commentHeartRepository.findByPerfumeCommentAndMember(comment, member).isPresent();
+    }
+
+    private static boolean isFirstCursor(Long cursor) {
+        return cursor == 0;
     }
 }

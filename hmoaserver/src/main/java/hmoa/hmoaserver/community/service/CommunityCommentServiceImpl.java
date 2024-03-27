@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CommunityCommentServiceImpl implements CommunityCommentService{
     private static final String DELETE_COMMENT = "답변 삭제 성공";
-    private static final PageRequest pageReqeust = PageRequest.of(0, 10);
+    private static final PageRequest pageReqeust = PageRequest.of(0, 6);
     private final CommunityCommentRepository commentRepository;
 
     @Override
@@ -29,13 +29,13 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, int pageNum) {
-        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdAsc(communityId, PageRequest.of(pageNum, 6));
+        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, PageRequest.of(pageNum, 6));
     }
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, Long cursor) {
         if (isFirstCursor(cursor)) {
-            return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdAsc(communityId, pageReqeust);
+            return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, pageReqeust);
         }
         return commentRepository.findCommunityCommentNextPage(communityId, cursor, pageReqeust);
     }

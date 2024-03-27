@@ -41,13 +41,13 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getAllCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdAsc(category, PageRequest.of(page,10));
+        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page,10));
     }
 
     @Override
     public Page<Community> getAllCommunitysByCategory(Long cursor, Category category) {
         if (isFirstCursor(cursor)) {
-            return communityRepository.findAllByCategoryOrderByCreatedAtDescIdAsc(category, pageRequest);
+            return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, pageRequest);
         }
         return communityRepository.findCommunityNextPage(cursor, category, pageRequest);
     }

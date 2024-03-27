@@ -18,8 +18,12 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = {"향수댓글"})
 @RestController
@@ -111,6 +115,25 @@ public class PerfumeCommentController {
         Member member = memberService.findByMember(token);
         PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(최신순 , 커서 페이징)", notes = "처음 Cursor는 0으로 보내기, 다음 Cursor는 마지막 Comment의 id 값 보내기.")
+    @GetMapping("/{perfumeId}/comments/cursor")
+    public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long perfumeId, @RequestParam Long cursor) {
+        Page<PerfumeComment> comments = commentService.findCommentsByPerfume(perfumeId, cursor);
+        Long count = commentService.totalCountsByPerfume(perfumeId);
+
+        if (memberService.isTokenNullOrEmpty(token)) {
+            List<PerfumeCommentResponseDto> dtos = comments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
+            return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, dtos));
+        }
+
+        Member member = memberService.findByMember(token);
+        List<PerfumeCommentResponseDto> dtos = comments.stream().map(comment ->
+                new PerfumeCommentResponseDto(comment, commentService.isPerfumeCommentLiked(comment, member), member))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, dtos));
     }
 
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
