@@ -40,6 +40,11 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         return commentRepository.findCommunityCommentNextPage(communityId, cursor, pageReqeust);
     }
 
+    @Override
+    public Long countAllCommunityComment(Long communityId) {
+        return commentRepository.countByCommunityId(communityId);
+    }
+
 
     @Override
     @Transactional

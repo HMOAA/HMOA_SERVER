@@ -81,10 +81,11 @@ public class CommunityCommentController {
     @GetMapping("/{communityId}/findAll/cursor")
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam Long cursor) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId, cursor);
+        Long count = commentService.countAllCommunityComment(communityId);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, commentDtos));
         }
 
         Member member = memberService.findByMember(token);
@@ -93,7 +94,7 @@ public class CommunityCommentController {
                         comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
                 )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, commentDtos));
     }
 
     @ApiOperation("답변 수정")

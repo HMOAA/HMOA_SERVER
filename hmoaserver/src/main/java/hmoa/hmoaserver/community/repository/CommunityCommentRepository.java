@@ -17,4 +17,5 @@ public interface CommunityCommentRepository extends JpaRepository<CommunityComme
             "AND c.id < ?2 " +
             "ORDER BY c.createdAt DESC, c.id ASC")
     Page<CommunityComment> findCommunityCommentNextPage(Long communityId, Long cursor, Pageable pageable);
+    Long countByCommunityId(Long communityId);
 }

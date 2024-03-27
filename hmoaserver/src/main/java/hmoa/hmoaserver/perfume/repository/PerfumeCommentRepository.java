@@ -5,6 +5,7 @@ import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public interface PerfumeCommentRepository extends JpaRepository<PerfumeComment, 
      * 최신순
      */
     Page<PerfumeComment> findAllByPerfumeIdOrderByCreatedAtDescIdAsc(Long perfumeId, Pageable pageable);
+
 
     /**
      * 좋아요순
