@@ -53,6 +53,7 @@ public enum Code {
     COMMUNITYLIKEDMEMEBER_NOT_FOUND(NOT_FOUND, "등록된 커뮤니티 좋아요가 없습니다."),
     COMMUNITYCOMMENTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "등록된 커뮤니티 댓글 좋아요가 없습니다."),
     MAGAZINE_NOT_FOUND(NOT_FOUND, "등록된 매거진이 없습니다"),
+    MAGAZINELIKEDMEMBER_NOT_FOUND(NOT_FOUND, "등록된 매거진 좋아요가 없습니다."),
 
     /**
      * 409 CONFLICT

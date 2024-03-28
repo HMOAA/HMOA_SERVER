@@ -5,8 +5,10 @@ import hmoa.hmoaserver.magazine.domain.Magazine;
 import hmoa.hmoaserver.magazine.dto.MagazineListResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineSaveRequestDto;
+import hmoa.hmoaserver.magazine.service.MagazineLikedMemberService;
 import hmoa.hmoaserver.magazine.service.MagazineService;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.photo.domain.MagazinePhoto;
 import hmoa.hmoaserver.photo.service.MagazinePhotoService;
 import io.swagger.annotations.Api;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 public class MagazineController {
     private final MagazineService magazineService;
     private final MagazinePhotoService magazinePhotoService;
+    private final MemberService memberService;
+    private final MagazineLikedMemberService magazineLikedMemberService;
 
     @ApiOperation("매거진 저장")
     @PostMapping("/save")
@@ -76,5 +80,27 @@ public class MagazineController {
         MagazineResponseDto result = new MagazineResponseDto(magazine);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation("매거진 좋아요")
+    @PutMapping("/{magazineId}/like")
+    private ResponseEntity<ResultDto> saveMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+        Member member = memberService.findByMember(token);
+        Magazine magazine = magazineService.findById(magazineId);
+
+        magazineLikedMemberService.save(magazine, member);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("매거진 좋아요 취소")
+    @DeleteMapping("/{magazineId}/like")
+    private ResponseEntity<ResultDto> deleteMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+        Member member = memberService.findByMember(token);
+        Magazine magazine = magazineService.findById(magazineId);
+
+        magazineLikedMemberService.delete(magazine, member);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

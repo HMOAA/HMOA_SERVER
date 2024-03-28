@@ -25,6 +25,9 @@ public class Magazine extends BaseEntity {
     @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MagazineContent> contents = new ArrayList<>();
 
+    @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MagazineLikedMember> likedMembers = new ArrayList<>();
+
     @Builder
     public Magazine(String title, List<MagazineContent> contents, List<String> tags) {
         this.title = title;

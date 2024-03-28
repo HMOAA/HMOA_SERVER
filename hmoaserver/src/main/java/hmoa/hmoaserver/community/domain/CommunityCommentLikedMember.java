@@ -20,12 +20,12 @@ public class CommunityCommentLikedMember {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="community_comment_id")
+    @JoinColumn(name = "community_comment_id")
     private CommunityComment communityComment;
 
     @Builder

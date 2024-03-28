@@ -1,5 +1,4 @@
-package hmoa.hmoaserver.community.domain;
-
+package hmoa.hmoaserver.magazine.domain;
 
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
@@ -14,11 +13,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommunityLikedMember {
+public class MagazineLikedMember {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "heart_id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -26,12 +25,12 @@ public class CommunityLikedMember {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Community community;
+    @JoinColumn(name = "magazine_id")
+    private Magazine magazine;
 
     @Builder
-    public CommunityLikedMember(Member member, Community community) {
+    public MagazineLikedMember(Member member, Magazine magazine) {
         this.member = member;
-        this.community = community;
+        this.magazine = magazine;
     }
 }

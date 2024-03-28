@@ -36,7 +36,7 @@ public class MagazineService {
             magazine.setContents(extractContentRequests(magazine, magazineSaveRequestDto.getContents()));
             return magazine;
         } catch (RuntimeException e) {
-            throw new CustomException(null, SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
