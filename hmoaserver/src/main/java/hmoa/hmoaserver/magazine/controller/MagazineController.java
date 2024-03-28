@@ -2,6 +2,7 @@ package hmoa.hmoaserver.magazine.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.magazine.domain.Magazine;
+import hmoa.hmoaserver.magazine.dto.MagazineListResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineSaveRequestDto;
 import hmoa.hmoaserver.magazine.service.MagazineService;
@@ -12,12 +13,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "매거진")
 @RestController
@@ -54,6 +57,14 @@ public class MagazineController {
         magazineService.savePreview(magazine, magazinePhotoService.saveMagazinePhoto(magazine, List.of(file)).get(0), previewContent);
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("최신 매거진 목록 조회")
+    @GetMapping("/list")
+    private ResponseEntity<List<MagazineListResponseDto>> findMagazineList(@RequestParam int page) {
+        Page<Magazine> magazines = magazineService.findRecentMagazineList(page);
+
+        return ResponseEntity.ok(magazines.stream().map(magazine -> new MagazineListResponseDto(magazine)).collect(Collectors.toList()));
     }
 
     @ApiOperation("매거진 단건 조회")

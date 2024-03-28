@@ -9,6 +9,9 @@ import hmoa.hmoaserver.magazine.repository.MagazineRepository;
 import hmoa.hmoaserver.photo.domain.MagazinePhoto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,11 @@ public class MagazineService {
     public Magazine savePreview(Magazine magazine, MagazinePhoto magazinePhoto, String content) {
         magazine.setPreviews(content, magazinePhoto.getPhotoUrl());
         return magazine;
+    }
+
+    public Page<Magazine> findRecentMagazineList(int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        return magazineRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     public Magazine saveImages(Magazine magazine, List<MagazinePhoto> magazinePhotos) {
