@@ -16,6 +16,8 @@ public class Magazine extends BaseEntity {
     @Column(name = "magazine_id")
     private long id;
     private String title;
+    private String preview;
+    private String previewImgUrl;
     private int viewCount;
     private int likeCount;
     @ElementCollection
@@ -32,11 +34,24 @@ public class Magazine extends BaseEntity {
         this.likeCount = 0;
     }
 
+    public void setPreviews(String preview, String previewImgUrl) {
+        this.preview = preview;
+        this.previewImgUrl = previewImgUrl;
+    }
+
     public void setContents(List<MagazineContent> contents) {
         this.contents = contents;
     }
 
     public void increaseViewCount() {
         this.viewCount++;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
     }
 }

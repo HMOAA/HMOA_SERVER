@@ -46,6 +46,16 @@ public class MagazineController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation("매거진 프리뷰 저장")
+    @PostMapping(value = "/preview/{magazineId}", consumes = "multipart/form-data")
+    public ResponseEntity<ResultDto> saveMagazinePreview(@PathVariable Long magazineId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestPart(value="image", required = false) MultipartFile file, @RequestParam("previewContent") String previewContent) {
+        Magazine magazine = magazineService.findById(magazineId);
+
+        magazineService.savePreview(magazine, magazinePhotoService.saveMagazinePhoto(magazine, List.of(file)).get(0), previewContent);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("매거진 단건 조회")
     @GetMapping("/{magazineId}")
     public ResponseEntity<MagazineResponseDto> findOneMagazine(@PathVariable Long magazineId) {

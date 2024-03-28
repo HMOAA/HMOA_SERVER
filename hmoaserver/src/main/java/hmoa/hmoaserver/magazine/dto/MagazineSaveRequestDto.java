@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class MagazineSaveRequestDto {
     private String title;
+    private String preview;
     private List<ContentRequestDto> contents;
     private List<String> tags;
 

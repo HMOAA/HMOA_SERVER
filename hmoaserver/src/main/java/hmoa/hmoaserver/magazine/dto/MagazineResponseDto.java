@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 public class MagazineResponseDto {
     private String title;
     private String createAt;
+    private String preview;
+    private String previewImgUrl;
     private List<ContentResponseDto> contents;
     private List<String> tags;
     private int viewCount;
@@ -23,5 +25,7 @@ public class MagazineResponseDto {
         this.tags = magazine.getTags();
         this.viewCount = magazine.getViewCount();
         this.likeCount = magazine.getLikeCount();
+        this.preview = magazine.getPreview();
+        this.previewImgUrl = magazine.getPreviewImgUrl();
     }
 }

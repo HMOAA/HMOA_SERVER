@@ -37,6 +37,11 @@ public class MagazineService {
         }
     }
 
+    public Magazine savePreview(Magazine magazine, MagazinePhoto magazinePhoto, String content) {
+        magazine.setPreviews(content, magazinePhoto.getPhotoUrl());
+        return magazine;
+    }
+
     public Magazine saveImages(Magazine magazine, List<MagazinePhoto> magazinePhotos) {
         List<MagazineContent> magazineContents = magazine.getContents();
         List<Integer> imageTypeIndexs = extractContentImageIndex(magazineContents);
