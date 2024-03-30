@@ -73,13 +73,18 @@ public class MagazineController {
 
     @ApiOperation("매거진 단건 조회")
     @GetMapping("/{magazineId}")
-    public ResponseEntity<MagazineResponseDto> findOneMagazine(@PathVariable Long magazineId) {
+    public ResponseEntity<MagazineResponseDto> findOneMagazine(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
         Magazine magazine = magazineService.findById(magazineId);
         magazineService.increaseViewCount(magazine);
 
-        MagazineResponseDto result = new MagazineResponseDto(magazine);
+        if (memberService.isTokenNullOrEmpty(token)) {
+            return ResponseEntity.ok(new MagazineResponseDto(magazine));
+        }
 
-        return ResponseEntity.ok(result);
+        Member member = memberService.findByMember(token);
+        boolean isLiked = magazineLikedMemberService.isMagazineLikedMember(magazine,member);
+
+        return ResponseEntity.ok(new MagazineResponseDto(magazine, isLiked));
     }
 
     @ApiOperation("매거진 좋아요")
