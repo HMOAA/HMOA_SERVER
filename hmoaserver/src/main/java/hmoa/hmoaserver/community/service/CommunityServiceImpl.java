@@ -26,6 +26,7 @@ import java.util.List;
 public class CommunityServiceImpl implements CommunityService {
     private static final String DELETE_SUCCESS = "삭제 성공";
     private static final PageRequest pageRequest = PageRequest.of(0, 10);
+    private static final int PAGE_SIZE = 10;
     private final CommunityRepository communityRepository;
     private final CommunityPhotoService communityPhotoService;
 
@@ -41,7 +42,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getAllCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page,10));
+        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page,PAGE_SIZE));
     }
 
     @Override
@@ -53,8 +54,13 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public Page<Community> getTopCommunitysByCategory(int page, Category category) {
+        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PAGE_SIZE));
+    }
+
+    @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, 10));
+        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, PAGE_SIZE));
     }
 
     @Override

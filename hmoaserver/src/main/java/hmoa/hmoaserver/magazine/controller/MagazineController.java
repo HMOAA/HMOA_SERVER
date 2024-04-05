@@ -1,10 +1,14 @@
 package hmoa.hmoaserver.magazine.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.community.domain.Category;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.magazine.domain.Magazine;
 import hmoa.hmoaserver.magazine.dto.MagazineListResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineResponseDto;
 import hmoa.hmoaserver.magazine.dto.MagazineSaveRequestDto;
+import hmoa.hmoaserver.magazine.dto.TopTastingResponseDto;
 import hmoa.hmoaserver.magazine.service.MagazineLikedMemberService;
 import hmoa.hmoaserver.magazine.service.MagazineService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -34,6 +38,7 @@ public class MagazineController {
     private final MagazinePhotoService magazinePhotoService;
     private final MemberService memberService;
     private final MagazineLikedMemberService magazineLikedMemberService;
+    private final CommunityService communityService;
 
     @ApiOperation("매거진 저장")
     @PostMapping("/save")
@@ -53,6 +58,14 @@ public class MagazineController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "매거진 탑 시향기 조회", notes = "시향기 조회 100글자 이후는 ... 으로 잘라서 응답하도록 하였습니다.!")
+    @GetMapping("/tastingComment")
+    public ResponseEntity<List<TopTastingResponseDto>> getMagazineTastingComment() {
+        Page<Community> communities = communityService.getTopCommunitysByCategory(0, Category.시향기);
+
+        return ResponseEntity.ok(communities.stream().map(TopTastingResponseDto::new).collect(Collectors.toList()));
+    }
+
     @ApiOperation("매거진 프리뷰 저장")
     @PostMapping(value = "/preview/{magazineId}", consumes = "multipart/form-data")
     public ResponseEntity<ResultDto> saveMagazinePreview(@PathVariable Long magazineId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestPart(value="image", required = false) MultipartFile file, @RequestParam("previewContent") String previewContent) {
@@ -68,12 +81,12 @@ public class MagazineController {
     private ResponseEntity<List<MagazineListResponseDto>> findMagazineList(@RequestParam int page) {
         Page<Magazine> magazines = magazineService.findRecentMagazineList(page);
 
-        return ResponseEntity.ok(magazines.stream().map(magazine -> new MagazineListResponseDto(magazine)).collect(Collectors.toList()));
+        return ResponseEntity.ok(magazines.stream().map(MagazineListResponseDto::new).collect(Collectors.toList()));
     }
 
     @ApiOperation("매거진 단건 조회")
     @GetMapping("/{magazineId}")
-    public ResponseEntity<MagazineResponseDto> findOneMagazine(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+    public ResponseEntity<MagazineResponseDto> findOneMagazine(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long magazineId) {
         Magazine magazine = magazineService.findById(magazineId);
         magazineService.increaseViewCount(magazine);
 

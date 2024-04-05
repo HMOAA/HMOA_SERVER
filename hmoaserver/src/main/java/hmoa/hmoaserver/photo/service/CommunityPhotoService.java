@@ -47,7 +47,7 @@ public class CommunityPhotoService {
     @Transactional
     public List<CommunityPhoto> saveCommunityPhotos(Community community, List<MultipartFile> files) {
 
-        String folderName = community.getTitle() + "/" + "community-" + community.getId();
+        String folderName = "community-" + community.getId();
 
         List<CommunityPhoto> savedPhotos = new ArrayList<>();
 
