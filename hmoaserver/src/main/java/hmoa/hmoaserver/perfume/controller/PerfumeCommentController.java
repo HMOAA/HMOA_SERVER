@@ -109,11 +109,11 @@ public class PerfumeCommentController {
     @GetMapping("/{perfumeId}/comments")
     public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@PathVariable Long perfumeId, @RequestParam int page, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token) {
         if (memberService.isTokenNullOrEmpty(token)) {
-            PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page);
+            PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId, page);
             return ResponseEntity.ok(result);
         }
         Member member = memberService.findByMember(token);
-        PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId,page,member);
+        PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId, page, member);
         return ResponseEntity.ok(result);
     }
 
@@ -121,11 +121,12 @@ public class PerfumeCommentController {
     @GetMapping("/{perfumeId}/comments/cursor")
     public ResponseEntity<PerfumeCommentGetResponseDto> findCommentsByPerfume(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long perfumeId, @RequestParam Long cursor) {
         Page<PerfumeComment> comments = commentService.findCommentsByPerfume(perfumeId, cursor);
+        boolean isLastPage = isLastPage(comments);
         Long count = commentService.totalCountsByPerfume(perfumeId);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             List<PerfumeCommentResponseDto> dtos = comments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, dtos));
+            return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, isLastPage, dtos));
         }
 
         Member member = memberService.findByMember(token);
@@ -133,7 +134,7 @@ public class PerfumeCommentController {
                 new PerfumeCommentResponseDto(comment, commentService.isPerfumeCommentLiked(comment, member), member))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, dtos));
+        return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, isLastPage, dtos));
     }
 
     @ApiOperation(value = "한 향수에 달린 댓글 전부 불러오기(좋아요순)")
@@ -269,5 +270,9 @@ public class PerfumeCommentController {
         Member member = memberService.findByMember(token);
         commentService.deleteComment(member, commentId);
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    private static boolean isLastPage(Page<PerfumeComment> comments) {
+        return !comments.hasNext();
     }
 }

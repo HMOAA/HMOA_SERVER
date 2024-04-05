@@ -22,14 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hmoa.hmoaserver.fcm.NotificationType.COMMENT_LIKE;
 import static hmoa.hmoaserver.fcm.NotificationType.COMMUNITY_LIKE;
 
 @Api(tags = "커뮤니티")
@@ -47,22 +45,32 @@ public class CommunityController {
 
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save", consumes = "multipart/form-data")
-    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
+    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(HttpServletRequest request, @RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
+        log.info("{}", request.getHeader("Content-Type"));
+        log.info("{}", request.getHeaderNames());
+        log.info("community 1");
         Member member = memberService.findByMember(token);
         Community community = communityService.saveCommunity(member, dto);
-
+        log.info("community 2");
         if (files == null) {
+            log.info("community 3 null");
             files = Collections.emptyList();
         }
-
+        log.info("community 3");
         photoService.validateCommunityPhotoCountExceeded(files.size());
 
+        log.info("community 4");
         if (files.size() != 0)
+            log.info("community 5 null");
             communityService.saveCommunityPhotos(community, files);
 
+        log.info("community 5");
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
+        log.info("community 6");
         result.setWrited(true);
+        log.info("community 7");
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
+        log.info("community 8");
 
         return ResponseEntity.ok(result);
     }
@@ -87,11 +95,12 @@ public class CommunityController {
 
     @ApiOperation(value = "카테고리 별 게시글 조회 (커서 페이징)", notes = "처음 Cursor는 0으로 보내기, 다음 Cursor는 마지막 Comment의 id 값 보내기.")
     @GetMapping("/category/cursor")
-    public ResponseEntity<List<CommunityByCategoryResponseDto>> findAllCommunityByCursor(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam Long cursor) {
+    public ResponseEntity<CommunityListResponseDto> findAllCommunityByCursor(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam Long cursor) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(cursor, category);
+        boolean isLastPage = !communities.hasNext();
 
         if (memberService.isTokenNullOrEmpty(token)) {
-            return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
+            return ResponseEntity.ok(new CommunityListResponseDto(isLastPage, communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList())));
         }
 
         Member member = memberService.findByMember(token);
@@ -100,7 +109,7 @@ public class CommunityController {
                 .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new CommunityListResponseDto(isLastPage, result));
     }
 
     @ApiOperation("커뮤니티 홈 조회")

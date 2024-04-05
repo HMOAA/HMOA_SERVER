@@ -109,9 +109,11 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, PageRequest.of(page,10));
+            boolean isLastPage = isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -133,14 +135,17 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
         try {
             Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page,10));
+            boolean isLastPage = isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if (hasLike(comment,member)) {
+                if (hasLike(comment, member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
                 }
                 return new PerfumeCommentResponseDto(comment,false, member);
             }).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         }catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -153,9 +158,11 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page, size));
+            boolean isLastPage = isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount, dto);
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -168,15 +175,18 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDescIdAsc(perfumeId,PageRequest.of(page,size));
+            boolean isLastPage = isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if (hasLike(comment,member)) {
+                if (hasLike(comment, member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
                 } else {
                     return new PerfumeCommentResponseDto(comment,false, member);
                 }
             }).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -200,5 +210,9 @@ public class PerfumeCommentService {
 
     private static boolean isFirstCursor(Long cursor) {
         return cursor == 0;
+    }
+
+    private static boolean isLastPage(Page<PerfumeComment> comments) {
+        return !comments.hasNext();
     }
 }

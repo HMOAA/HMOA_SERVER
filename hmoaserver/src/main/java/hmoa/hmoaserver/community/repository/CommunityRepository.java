@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findAllByCategoryOrderByCreatedAtDescIdDesc(Category category, Pageable pageable);
     Page<Community> findAllByCategoryOrderByHeartCountDescIdDesc(Category category, Pageable pageable);
@@ -15,6 +17,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
             Category category, String title, String content, Pageable pageable
     );
+
     Page<Community> findByTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
             String title, String content, Pageable pageable
     );

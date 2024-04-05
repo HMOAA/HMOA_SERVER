@@ -62,10 +62,11 @@ public class CommunityCommentController {
     @PostMapping("/{communityId}/findAll")
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam int page) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId,page);
+        boolean isLastPage = isLastPage(comments);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), isLastPage, commentDtos));
         }
 
         Member member = memberService.findByMember(token);
@@ -74,7 +75,7 @@ public class CommunityCommentController {
                         comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
                 )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), commentDtos));
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(comments.getTotalElements(), isLastPage, commentDtos));
     }
 
     @ApiOperation(value = "답변 조회 (커서 페이징)", notes = "처음 Cursor는 0으로 보내기, 다음 Cursor는 마지막 Comment의 id 값 보내기.")
@@ -82,10 +83,11 @@ public class CommunityCommentController {
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam Long cursor) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId, cursor);
         Long count = commentService.countAllCommunityComment(communityId);
+        boolean isLastPage = isLastPage(comments);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
-            return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, commentDtos));
+            return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, isLastPage, commentDtos));
         }
 
         Member member = memberService.findByMember(token);
@@ -94,7 +96,7 @@ public class CommunityCommentController {
                         comment, comment.isWrited(member), commentLikedMemberService.isCommentLikedMember(member, comment)
                 )).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, commentDtos));
+        return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, isLastPage, commentDtos));
     }
 
     @ApiOperation("답변 수정")
@@ -140,5 +142,9 @@ public class CommunityCommentController {
         commentLikedMemberService.delete(member, comment);
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    private static boolean isLastPage(Page<CommunityComment> comments) {
+        return !comments.hasNext();
     }
 }
