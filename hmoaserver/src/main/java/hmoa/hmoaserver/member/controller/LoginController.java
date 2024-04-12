@@ -2,11 +2,13 @@ package hmoa.hmoaserver.member.controller;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
+import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
 import hmoa.hmoaserver.member.dto.RememberedLoginRequestDto;
 import hmoa.hmoaserver.member.dto.TokenResponseDto;
 import hmoa.hmoaserver.member.service.MemberService;
+import hmoa.hmoaserver.member.service.RefreshRequestService;
 import hmoa.hmoaserver.oauth.AccessToken;
 import hmoa.hmoaserver.oauth.jwt.Token;
 import io.swagger.annotations.Api;
@@ -27,6 +29,7 @@ import static hmoa.hmoaserver.exception.Code.UNKNOWN_ERROR;
 @RequiredArgsConstructor
 public class LoginController {
     private final MemberService memberService;
+    private final RefreshRequestService refreshRequestService;
 
     @ApiOperation(value = "자동 로그인")
     @ApiResponses({
@@ -62,6 +65,10 @@ public class LoginController {
             Token token = memberService.reIssue(dto.getRememberedToken());
             TokenResponseDto responseDto = new TokenResponseDto(token);
             log.info("{}", dto.getRememberedToken());
+            //리프레쉬 요청 확인
+            Member member = memberService.findByMember(token.getAuthToken());
+            refreshRequestService.save(member, dto.getRememberedToken(), token.getRememberedToken());
+            //여기까지
             return ResponseEntity.ok(responseDto);
         } else {
             throw new CustomException(null, UNKNOWN_ERROR);

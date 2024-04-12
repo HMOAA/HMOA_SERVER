@@ -6,6 +6,8 @@ import hmoa.hmoaserver.brand.dto.BrandDefaultResponseDto;
 import hmoa.hmoaserver.brand.dto.BrandSaveRequestDto;
 import hmoa.hmoaserver.brand.service.BrandLikedMemberService;
 import hmoa.hmoaserver.brand.service.BrandService;
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
@@ -138,104 +140,109 @@ public class BrandController {
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(최신순)")
     @GetMapping("/perfumes/{brandId}/update")
-    public ResponseEntity<ResultDto<Object>> findUpdatePerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
+    public ResponseEntity<PagingDto<Object>> findUpdatePerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findUpdatePerfumesByBrand(brandId, pageNum);
+        boolean isLastPage = PageUtil.isLastPage(perfumes);
 
-        if (token == null) {
+        if (memberService.isTokenNullOrEmpty(token)) {
             List<PerfumeByBrandResponseDto> response = perfumes.stream()
                     .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
             return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
+                    .body(PagingDto.builder()
                             .data(response)
-                            .build()
-                    );
-        } else {
-            String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
-
-            List<PerfumeByBrandResponseDto> response = perfumes.stream()
-                    .map(perfume -> {
-                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
-                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
-
-            return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
-                            .data(response)
+                            .isLastPage(isLastPage)
                             .build()
                     );
         }
+
+        Member member = memberService.findByMember(token);
+
+        List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                .map(perfume -> {
+                    boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                    return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(PagingDto.builder()
+                        .data(response)
+                        .isLastPage(isLastPage)
+                        .build()
+                );
     }
+
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(문자열순)")
     @GetMapping("/perfumes/{brandId}")
-    public ResponseEntity<ResultDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
+    public ResponseEntity<PagingDto<Object>> findPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findPerfumesByBrand(brandId, pageNum);
+        boolean isLastPage = PageUtil.isLastPage(perfumes);
 
-        if (token == null) {
+        if (memberService.isTokenNullOrEmpty(token)) {
             List<PerfumeByBrandResponseDto> response = perfumes.stream()
                     .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
             return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
+                    .body(PagingDto.builder()
                             .data(response)
-                            .build()
-                    );
-        } else {
-            String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
-
-
-            List<PerfumeByBrandResponseDto> response = perfumes.stream()
-                    .map(perfume -> {
-                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
-                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
-
-            return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
-                            .data(response)
+                            .isLastPage(isLastPage)
                             .build()
                     );
         }
 
+        Member member = memberService.findByMember(token);
+
+        List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                .map(perfume -> {
+                    boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                    return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(PagingDto.builder()
+                        .data(response)
+                        .isLastPage(isLastPage)
+                        .build()
+                );
     }
 
     @ApiOperation(value = "브랜드별 향수 목록 조회(좋아요순)")
     @GetMapping("/perfumes/{brandId}/top")
-    public ResponseEntity<ResultDto<Object>> findTopPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
+    public ResponseEntity<PagingDto<Object>> findTopPerfumesByBrand(@PathVariable Long brandId, @RequestParam int pageNum, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
 
         brandService.findById(brandId);
         Page<Perfume> perfumes = perfumeService.findTopPerfumesByBrand(brandId, pageNum);
+        boolean isLastPage = PageUtil.isLastPage(perfumes);
 
-        if (token == null) {
+        if (memberService.isTokenNullOrEmpty(token)) {
             List<PerfumeByBrandResponseDto> response = perfumes.stream()
                     .map(perfume -> new PerfumeByBrandResponseDto(perfume, false)).collect(Collectors.toList());
 
             return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
+                    .body(PagingDto.builder()
                             .data(response)
+                            .isLastPage(isLastPage)
                             .build()
                     );
-        } else {
-            String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
+        }
+        String email = jwtService.getEmail(token);
+        Member member = memberService.findByEmail(email);
 
-            List<PerfumeByBrandResponseDto> response = perfumes.stream()
-                    .map(perfume -> {
-                        boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
-                        return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
+        List<PerfumeByBrandResponseDto> response = perfumes.stream()
+                .map(perfume -> {
+                    boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
+                    return new PerfumeByBrandResponseDto(perfume, memberLikedPerfume);}).collect(Collectors.toList());
 
-            return ResponseEntity.status(200)
-                    .body(ResultDto.builder()
-                            .data(response)
-                            .build()
-                    );
+        return ResponseEntity.status(200)
+                .body(PagingDto.builder()
+                        .data(response)
+                        .isLastPage(isLastPage)
+                        .build()
+                );
         }
 
     }
 
-}

@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.note.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
@@ -37,16 +39,18 @@ public class NoteController {
 
     @ApiOperation("노트 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findNote(@RequestParam int pageNum) {
+    public ResponseEntity<PagingDto<Object>> findNote(@RequestParam int pageNum) {
         Page<Note> notes = noteService.findNote(pageNum);
+        boolean isLastPage = PageUtil.isLastPage(notes);
 
         List<NoteDefaultResponseDto> responseDto = notes.stream()
-                .map(note -> new NoteDefaultResponseDto(note))
+                .map(NoteDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(200)
-                .body(ResultDto.builder()
+                .body(PagingDto.builder()
                         .data(responseDto)
+                        .isLastPage(isLastPage)
                         .build());
     }
 

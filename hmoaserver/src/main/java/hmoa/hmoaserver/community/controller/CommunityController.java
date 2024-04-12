@@ -45,32 +45,20 @@ public class CommunityController {
 
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save", consumes = "multipart/form-data")
-    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(HttpServletRequest request, @RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto){
-        log.info("{}", request.getHeader("Content-Type"));
-        log.info("{}", request.getHeaderNames());
-        log.info("community 1");
+    public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(HttpServletRequest request, @RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto) {
         Member member = memberService.findByMember(token);
         Community community = communityService.saveCommunity(member, dto);
-        log.info("community 2");
         if (files == null) {
-            log.info("community 3 null");
             files = Collections.emptyList();
         }
-        log.info("community 3");
         photoService.validateCommunityPhotoCountExceeded(files.size());
 
-        log.info("community 4");
         if (files.size() != 0)
-            log.info("community 5 null");
             communityService.saveCommunityPhotos(community, files);
 
-        log.info("community 5");
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community);
-        log.info("community 6");
         result.setWrited(true);
-        log.info("community 7");
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
-        log.info("community 8");
 
         return ResponseEntity.ok(result);
     }

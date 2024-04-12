@@ -19,6 +19,10 @@ public class PageUtil<T> {
         return new PageImpl<>(sublist, PageRequest.of(pageNo, pageSize), list.size());
     }
 
+    public static <T> boolean isLastPage(Page<T> list) {
+        return !list.hasNext();
+    }
+
     private static boolean validateIndex(int start, int end){
         return start <= end;
     }

@@ -8,6 +8,8 @@ import hmoa.hmoaserver.brandstory.domain.BrandStory;
 import hmoa.hmoaserver.brandstory.dto.BrandStoryDetailResponseDto;
 import hmoa.hmoaserver.brandstory.dto.BrandStorySaveRequestDto;
 import hmoa.hmoaserver.brandstory.dto.BrandStoryUpdateRequestDto;
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,16 +42,18 @@ public class BrandStoryController {
 
     @ApiOperation("브랜드스토리 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findBrandStory(@RequestParam int pageNum) {
+    public ResponseEntity<PagingDto<Object>> findBrandStory(@RequestParam int pageNum) {
         Page<BrandStory> brandStories = brandStoryService.findBrandStory(pageNum);
+        boolean isLastPage = PageUtil.isLastPage(brandStories);
 
         List<BrandStoryDefaultResponseDto> responseDto = brandStories.stream()
-                .map(brandStory -> new BrandStoryDefaultResponseDto(brandStory))
+                .map(BrandStoryDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(200)
-                .body(ResultDto.builder()
+                .body(PagingDto.builder()
                         .data(responseDto)
+                        .isLastPage(isLastPage)
                         .build());
     }
 

@@ -18,6 +18,7 @@ public class PerfumeByBrandResponseDto {
     private String perfumeName;
     private int heartCount;
     private boolean isLiked = false;
+    private boolean isLastPage = false;
 
     public PerfumeByBrandResponseDto(Perfume perfume, boolean isLiked){
         this.brandName=perfume.getBrand().getBrandName();
