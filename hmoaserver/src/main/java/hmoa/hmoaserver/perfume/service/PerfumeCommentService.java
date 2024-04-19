@@ -60,7 +60,7 @@ public class PerfumeCommentService {
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
 
-        if (!hasLike(findComment,findMember)) {
+        if (!hasLike(findComment, findMember)) {
             findComment.increaseHeartCount();
             PerfumeCommentLiked heart = PerfumeCommentLiked.builder()
                     .member(findMember)
@@ -71,10 +71,10 @@ public class PerfumeCommentService {
             return CREATE_LIKE_SUCCESS;
         }
 
-        throw new CustomException(null,DUPLICATE_LIKED);
+        throw new CustomException(null, DUPLICATE_LIKED);
     }
 
-    public String deleteLike(String token,Long commentId) {
+    public String deleteLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)

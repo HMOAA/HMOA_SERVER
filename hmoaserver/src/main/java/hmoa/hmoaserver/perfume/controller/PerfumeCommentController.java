@@ -249,7 +249,7 @@ public class PerfumeCommentController {
     })
     @DeleteMapping("comments/{commentId}/like")
     public ResponseEntity<ResultDto<Object>> deleteHeart(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
-        commentService.deleteLike(token,commentId);
+        commentService.deleteLike(token, commentId);
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());

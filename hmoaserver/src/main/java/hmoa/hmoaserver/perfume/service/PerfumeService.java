@@ -11,8 +11,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -23,6 +26,8 @@ public class PerfumeService {
 
     private final PerfumeRepository perfumeRepository;
     private final BrandRepository brandRepository;
+
+    private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 10);
 
     public Perfume save(PerfumeSaveRequestDto requestDto) {
         Brand brand = brandRepository.findByBrandName(requestDto.getABrandName())
@@ -108,5 +113,13 @@ public class PerfumeService {
         Brand brand = brandRepository.findByBrandName(dto.getABrandName())
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
         return perfumeRepository.findByBrandIdAndKoreanName(brand.getId(), dto.getBKoreanName()).isPresent();
+    }
+
+    public void saveRelase(Perfume perfume, LocalDate localDate) {
+        perfume.setRelaseDate(localDate);
+    }
+
+    public Page<Perfume> findRecentPerfumes() {
+        return perfumeRepository.findAllByOrderByRelaseDateDescIdAsc(DEFAULT_PAGEABLE);
     }
 }

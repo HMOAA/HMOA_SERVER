@@ -24,10 +24,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -230,6 +232,23 @@ public class PerfumeController {
         }
         Member member = memberService.findByMember(token);
         result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3,member),similarDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향수 출시일자 저장", notes = "향수 출시 일자 저장")
+    @PostMapping("/{perfumeId}/relase")
+    public ResponseEntity<ResultDto<Object>> saveRelase(@PathVariable Long perfumeId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate relase) {
+        Perfume perfume = perfumeService.findById(perfumeId);
+        perfumeService.saveRelase(perfume, relase);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "최신 향수 불러오기 (10개)", notes = "최신 향수 불러오기")
+    @GetMapping("/recentPerfume")
+    public ResponseEntity<List<RecentPerfumeResponseDto>> findRecentPerfume() {
+        Page<Perfume> perfumes = perfumeService.findRecentPerfumes();
+        List<RecentPerfumeResponseDto> result = perfumes.stream().map(RecentPerfumeResponseDto::new).collect(Collectors.toList());
+
         return ResponseEntity.ok(result);
     }
 }
