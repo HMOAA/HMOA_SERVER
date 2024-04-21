@@ -46,15 +46,30 @@ public class BrandStoryController {
         Page<BrandStory> brandStories = brandStoryService.findBrandStory(pageNum);
         boolean isLastPage = PageUtil.isLastPage(brandStories);
 
-        List<BrandStoryDefaultResponseDto> responseDto = brandStories.stream()
+        List<BrandStoryDefaultResponseDto> responseDtos = brandStories.stream()
                 .map(BrandStoryDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(PagingDto.builder()
-                        .data(responseDto)
+        return ResponseEntity.ok(PagingDto.builder()
+                        .data(responseDtos)
                         .isLastPage(isLastPage)
                         .build());
+    }
+
+    @ApiOperation("브랜드스토리 목록 조회 (커서 페이징)")
+    @GetMapping("/cursor")
+    public ResponseEntity<PagingDto<Object>> findBrandStroyByCursor(@RequestParam Long cursor) {
+        Page<BrandStory> brandStories = brandStoryService.findBrandStoryByCursor(cursor);
+        boolean isLastPage = PageUtil.isLastPage(brandStories);
+
+        List<BrandStoryDefaultResponseDto> responseDtos = brandStories.stream()
+                .map(BrandStoryDefaultResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .data(responseDtos)
+                .isLastPage(isLastPage)
+                .build());
     }
 
     @ApiOperation("브랜드스토리 단건 조회")

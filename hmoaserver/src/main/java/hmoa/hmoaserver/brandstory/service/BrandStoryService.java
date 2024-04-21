@@ -5,6 +5,8 @@ import hmoa.hmoaserver.brandstory.domain.BrandStory;
 import hmoa.hmoaserver.brandstory.dto.BrandStorySaveRequestDto;
 import hmoa.hmoaserver.brandstory.dto.BrandStoryUpdateRequestDto;
 import hmoa.hmoaserver.brandstory.repository.BrandStoryRepository;
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +25,21 @@ import static hmoa.hmoaserver.exception.Code.BRANDSTORY_NOT_FOUND;
 public class BrandStoryService {
 
     private final BrandStoryRepository brandStoryRepository;
+    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIFTY_SIZE.getSize());
 
     public BrandStory save(BrandStorySaveRequestDto requestDto) {
         return brandStoryRepository.save(requestDto.toEntity());
     }
 
     public Page<BrandStory> findBrandStory(int pageNum) {
-        return brandStoryRepository.findAll(PageRequest.of(pageNum, 15));
+        return brandStoryRepository.findAll(PageRequest.of(pageNum, PageSize.FIFTY_SIZE.getSize()));
+    }
+
+    public Page<BrandStory> findBrandStoryByCursor(Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return brandStoryRepository.findAllByOrderByIdDesc(DEFAULT_PAGE_REQUEST);
+        }
+        return brandStoryRepository.findBrandStoryNextPage(cursor, DEFAULT_PAGE_REQUEST);
     }
 
     public BrandStory findById(Long brandStoryId) {
