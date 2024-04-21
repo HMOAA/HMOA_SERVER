@@ -47,9 +47,24 @@ public class PerfumerController {
                 .map(PerfumerDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(PagingDto.builder()
+        return ResponseEntity.ok(PagingDto.builder()
                         .data(responseDto)
+                        .isLastPage(isLastPage)
+                        .build());
+    }
+
+    @ApiOperation("조향사 목록 조회 (커서 페이징)")
+    @GetMapping("/cursor")
+    public ResponseEntity<PagingDto<Object>> findPerfumerByCursor(@RequestParam Long cursor) {
+        Page<Perfumer> perfumers = perfumerService.findPerfumerByCursor(cursor);
+        boolean isLastPage = PageUtil.isLastPage(perfumers);
+
+        List<PerfumerDefaultResponseDto> responseDtos = perfumers.stream()
+                .map(PerfumerDefaultResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                        .data(responseDtos)
                         .isLastPage(isLastPage)
                         .build());
     }
