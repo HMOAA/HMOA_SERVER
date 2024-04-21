@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.community.service;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
@@ -19,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CommunityCommentServiceImpl implements CommunityCommentService{
     private static final String DELETE_COMMENT = "답변 삭제 성공";
-    private static final PageRequest pageReqeust = PageRequest.of(0, 6);
+    private static final PageRequest pageReqeust = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.SIX_SIZE.getSize());
     private final CommunityCommentRepository commentRepository;
 
     @Override
@@ -29,12 +31,12 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, int pageNum) {
-        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, PageRequest.of(pageNum, 6));
+        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, PageRequest.of(pageNum, PageSize.SIX_SIZE.getSize()));
     }
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, Long cursor) {
-        if (isFirstCursor(cursor)) {
+        if (PageUtil.isFistCursor(cursor)) {
             return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, pageReqeust);
         }
         return commentRepository.findCommunityCommentNextPage(communityId, cursor, pageReqeust);
@@ -72,9 +74,5 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         }
         commentRepository.delete(comment);
         return DELETE_COMMENT;
-    }
-
-    private static boolean isFirstCursor(Long cursor) {
-        return cursor == 0;
     }
 }

@@ -8,6 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PageUtil<T> {
+    public static PageRequest getCursorPageRequest(final int size) {
+        return PageRequest.of(PageSize.ZERO_PAGE.getSize(), size);
+    }
+
+    public static boolean isFistCursor(final Long cursor) {
+        return cursor == PageSize.ZERO_PAGE.getSize();
+    }
+
     public Page<T> convertListToPage(List<T> list, int pageNo, int pageSize){
         int startIdx = pageNo * pageSize;
         int endIdx = Math.min((startIdx + pageSize), list.size());
@@ -23,7 +31,7 @@ public class PageUtil<T> {
         return !list.hasNext();
     }
 
-    private static boolean validateIndex(int start, int end){
+    private static boolean validateIndex(final int start, final int end){
         return start <= end;
     }
 }

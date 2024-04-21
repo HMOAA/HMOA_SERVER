@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.community.service;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
@@ -25,8 +26,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class CommunityServiceImpl implements CommunityService {
     private static final String DELETE_SUCCESS = "삭제 성공";
-    private static final PageRequest pageRequest = PageRequest.of(0, 10);
-    private static final int PAGE_SIZE = 10;
+    private static final PageRequest pageRequest = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize());
     private final CommunityRepository communityRepository;
     private final CommunityPhotoService communityPhotoService;
 
@@ -42,7 +42,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getAllCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page,PAGE_SIZE));
+        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     @Override
@@ -55,12 +55,12 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getTopCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PAGE_SIZE));
+        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, PAGE_SIZE));
+        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, PageSize.TEN_SIZE.getSize()));
     }
 
     @Override

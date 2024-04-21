@@ -43,15 +43,30 @@ public class NoteController {
         Page<Note> notes = noteService.findNote(pageNum);
         boolean isLastPage = PageUtil.isLastPage(notes);
 
-        List<NoteDefaultResponseDto> responseDto = notes.stream()
+        List<NoteDefaultResponseDto> responseDtos = notes.stream()
                 .map(NoteDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(PagingDto.builder()
-                        .data(responseDto)
-                        .isLastPage(isLastPage)
-                        .build());
+        return ResponseEntity.ok(PagingDto.builder()
+                .data(responseDtos)
+                .isLastPage(isLastPage)
+                .build());
+    }
+
+    @ApiOperation("노트 목록 조회 (커서 페이징)")
+    @GetMapping("/cursor")
+    public ResponseEntity<PagingDto<Object>> findNoteByCursor(@RequestParam Long cursor) {
+        Page<Note> notes = noteService.findNoteByCursor(cursor);
+        boolean isLastPage = PageUtil.isLastPage(notes);
+
+        List<NoteDefaultResponseDto> responseDtos = notes.stream()
+                .map(NoteDefaultResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .data(responseDtos)
+                .isLastPage(isLastPage)
+                .build());
     }
 
     @ApiOperation("노트 단건 조회")

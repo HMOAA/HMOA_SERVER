@@ -8,6 +8,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class PagingDto<D> {
-    private final D data;
     private boolean isLastPage = false;
+    private final D data;
 }
