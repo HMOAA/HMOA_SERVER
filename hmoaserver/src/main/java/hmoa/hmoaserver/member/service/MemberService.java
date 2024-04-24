@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.member.service;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
@@ -42,13 +43,12 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
+    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize());
+
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
     private final ProviderService providerService;
-    private final PerfumeCommentRepository perfumeCommentRepository;
-    private final PerfumeCommentLikedRepository perfumeCommentHeartRepository;
     private final MemberPhotoService memberPhotoService;
-    private final CommunityCommentRepository communityCommentRepository;
 
     @Transactional
     public Member save(Member member){
@@ -58,6 +58,7 @@ public class MemberService {
             throw new RuntimeException(e);
         }
     }
+
     @Transactional
     public String delete(Member member){
         try {
@@ -199,30 +200,6 @@ public class MemberService {
         }
     }
 
-    public Page<PerfumeComment> findPerfumeCommentByMe(String token, int page){
-        String findEmail = jwtService.getEmail(token);
-        Member member = findByEmail(findEmail);
-        Pageable pageable = PageRequest.of(page,10);
-        return perfumeCommentRepository.findAllByMember(member,pageable);
-    }
-
-    public Page<CommunityComment> findCommunityCommentByMe(String token, int page) {
-        Member member = findByMember(token);
-        Pageable pageable = PageRequest.of(page, 10);
-        return communityCommentRepository.findAllByMember(member, pageable);
-    }
-
-    public Page<PerfumeComment> findByHeartComment(String token, int page){
-        String findEmail = jwtService.getEmail(token);
-        Member member = findByEmail(findEmail);
-        PageRequest pageRequest = PageRequest.of(page,10);
-        List<PerfumeCommentLiked> hearts= perfumeCommentHeartRepository.findAllByMemberId(member.getId());
-        List<PerfumeComment> comments = hearts.stream().map(heart -> heart.getPerfumeComment()).collect(Collectors.toList());
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start+pageRequest.getPageSize()), comments.size());
-        return new PageImpl<>(comments.subList(start,end),pageRequest,comments.size());
-    }
-
     @Transactional
     public void saveMemberPhoto(Member member, MultipartFile file) {
         if (member.getMemberPhoto() != null)
@@ -239,11 +216,6 @@ public class MemberService {
     @Transactional
     public void deleteFCMToken(Member member) {
         memberRepository.updateFirebaseTokenToNull(member.getId());
-    }
-
-    public Page<Community> findByMyCommunities(Member member, int page){
-        List<Community> communities = member.getCommunities();
-        return new PageUtil<Community>().convertListToPage(communities, page, 10);
     }
 
     public boolean isTokenNullOrEmpty(String token){

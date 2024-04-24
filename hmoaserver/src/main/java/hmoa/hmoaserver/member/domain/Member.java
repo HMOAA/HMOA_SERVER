@@ -4,6 +4,8 @@ import hmoa.hmoaserver.brand.domain.BrandLikedMember;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
+import hmoa.hmoaserver.community.domain.CommunityCommentLikedMember;
+import hmoa.hmoaserver.community.domain.CommunityLikedMember;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.domain.PerfumeLikedMember;
@@ -80,6 +82,12 @@ public class Member extends BaseEntity implements UserDetails {
     private List<Community> communities = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<CommunityCommentLikedMember> commentLikedMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<CommunityLikedMember> communityLikedMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<CommunityComment> communityComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
@@ -90,6 +98,9 @@ public class Member extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeWeather> perfumeWeathers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshRequest> refreshRequests = new ArrayList<>();
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
@@ -157,5 +168,9 @@ public class Member extends BaseEntity implements UserDetails {
         if (memberPhoto.isDeleted())
             return null;
         return memberPhoto;
+    }
+
+    public boolean isSameMember(Member member) {
+        return this.id.equals(member.getId());
     }
 }

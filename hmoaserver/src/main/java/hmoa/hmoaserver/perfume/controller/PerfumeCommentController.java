@@ -1,13 +1,19 @@
 package hmoa.hmoaserver.perfume.controller;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
+import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.dto.*;
+import hmoa.hmoaserver.perfume.service.PerfumeCommentLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeCommentService;
 
 import io.swagger.annotations.Api;
@@ -32,6 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PerfumeCommentController {
     private final PerfumeCommentService commentService;
+    private final PerfumeCommentLikedMemberService commentLikedMemberService;
     private final MemberService memberService;
 
     @ApiOperation(value = "향수 댓글 저장")
@@ -253,6 +260,42 @@ public class PerfumeCommentController {
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation(value = "내가 쓴 향수 댓글 조회 (커서 페이징)")
+    @GetMapping("comments/me")
+    public ResponseEntity<PagingDto<Object>> findAllByMember(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (cursor == 0) cursor = (long) PageSize.DEFAULT_CURSOR.getSize();
+        Page<PerfumeComment> comments = commentService.findPerfumeCommentByMemberAndCursor(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(comments);
+
+        List<PerfumeCommentByMemberResponseDto> result = comments.stream().map(comment ->
+                new PerfumeCommentByMemberResponseDto(comment, commentLikedMemberService.isMemberLikedPerfumeComment(member, comment), true))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result)
+                .build());
+    }
+
+    @ApiOperation(value = "내가 좋아요한 향수 댓글 조회 (커서 페이징)")
+    @GetMapping("comments/like")
+    public ResponseEntity<PagingDto<Object>> findAllByLiked(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (cursor == 0) cursor = (long) PageSize.DEFAULT_CURSOR.getSize();
+        Page<PerfumeCommentLiked> commentLikeds = commentLikedMemberService.findAllByMemberAndCursor(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(commentLikeds);
+
+        List<PerfumeCommentByMemberResponseDto> result = commentLikeds.stream().map(commentLiked ->
+                new PerfumeCommentByMemberResponseDto(commentLiked.getPerfumeComment(), true, member.isSameMember(commentLiked.getPerfumeComment().getMember())))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result)
+                .build());
     }
 
     @ApiOperation(value = "향수 댓글 수정")

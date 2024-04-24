@@ -18,6 +18,8 @@ public interface CommunityService {
     Page<Community> getAllCommunitysByCategory(Long cursor, Category category);
     Page<Community> getTopCommunitysByCategory(int page, Category category);
     Page<Community> getCommunityByHome();
+    Page<Community> getCommunityByMember(Member member, int page);
+    Page<Community> getCommunityByMemberAndCursor(Member member, Long cursor);
     Community getCommunityById(Long communityId);
     Community modifyCommunity(Member member, CommunityModifyRequestDto communityModifyRequestDto, Long communityId, List<CommunityPhoto> deleteCommunityPhotos);
     List<CommunityPhoto> saveCommunityPhotos(Community community, List<MultipartFile> files);

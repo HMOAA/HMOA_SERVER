@@ -60,7 +60,17 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(PageRequest.of(0, PageSize.TEN_SIZE.getSize()));
+        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(pageRequest);
+    }
+
+    @Override
+    public Page<Community> getCommunityByMember(Member member, int page) {
+        return communityRepository.findAllByMemberOrderByCreatedAtDescIdDesc(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<Community> getCommunityByMemberAndCursor(Member member, Long cursor) {
+        return communityRepository.findCommunityNextPageByMember(member, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
     }
 
     @Override

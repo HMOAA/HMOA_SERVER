@@ -43,6 +43,16 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
     }
 
     @Override
+    public Page<CommunityComment> findAllCommunityCommentByMember(Member member, int page) {
+        return commentRepository.findAllByMemberOrderByCreatedAtDescIdDesc(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<CommunityComment> findAllByMemberNextCursor(Member member, Long cursor) {
+        return commentRepository.findCommunityCommentByMemberNextPage(member, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
     public Long countAllCommunityComment(Long communityId) {
         return commentRepository.countByCommunityId(communityId);
     }

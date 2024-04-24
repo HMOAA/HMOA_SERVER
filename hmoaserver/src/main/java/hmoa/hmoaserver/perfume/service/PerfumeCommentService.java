@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.perfume.service;
 
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
@@ -52,6 +54,14 @@ public class PerfumeCommentService {
         Perfume findPerfume = perfumeService.findById(id);
         return commentRepository.save(dto.toEntity(member, findPerfume));
 
+    }
+
+    public Page<PerfumeComment> findPerfumeCommentByMember(Member member, int page) {
+        return commentRepository.findAllByMember(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    public Page<PerfumeComment> findPerfumeCommentByMemberAndCursor(Member member, Long cursor) {
+        return commentRepository.findPerfumeCommentByMemberAndNextCursor(member, cursor, pageRequest);
     }
 
     public String saveLike(String token, Long commentId) {
@@ -109,7 +119,7 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, PageRequest.of(page,10));
-            boolean isLastPage = isLastPage(foundComments);
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
 
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
@@ -120,7 +130,7 @@ public class PerfumeCommentService {
     }
 
     public Page<PerfumeComment> findCommentsByPerfume(Long perfumeId, Long cursor) {
-        if (isFirstCursor(cursor)) {
+        if (PageUtil.isFistCursor(cursor)) {
             return commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, pageRequest);
         }
         return commentRepository.findPerfumeCommentOrderByCreatedAtNextCursor(perfumeId, cursor, pageRequest);
@@ -129,13 +139,14 @@ public class PerfumeCommentService {
     public Long totalCountsByPerfume(Long perfumeId) {
         return commentRepository.countByPerfumeId(perfumeId);
     }
+
     /**
      * 로그인 시 댓글 조회
      */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
         try {
             Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page,10));
-            boolean isLastPage = isLastPage(foundComments);
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
 
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
@@ -158,7 +169,7 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page, size));
-            boolean isLastPage = isLastPage(foundComments);
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
 
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
@@ -175,7 +186,7 @@ public class PerfumeCommentService {
         try {
             Page<PerfumeComment> foundComments =
                     commentRepository.findAllByPerfumeIdOrderByHeartCountDescIdAsc(perfumeId,PageRequest.of(page,size));
-            boolean isLastPage = isLastPage(foundComments);
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
 
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
@@ -206,13 +217,5 @@ public class PerfumeCommentService {
 
     public boolean isPerfumeCommentLiked(PerfumeComment comment, Member member) {
         return commentHeartRepository.findByPerfumeCommentAndMember(comment, member).isPresent();
-    }
-
-    private static boolean isFirstCursor(Long cursor) {
-        return cursor == 0;
-    }
-
-    private static boolean isLastPage(Page<PerfumeComment> comments) {
-        return !comments.hasNext();
     }
 }

@@ -2,6 +2,7 @@ package hmoa.hmoaserver.community.repository;
 
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.member.domain.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
             Category category, String title, String content, Pageable pageable
     );
-
+    Page<Community> findAllByMemberOrderByCreatedAtDescIdDesc(Member member, Pageable pageable);
     Page<Community> findByTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
             String title, String content, Pageable pageable
     );
@@ -29,4 +30,11 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
             "c.category = ?2 " +
             "ORDER BY c.createdAt DESC, c.id Desc")
     Page<Community> findCommunityNextPage(Long lastCommentId, Category category, PageRequest pageRequest);
+
+    @Query("SELECT c " +
+            "FROM Community c " +
+            "WHERE c.member = ?1 AND " +
+            "c.id < ?2 " +
+            "ORDER BY c.createdAt DESC, c.id Desc")
+    Page<Community> findCommunityNextPageByMember(Member member, Long lastCommentId, PageRequest pageRequest);
 }

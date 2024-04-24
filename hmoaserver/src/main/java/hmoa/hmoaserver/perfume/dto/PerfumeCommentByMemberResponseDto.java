@@ -17,10 +17,10 @@ public class PerfumeCommentByMemberResponseDto {
     private Long parentId;
     private String profileImg;
     private boolean isLiked = false;
-    private boolean isWrited = false;
+    private boolean isWrited = true;
     private String createAt;
 
-    public PerfumeCommentByMemberResponseDto(PerfumeComment perfumeComment, boolean isLiked, Member member) {
+    public PerfumeCommentByMemberResponseDto(PerfumeComment perfumeComment, boolean isLiked, boolean isWrited) {
         this.id = perfumeComment.getId();
         this.content = perfumeComment.getContent();
         this.heartCount = perfumeComment.getHeartCount();
@@ -29,6 +29,6 @@ public class PerfumeCommentByMemberResponseDto {
         this.isLiked = isLiked;
         this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
-        this.isWrited = perfumeComment.getMember().getId().equals(member.getId());
+        this.isWrited = isWrited;
     }
 }

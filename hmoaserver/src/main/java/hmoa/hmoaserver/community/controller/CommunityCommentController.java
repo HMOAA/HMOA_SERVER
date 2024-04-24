@@ -1,8 +1,11 @@
 package hmoa.hmoaserver.community.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
+import hmoa.hmoaserver.community.domain.CommunityCommentLikedMember;
 import hmoa.hmoaserver.community.dto.*;
 import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
@@ -83,7 +86,7 @@ public class CommunityCommentController {
     public ResponseEntity<CommunityCommentAllResponseDto> findAllCommunityComment(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long communityId, @RequestParam Long cursor) {
         Page<CommunityComment> comments = commentService.findAllCommunityComment(communityId, cursor);
         Long count = commentService.countAllCommunityComment(communityId);
-        boolean isLastPage = isLastPage(comments);
+        boolean isLastPage = PageUtil.isLastPage(comments);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             List<CommunityCommentDefaultResponseDto> commentDtos = comments.stream().map(CommunityCommentDefaultResponseDto::new).collect(Collectors.toList());
@@ -97,6 +100,42 @@ public class CommunityCommentController {
                 )).collect(Collectors.toList());
 
         return ResponseEntity.ok(new CommunityCommentAllResponseDto(count, isLastPage, commentDtos));
+    }
+
+    @ApiOperation(value = "내가 쓴 커뮤니티 답변 (커서 페이징)")
+    @GetMapping("/me")
+    public ResponseEntity<PagingDto<Object>> findAllByMe(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<CommunityComment> comments = commentService.findAllByMemberNextCursor(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(comments);
+
+        List<CommunityCommentByMemberResponseDto> result = comments.stream().map(comment ->
+                new CommunityCommentByMemberResponseDto(comment, commentLikedMemberService.isCommentLikedMember(member, comment), true))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result).
+                build());
+    }
+
+    @ApiOperation(value = "내가 좋아요한 커뮤니티 답변 (커서 페이징)")
+    @GetMapping("/like")
+    public ResponseEntity<PagingDto<Object>> findAllByLike(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<CommunityCommentLikedMember> cclms = commentLikedMemberService.findAllByMemberAndCursor(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(cclms);
+
+        List<CommunityCommentByMemberResponseDto> result = cclms.stream().map(cclm ->
+                new CommunityCommentByMemberResponseDto(cclm.getCommunityComment(), true, member.isSameMember(cclm.getCommunityComment().getMember())))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result)
+                .build());
     }
 
     @ApiOperation("답변 수정")

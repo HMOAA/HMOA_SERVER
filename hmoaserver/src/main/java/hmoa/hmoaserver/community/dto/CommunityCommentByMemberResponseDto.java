@@ -21,7 +21,7 @@ public class CommunityCommentByMemberResponseDto {
     private boolean isLiked = false;
     private boolean isWrited = false;
 
-    public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean isLiked, Member member){
+    public CommunityCommentByMemberResponseDto(CommunityComment comment, boolean isLiked, boolean isWrited){
         if (comment.getCommunity() == null) {
             this.parentId = -1L;
         }
@@ -35,6 +35,6 @@ public class CommunityCommentByMemberResponseDto {
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
         this.createAt = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
         this.isLiked = isLiked;
-        this.isWrited = comment.getMember().getId().equals(member.getId());
+        this.isWrited = isWrited;
     }
 }

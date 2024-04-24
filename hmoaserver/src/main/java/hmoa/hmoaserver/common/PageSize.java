@@ -5,7 +5,8 @@ public enum PageSize {
     FIVE_SIZE(5),
     SIX_SIZE(6),
     TEN_SIZE(10),
-    FIFTY_SIZE(15);
+    FIFTY_SIZE(15),
+    DEFAULT_CURSOR(9_999_999);
 
     private final int size;
 

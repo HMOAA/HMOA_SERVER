@@ -12,6 +12,10 @@ public class PageUtil<T> {
         return PageRequest.of(PageSize.ZERO_PAGE.getSize(), size);
     }
 
+    public static Long convertFirstCursor(final Long cursor) {
+        return (long) PageSize.DEFAULT_CURSOR.getSize();
+    }
+
     public static boolean isFistCursor(final Long cursor) {
         return cursor == PageSize.ZERO_PAGE.getSize();
     }

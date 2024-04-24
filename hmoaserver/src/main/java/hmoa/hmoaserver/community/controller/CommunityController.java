@@ -1,8 +1,11 @@
 package hmoa.hmoaserver.community.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.domain.CommunityLikedMember;
 import hmoa.hmoaserver.community.dto.*;
 import hmoa.hmoaserver.community.service.CommunityLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityService;
@@ -85,7 +88,7 @@ public class CommunityController {
     @GetMapping("/category/cursor")
     public ResponseEntity<CommunityListResponseDto> findAllCommunityByCursor(@RequestHeader(name = "X-AUTH-TOKEN", required = false) String token, @RequestParam Category category, @RequestParam Long cursor) {
         Page<Community> communities = communityService.getAllCommunitysByCategory(cursor, category);
-        boolean isLastPage = !communities.hasNext();
+        boolean isLastPage = PageUtil.isLastPage(communities);
 
         if (memberService.isTokenNullOrEmpty(token)) {
             return ResponseEntity.ok(new CommunityListResponseDto(isLastPage, communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList())));
@@ -98,6 +101,42 @@ public class CommunityController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new CommunityListResponseDto(isLastPage, result));
+    }
+
+    @ApiOperation(value = "내가 쓴 게시글 조회 (커서 페이징)")
+    @GetMapping("/me")
+    public ResponseEntity<PagingDto<Object>> findAllCommunitiesByMember(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if(PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<Community> communities = communityService.getCommunityByMemberAndCursor(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(communities);
+
+        List<CommunityByCategoryResponseDto> result = communities.stream().map(community ->
+                new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result)
+                .build());
+    }
+
+    @ApiOperation(value = "내가 좋아요 한 게시글 조회 (커서 페이징)")
+    @GetMapping("/like")
+    public ResponseEntity<PagingDto<Object>> findAllCommunitiesByLiked(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if(PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<CommunityLikedMember> clms = communityLikedMemberService.findAllByMember(member, cursor);
+        boolean isLastPage = PageUtil.isLastPage(clms);
+
+        List<CommunityByCategoryResponseDto> result = clms.stream().map(clm ->
+                new CommunityByCategoryResponseDto(clm.getCommunity(), true))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(result)
+                .build());
     }
 
     @ApiOperation("커뮤니티 홈 조회")

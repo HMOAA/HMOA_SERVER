@@ -9,13 +9,21 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CommunityCommentRepository extends JpaRepository<CommunityComment,Long> {
     Page<CommunityComment> findAllByCommunityIdOrderByCreatedAtDescIdDesc(Long communityId, Pageable pageable);
-    Page<CommunityComment> findAllByMember(Member member, Pageable pageable);
+    Page<CommunityComment> findAllByMemberOrderByCreatedAtDescIdDesc(Member member, Pageable pageable);
 
-    @Query("SELECT c " +
-            "FROM CommunityComment c " +
-            "WHERE c.community.id = ?1 " +
-            "AND c.id < ?2 " +
-            "ORDER BY c.createdAt DESC, c.id DESC")
+    @Query("SELECT cc " +
+            "FROM CommunityComment cc " +
+            "WHERE cc.community.id = ?1 " +
+            "AND cc.id < ?2 " +
+            "ORDER BY cc.createdAt DESC, cc.id DESC")
     Page<CommunityComment> findCommunityCommentNextPage(Long communityId, Long cursor, Pageable pageable);
+
+    @Query("SELECT cc " +
+            "FROM CommunityComment cc " +
+            "WHERE cc.member = ?1 " +
+            "AND cc.id < ?2 " +
+            "ORDER BY cc.createdAt DESC, cc.id DESC")
+    Page<CommunityComment> findCommunityCommentByMemberNextPage(Member member, Long cursor, Pageable pageable);
+
     Long countByCommunityId(Long communityId);
 }

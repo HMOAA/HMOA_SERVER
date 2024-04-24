@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.community.service;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityLikedMember;
 import hmoa.hmoaserver.community.repository.CommunityLikedMemberRepository;
@@ -8,6 +9,8 @@ import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +63,11 @@ public class CommunityLikedMemberServiceImpl implements CommunityLikedMemberServ
     public CommunityLikedMember findOneCommunityLiked(Member member, Community community) {
         return communityLikedMemberRepository.findByMemberAndCommunity(member, community)
                 .orElseThrow(() -> new CustomException(null, COMMUNITYLIKEDMEMEBER_NOT_FOUND));
+    }
+
+    @Override
+    public Page<CommunityLikedMember> findAllByMember(Member member, Long cursor) {
+        return communityLikedMemberRepository.findAllByMemberNextCursor(member, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
     }
 
 }
