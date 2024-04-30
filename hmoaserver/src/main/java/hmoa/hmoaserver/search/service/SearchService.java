@@ -87,13 +87,13 @@ public class SearchService {
         return searchBrandList;
     }
 
-    public Page<Perfume> perfumeSearch(String perfumeName, String englishName,int page) {
-        Pageable pageable = PageRequest.of(page,6);
-        return perfumeRepository.findAllSearch(perfumeName,englishName,pageable);
+    public Page<Perfume> perfumeSearch(String perfumeName, String englishName, int page) {
+        Pageable pageable = PageRequest.of(page, 6);
+        return perfumeRepository.findAllSearch(perfumeName, englishName, pageable);
     }
 
     public List<PerfumeNameSearchResponseDto> perfumeNameSearch(String perfumeName, int page){
-        Pageable pageable = PageRequest.of(page,20);
+        Pageable pageable = PageRequest.of(page, 20);
         Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName, perfumeName, pageable);
         return perfumes.stream().map(PerfumeNameSearchResponseDto::new).collect(Collectors.toList());
     }
