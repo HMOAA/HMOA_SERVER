@@ -22,8 +22,8 @@ public class TopTastingResponseDto {
     private static String convertContent(String content) {
         String trimmedContent = content.replaceAll("\\s+", " ").trim();
 
-        if (trimmedContent.length() > 100) {
-            trimmedContent = trimmedContent.substring(0, 100);
+        if (trimmedContent.length() > 300) {
+            trimmedContent = trimmedContent.substring(0, 300);
             int lastSpaceIndex = trimmedContent.lastIndexOf(" ");
 
             if (lastSpaceIndex != -1) {

@@ -74,6 +74,13 @@ public class PerfumeController {
                         .build());
     }
 
+    @ApiOperation("향수 저장 새로운 버전")
+    @PostMapping("/newList")
+    public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody PerfumeNewRequestDto request) {
+        log.info("{}", request.getBaseNote());
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("향수 메인 사진 저장")
     @PostMapping("/{perfumeId}")
     public ResponseEntity<ResultDto<Object>> savePerfumePhoto(@RequestPart(value = "image") MultipartFile file, @PathVariable Long perfumeId) {

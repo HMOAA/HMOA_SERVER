@@ -21,7 +21,7 @@ public enum Code {
      */
     UNSUPPORTED_TOKEN(UNAUTHORIZED, "변조된 토큰입니다."),
     WRONG_TYPE_TOKEN(UNAUTHORIZED, "변조된 토큰입니다."),
-    EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다."),
+    EXPIRED_TOKEN(UNAUTHORIZED, "ACCESS Token이 만료되었습니다."),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
     UNAUTHORIZED_COMMENT(UNAUTHORIZED, "자신이 쓴 댓글만 수정이 가능합니다."),
 
@@ -33,7 +33,7 @@ public enum Code {
     /**
      * 404 NOT_FOUND
      */
-    UNKNOWN_ERROR(NOT_FOUND, "토큰이 존재하지 않습니다."),
+    UNKNOWN_ERROR(NOT_FOUND, "jwt가 존재하지 않습니다."),
     FILE_NOT_FOUND(NOT_FOUND, "등록된 파일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
     BRAND_NOT_FOUND(NOT_FOUND, "등록된 브랜드가 없습니다."),

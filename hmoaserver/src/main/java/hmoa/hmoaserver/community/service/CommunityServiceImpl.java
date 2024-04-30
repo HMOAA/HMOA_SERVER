@@ -108,8 +108,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public String deleteCommunity(Member member, Long communityId) {
         Community community = getCommunityById(communityId);
-        if(!community.isWrited(member)){
-            throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
+        if (!community.isWrited(member)){
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
         }
         List<CommunityComment> comments = community.getCommunityComments();
         comments.forEach(CommunityComment::setCommunityIsNull);

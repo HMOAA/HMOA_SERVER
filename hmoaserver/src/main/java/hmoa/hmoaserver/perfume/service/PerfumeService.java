@@ -27,7 +27,6 @@ public class PerfumeService {
 
     private final PerfumeRepository perfumeRepository;
     private final BrandRepository brandRepository;
-
     private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 10);
 
     public Perfume save(PerfumeSaveRequestDto requestDto) {
