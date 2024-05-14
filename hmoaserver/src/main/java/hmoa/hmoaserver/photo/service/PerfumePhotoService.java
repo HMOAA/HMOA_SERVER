@@ -44,7 +44,7 @@ public class PerfumePhotoService {
     @Transactional
     public PerfumePhoto savePerfumePhotos(Perfume perfume, MultipartFile file) {
 
-        String folderName = perfume.getKoreanName() + "/" + "perfume-" + perfume.getId();
+        String folderName = reduceName(perfume.getKoreanName()) + "/" + "perfume-" + perfume.getId();
         String fileName = UUID.randomUUID() + file.getContentType().replace("image/", ".");
 
         String photoUrl = photoService.insertFileToS3(perfumePhotoBucketName, folderName, fileName, file);
@@ -62,4 +62,8 @@ public class PerfumePhotoService {
         return save(savedPerfumePhoto);
     }
 
+    private static String reduceName(String str) {
+        String result = str.length() > 6 ? str.substring(0, 6) : str;
+        return result;
+    }
 }

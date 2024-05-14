@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.magazine.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
@@ -58,7 +60,7 @@ public class MagazineController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
-    @ApiOperation(value = "매거진 탑 시향기 조회", notes = "시향기 조회 100글자 이후는 ... 으로 잘라서 응답하도록 하였습니다.!")
+    @ApiOperation(value = "매거진 탑 시향기 조회", notes = "시향기 조회 300글자 이후는 ... 으로 잘라서 응답하도록 하였습니다.!")
     @GetMapping("/tastingComment")
     public ResponseEntity<List<TopTastingResponseDto>> getMagazineTastingComment() {
         Page<Community> communities = communityService.getTopCommunitysByCategory(0, Category.시향기);
@@ -78,10 +80,24 @@ public class MagazineController {
 
     @ApiOperation("최신 매거진 목록 조회")
     @GetMapping("/list")
-    private ResponseEntity<List<MagazineListResponseDto>> findMagazineList(@RequestParam int page) {
+    public ResponseEntity<List<MagazineListResponseDto>> findMagazineList(@RequestParam int page) {
         Page<Magazine> magazines = magazineService.findRecentMagazineList(page);
 
         return ResponseEntity.ok(magazines.stream().map(MagazineListResponseDto::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation("최신 매거진 목록 조회 (cursor)")
+    @GetMapping("/list/cursor")
+    public ResponseEntity<PagingDto<Object>> findMagazineList(@RequestParam Long cursor) {
+        Page<Magazine> magazines = magazineService.findRecentMagazineListByCursor(cursor);
+        boolean isLastPage = PageUtil.isLastPage(magazines);
+
+        List<MagazineListResponseDto> result = magazines.stream().map(MagazineListResponseDto::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .data(result)
+                .isLastPage(isLastPage)
+                .build());
     }
 
     @ApiOperation("매거진 단건 조회")

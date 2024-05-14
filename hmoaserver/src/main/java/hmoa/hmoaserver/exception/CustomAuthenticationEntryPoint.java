@@ -22,7 +22,7 @@ import java.io.OutputStream;
 @Component
 @Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final int ERROR_CODE = 401;
+    private static final String ERROR_CODE = "401";
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -43,6 +43,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         } else {
             json.addProperty("message", Code.UNSUPPORTED_TOKEN.getMessage());
         }
+
+        log.info("{}", json.toString());
+
         response.getWriter().print(json);
     }
 

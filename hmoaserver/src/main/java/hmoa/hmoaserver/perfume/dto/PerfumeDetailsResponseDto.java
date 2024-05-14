@@ -2,7 +2,6 @@ package hmoa.hmoaserver.perfume.dto;
 
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeReviewResponseDto;
-
 import lombok.*;
 
 import java.util.List;
@@ -11,8 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PerfumeDetailResponseDto {
-
+public class PerfumeDetailsResponseDto {
     private Long perfumeId;
     private int heartNum;
     private Long brandId;
@@ -25,38 +23,27 @@ public class PerfumeDetailResponseDto {
     private int price;
     private List<Integer> volume;
     private int priceVolume;
-    private String topNote;
-    private String heartNote;
-    private String baseNote;
     private List<Integer> notePhotos;
-    private List<String> singleNote;
     private int sortType;
     private boolean isLiked = false;
     private PerfumeReviewResponseDto review;
 
-    public PerfumeDetailResponseDto(Perfume perfume, boolean isLiked, PerfumeReviewResponseDto review) {
+    public PerfumeDetailsResponseDto(Perfume perfume, boolean isLiked, PerfumeReviewResponseDto review) {
         this.perfumeId = perfume.getId();
         this.heartNum = perfume.getHeartCount();
-        this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
         this.brandId = perfume.getBrand().getId();
-        this.brandEnglishName = perfume.getBrand().getEnglishName();
-        this.brandImgUrl = perfume.getBrand().getBrandPhoto().getPhotoUrl();
         this.brandName = perfume.getBrand().getBrandName();
+        this.brandEnglishName = perfume.getBrand().getBrandName();
+        this.brandImgUrl = perfume.getBrand().getBrandPhoto().getPhotoUrl();
         this.koreanName = perfume.getKoreanName();
         this.englishName = perfume.getEnglishName();
-        this.volume = perfume.getVolume();
-        this.isLiked = isLiked;
-        this.notePhotos = perfume.getNotePhotos();
-        if (perfume.getSortType() == 0) {
-            this.topNote = perfume.getTopNote();
-            this.heartNote = perfume.getHeartNote();
-            this.baseNote = perfume.getBaseNote();
-        } else {
-            this.singleNote = perfume.getSingleNote();
-        }
-        this.priceVolume=perfume.getPriceVolume();
+        this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
         this.price = perfume.getPrice();
+        this.volume = perfume.getVolume();
+        this.priceVolume = perfume.getPriceVolume();
+        this.notePhotos = perfume.getNotePhotos();
         this.sortType = perfume.getSortType();
+        this.isLiked = isLiked;
         this.review = review;
     }
 }

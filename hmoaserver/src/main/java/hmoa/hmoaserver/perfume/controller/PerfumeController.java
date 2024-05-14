@@ -76,8 +76,26 @@ public class PerfumeController {
 
     @ApiOperation("향수 저장 새로운 버전")
     @PostMapping("/newList")
-    public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody PerfumeNewRequestDto request) {
-        log.info("{}", request.getBaseNote());
+    public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody List<PerfumeNewRequestDto> dtos) {
+        for (PerfumeNewRequestDto dto : dtos) {
+            log.info("{}", dto.getBaseNote());
+            perfumeService.newSave(dto);
+        }
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("향수 사진 저장 (New)")
+    @PostMapping(value = "/newImage", consumes = "multipart/form-data")
+    public ResponseEntity<ResultDto<Object>> savePerfumeImages(@RequestPart(value = "image") List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            String name = file.getOriginalFilename();
+            log.info("{}", name);
+            Perfume perfume = perfumeService.findPerfumeName(removeBrand(name));
+            photoService.validateFileExistence(file);
+            photoService.validateFileType(file);
+            perfumePhotoService.savePerfumePhotos(perfume, file);
+        }
+
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
@@ -100,6 +118,11 @@ public class PerfumeController {
     @GetMapping("/{perfumeId}")
     public ResponseEntity<PerfumeDetailResponseDto> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         Perfume perfume = perfumeService.findById(perfumeId);
+
+        if (perfume.isExpected()) {
+            throw new CustomException(null, PERFUME_NOT_FOUND);
+        }
+
         PerfumeDetailResponseDto responseDto = null;
         if (memberService.isTokenNullOrEmpty(token)) {
             responseDto = new PerfumeDetailResponseDto(perfume, false, perfumeReviewService.getReview(perfumeId));
@@ -160,13 +183,14 @@ public class PerfumeController {
         List<Long> foundPerfumeIds = perfumeLikedMemberService.findLikedPerfumeIdsByMemberId(member.getId());
 
         List<Perfume> resultPerfumes = new ArrayList<>();
+
         for (Long perfumeId : foundPerfumeIds) {
             Perfume perfume = perfumeService.findById(perfumeId);
             resultPerfumes.add(perfume);
         }
 
         List<PerfumeDefaultResponseDto> response = resultPerfumes.stream()
-                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+                .map(PerfumeDefaultResponseDto::new).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
@@ -257,5 +281,12 @@ public class PerfumeController {
         List<RecentPerfumeResponseDto> result = perfumes.stream().map(RecentPerfumeResponseDto::new).collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
+    }
+
+    private static String removeBrand(String name) {
+        String[] names = name.split("_");
+        String productName = names[1].substring(0, names[1].lastIndexOf("."));
+        log.info("{}", productName);
+        return productName;
     }
 }

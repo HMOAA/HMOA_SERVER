@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.magazine.service;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.magazine.domain.MagazineContent;
 import hmoa.hmoaserver.magazine.domain.Magazine;
@@ -28,6 +30,8 @@ import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 @Slf4j
 public class MagazineService {
     private static final String IMAGE_TYPE = "image";
+    private static final PageRequest pageRequest = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize());
+
     private final MagazineRepository magazineRepository;
 
     public Magazine save(MagazineSaveRequestDto magazineSaveRequestDto) {
@@ -46,8 +50,16 @@ public class MagazineService {
     }
 
     public Page<Magazine> findRecentMagazineList(int page) {
-        Pageable pageable = PageRequest.of(page, 5);
+        Pageable pageable = PageRequest.of(page, PageSize.FIVE_SIZE.getSize());
         return magazineRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    public Page<Magazine> findRecentMagazineListByCursor(Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return magazineRepository.findAllByOrderByCreatedAtDesc(pageRequest);
+        }
+
+        return magazineRepository.findMagazineNextPage(cursor, pageRequest);
     }
 
     public Magazine saveImages(Magazine magazine, List<MagazinePhoto> magazinePhotos) {

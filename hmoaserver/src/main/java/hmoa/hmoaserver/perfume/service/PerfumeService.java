@@ -5,6 +5,7 @@ import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -36,15 +41,26 @@ public class PerfumeService {
         return perfumeRepository.save(requestDto.toEntity(brand));
     }
 
-    /**
-     *  향수 저장 테스트 서비스
-     */
-    public Perfume testSave(PerfumeSaveRequestDto dto){
-        Brand brand = brandRepository.findByBrandName(dto.getABrandName())
-                .orElseThrow(()-> new CustomException(null,BRAND_NOT_FOUND));
-        return perfumeRepository.save(dto.toEntity(brand));
+    public Perfume newSave(PerfumeNewRequestDto dto) {
+        Brand brand = brandRepository.findByBrandName(dto.getBrandName())
+                .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
+        int sortType = 0;
+        List<Integer> notePhoto = new ArrayList<>(), volume;
+        if (dto.getNotePhotos() != null) {
+            String[] notePhotos = dto.getNotePhotos().split(",");
+            sortType = notePhotos.length;
+            notePhoto = Arrays.stream(notePhotos).map(Integer::parseInt).collect(Collectors.toList());
+        }
+        String[] volumes = dto.getVolumes().split(",");
+        volume = Arrays.stream(volumes).map(Integer::parseInt).collect(Collectors.toList());
+        int priceVolume = 0;
+        for (int i = 0; i < volume.size(); i++) {
+            if (dto.getPriceVolume() == volume.get(i)) {
+                priceVolume = i;
+            }
+        }
+        return perfumeRepository.save(dto.toEntity(brand, sortType, volume, notePhoto, priceVolume));
     }
-
     /**
      *  향수 단건 조회
      */
@@ -121,5 +137,9 @@ public class PerfumeService {
 
     public Page<Perfume> findRecentPerfumes() {
         return perfumeRepository.findAllByOrderByRelaseDateDescIdAsc(DEFAULT_PAGEABLE);
+    }
+
+    public Perfume findPerfumeName(String name) {
+        return perfumeRepository.findByKoreanName(name).orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
     }
 }

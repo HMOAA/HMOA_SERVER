@@ -63,7 +63,7 @@ public class PerfumeCommentLikedMemberService {
 
     @Transactional(readOnly = true)
     public Page<PerfumeCommentLiked> findAllByMember(Member member, int page) {
-        return commentLikedRepository.findAllByMemberOrderByIdDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+        return commentLikedRepository.findAllByMemberOrderByIdDesc(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     @Transactional(readOnly = true)

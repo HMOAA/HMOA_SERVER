@@ -302,8 +302,8 @@ public class PerfumeCommentController {
     @PutMapping("comments/{commentId}/modify")
     public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto) {
         Member member = memberService.findByMember(token);
-        PerfumeComment comment = commentService.modifyComment(token,commentId,dto.getContent());
-        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, true, member));
+        PerfumeComment comment = commentService.modifyComment(token, commentId, dto.getContent());
+        return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, commentLikedMemberService.isMemberLikedPerfumeComment(member, comment), member));
 
     }
 
