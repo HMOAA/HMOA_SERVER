@@ -36,4 +36,8 @@ public class PushAlarm extends BaseEntity {
         this.member = member;
         this.isRead = false;
     }
+
+    public void read() {
+        this.isRead = true;
+    }
 }

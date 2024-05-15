@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
@@ -12,6 +13,8 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +80,16 @@ public class FCMNotificationService {
 
             pushAlarmRepository.save(alarm);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PushAlarm> findPushAlarms(Member member) {
+        return pushAlarmRepository.findAllByMemberOrderByCreatedAtDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Transactional
+    public void readPushAlarm(PushAlarm pushAlarm) {
+        pushAlarm.read();
     }
 
     private String sendCommentLike(Member member, String sender) {

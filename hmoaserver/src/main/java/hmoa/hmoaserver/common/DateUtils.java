@@ -28,4 +28,10 @@ public class DateUtils {
 
         return createAt.format(formatter);
     }
+
+    public static String extractAlarmDate(LocalDateTime createdAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd HH:mm");
+
+        return createdAt.format(formatter);
+    }
 }
