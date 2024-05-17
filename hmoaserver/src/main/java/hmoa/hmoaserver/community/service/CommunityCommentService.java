@@ -14,6 +14,10 @@ import java.util.List;
 public interface CommunityCommentService {
     CommunityComment findOneComunityComment(Long commentId);
     Page<CommunityComment> findAllCommunityComment(Long communityId, int pageNum);
+    Page<CommunityComment> findAllCommunityComment(Long communityId, Long cursor);
+    Page<CommunityComment> findAllCommunityCommentByMember(Member member, int page);
+    Page<CommunityComment> findAllByMemberNextCursor(Member member, Long cursor);
+    Long countAllCommunityComment(Long communityId);
     CommunityComment saveCommunityComment(Member member, CommunityCommentDefaultRequestDto dto, Community community);
 
     CommunityComment modifyCommunityComment(Member member, CommunityCommentModifyRequestDto dto, Long commentId);

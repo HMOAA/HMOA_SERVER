@@ -10,7 +10,8 @@ import lombok.ToString;
 @Data
 public class CommunityCommentDefaultRequestDto {
     private String content;
-    public  CommunityComment toEntity(Member member, Community community){
+
+    public  CommunityComment toEntity(Member member, Community community) {
         return CommunityComment.builder()
                 .community(community)
                 .member(member)

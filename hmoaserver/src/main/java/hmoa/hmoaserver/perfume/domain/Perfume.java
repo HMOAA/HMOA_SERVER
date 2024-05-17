@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class Perfume extends BaseEntity {
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumePhoto> perfumePhotos = new ArrayList<>();
+    private LocalDate relaseDate;
 
     private String koreanName;
     private String englishName;
@@ -42,7 +44,6 @@ public class Perfume extends BaseEntity {
     private String heartNote;
     private String baseNote;
     private int heartCount;
-
     private String searchName;
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
@@ -59,7 +60,7 @@ public class Perfume extends BaseEntity {
     private List<PerfumeHomeMenu> perfumeHomeMenuList = new ArrayList<>();
 
     @Builder
-    public Perfume(String koreanName, List<Integer> notePhotos, int sortType,List<String> singleNote, String englishName, int price,List<Integer> volume,int priceVolume,String topNote,String heartNote,String baseNote, Brand brand,String searchName) {
+    public Perfume(String koreanName, List<Integer> notePhotos, int sortType, List<String> singleNote, String englishName, int price,List<Integer> volume, int priceVolume, String topNote, String heartNote, String baseNote, Brand brand, String searchName) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.price = price;
@@ -105,5 +106,9 @@ public class Perfume extends BaseEntity {
 
     public void decreaseHeartCount(){
         this.heartCount -= 1;
+    }
+
+    public void setRelaseDate(LocalDate localDate) {
+        this.relaseDate = localDate;
     }
 }

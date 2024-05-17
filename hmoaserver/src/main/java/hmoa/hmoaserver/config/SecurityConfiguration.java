@@ -61,7 +61,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/v2/api-docs",
                 "/v3/api-docs",
                 "/fcm/**",
-                "/appleTest/**"
+                "/appleTest/**",
+                "/magazine/**"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())

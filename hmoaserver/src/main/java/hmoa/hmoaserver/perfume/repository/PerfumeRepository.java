@@ -14,15 +14,24 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
      * 한글 이름 , 영어 이름 포함하여 검색
      */
     @Query(
-            value = "SELECT p FROM Perfume p WHERE p.koreanName LIKE %:koreanName% OR p.englishName LIKE %:englishName% ORDER BY p.koreanName ASC"
+            value = "SELECT p" +
+                    " FROM Perfume p" +
+                    " WHERE CONCAT(p.brand.brandName, ' ', p.koreanName) LIKE %:koreanName% OR" +
+                    " CONCAT(p.brand.englishName, ' ', p.englishName) LIKE %:englishName%" +
+                    " ORDER BY p.koreanName ASC"
     )
     Page<Perfume> findAllSearch(@Param("koreanName") String koreanName, @Param("englishName") String englishName, Pageable pageable);
 
-    Page<Perfume> findAllByBrandIdOrderByCreatedAtDesc(Long brandId, Pageable pageable);
+    Optional<Perfume> findByKoreanName(String koreanName);
 
-    Page<Perfume> findAllByBrandIdOrderByKoreanName(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByOrderByRelaseDateDescIdAsc(Pageable pageable);
 
-    Page<Perfume> findAllByBrandIdOrderByHeartCountDesc(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdOrderByCreatedAtDescIdAsc(Long brandId, Pageable pageable);
+
+    Page<Perfume> findAllByBrandIdOrderByKoreanNameAscIdAsc(Long brandId, Pageable pageable);
+
+    Page<Perfume> findAllByBrandIdOrderByHeartCountDescIdAsc(Long brandId, Pageable pageable);
+    Page<Perfume> findAllByBrandIdAndIdNot(Long brandId, Long excludedId, Pageable pageable);
 
     Optional<Perfume> findByBrandIdAndKoreanName(Long brandId, String koreanName);
 }

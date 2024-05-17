@@ -1,32 +1,27 @@
 package hmoa.hmoaserver.community.service;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.community.dto.CommunityCommentAllResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentDefaultRequestDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommunityCommentServiceImpl implements CommunityCommentService{
-    private final static String DELETE_COMMENT = "답변 삭제 성공";
+    private static final String DELETE_COMMENT = "답변 삭제 성공";
+    private static final PageRequest pageReqeust = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.SIX_SIZE.getSize());
     private final CommunityCommentRepository commentRepository;
 
     @Override
@@ -36,7 +31,30 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
 
     @Override
     public Page<CommunityComment> findAllCommunityComment(Long communityId, int pageNum) {
-        return commentRepository.findAllByCommunityId(communityId, PageRequest.of(pageNum, 6));
+        return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, PageRequest.of(pageNum, PageSize.SIX_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<CommunityComment> findAllCommunityComment(Long communityId, Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return commentRepository.findAllByCommunityIdOrderByCreatedAtDescIdDesc(communityId, pageReqeust);
+        }
+        return commentRepository.findCommunityCommentNextPage(communityId, cursor, pageReqeust);
+    }
+
+    @Override
+    public Page<CommunityComment> findAllCommunityCommentByMember(Member member, int page) {
+        return commentRepository.findAllByMemberOrderByCreatedAtDescIdDesc(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<CommunityComment> findAllByMemberNextCursor(Member member, Long cursor) {
+        return commentRepository.findCommunityCommentByMemberNextPage(member, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Long countAllCommunityComment(Long communityId) {
+        return commentRepository.countByCommunityId(communityId);
     }
 
 
@@ -67,5 +85,4 @@ public class CommunityCommentServiceImpl implements CommunityCommentService{
         commentRepository.delete(comment);
         return DELETE_COMMENT;
     }
-
 }

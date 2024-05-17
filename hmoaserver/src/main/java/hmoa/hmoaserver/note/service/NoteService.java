@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.note.service;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.note.domain.Note;
@@ -22,20 +24,28 @@ import static hmoa.hmoaserver.exception.Code.NOTE_NOT_FOUND;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIFTY_SIZE.getSize());
 
     public Note save(NoteSaveRequestDto requestDto) {
         return noteRepository.save(requestDto.toEntity());
     }
 
     public Page<Note> findNote(int pageNum) {
-        return noteRepository.findAll(PageRequest.of(pageNum, 15));
+        return noteRepository.findAll(PageRequest.of(pageNum, PageSize.FIFTY_SIZE.getSize()));
+    }
+
+    public Page<Note> findNoteByCursor(Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return noteRepository.findAllByOrderByIdDesc(DEFAULT_PAGE_REQUEST);
+        }
+        return noteRepository.findNoteNextPage(cursor, DEFAULT_PAGE_REQUEST);
     }
 
     public Note findById(Long noteId) {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new CustomException(null, NOTE_NOT_FOUND));
 
-        if (note.isDeleted() == true) {
+        if (note.isDeleted()) {
             throw new CustomException(null, NOTE_NOT_FOUND);
         }
 

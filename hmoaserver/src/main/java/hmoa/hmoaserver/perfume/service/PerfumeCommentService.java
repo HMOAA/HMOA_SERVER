@@ -1,12 +1,13 @@
 package hmoa.hmoaserver.perfume.service;
 
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
@@ -41,8 +42,7 @@ public class PerfumeCommentService {
     private String DEFALUT_PROFILE_URL;
     private static final String CREATE_LIKE_SUCCESS = "좋아요 등록 성공";
     private static final String DELETE_LIKE_SUCCESS = "좋아요 취소 성공";
-    private Long deleteMemberId= 0l;
-    private final MemberRepository memberRepository;
+    private static final PageRequest pageRequest = PageRequest.of(0, 10);
     private final PerfumeCommentRepository commentRepository;
     private final PerfumeCommentLikedRepository commentHeartRepository;
     private final JwtService jwtService;
@@ -56,27 +56,35 @@ public class PerfumeCommentService {
 
     }
 
+    public Page<PerfumeComment> findPerfumeCommentByMember(Member member, int page) {
+        return commentRepository.findAllByMember(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    public Page<PerfumeComment> findPerfumeCommentByMemberAndCursor(Member member, Long cursor) {
+        return commentRepository.findPerfumeCommentByMemberAndNextCursor(member, cursor, pageRequest);
+    }
+
     public String saveLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
 
-        if (!hasLike(findComment,findMember)) {
+        if (!hasLike(findComment, findMember)) {
             findComment.increaseHeartCount();
             PerfumeCommentLiked heart = PerfumeCommentLiked.builder()
                     .member(findMember)
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
-            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), NotificationType.COMMENT_LIKE));
+            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), findMember.getId(), NotificationType.COMMENT_LIKE));
             return CREATE_LIKE_SUCCESS;
         }
 
-        throw new CustomException(null,DUPLICATE_LIKED);
+        throw new CustomException(null, DUPLICATE_LIKED);
     }
 
-    public String deleteLike(String token,Long commentId) {
+    public String deleteLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
         Member findMember = memberService.findByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
@@ -107,16 +115,29 @@ public class PerfumeCommentService {
     /**
      * 비로그인시 댓글 조회
      */
-    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId,int page) {
+    public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, PageRequest.of(page,10));
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
+    }
+
+    public Page<PerfumeComment> findCommentsByPerfume(Long perfumeId, Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId, pageRequest);
+        }
+        return commentRepository.findPerfumeCommentOrderByCreatedAtNextCursor(perfumeId, cursor, pageRequest);
+    }
+
+    public Long totalCountsByPerfume(Long perfumeId) {
+        return commentRepository.countByPerfumeId(perfumeId);
     }
 
     /**
@@ -124,15 +145,18 @@ public class PerfumeCommentService {
      */
     public PerfumeCommentGetResponseDto findCommentsByPerfume(Long perfumeId, int page, Member member) {
         try {
-            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page,10));
+            Page<PerfumeComment> foundComments = commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page,10));
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if (hasLike(comment,member)) {
+                if (hasLike(comment, member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
                 }
                 return new PerfumeCommentResponseDto(comment,false, member);
             }).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         }catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -144,10 +168,12 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size) {
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDesc(perfumeId,PageRequest.of(page, size));
+                    commentRepository.findAllByPerfumeIdOrderByCreatedAtDescIdDesc(perfumeId,PageRequest.of(page, size));
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(PerfumeCommentResponseDto::new).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount, dto);
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
@@ -159,19 +185,26 @@ public class PerfumeCommentService {
     public PerfumeCommentGetResponseDto findTopCommentsByPerfume(Long perfumeId, int page, int size, Member member){
         try {
             Page<PerfumeComment> foundComments =
-                    commentRepository.findAllByPerfumeIdOrderByHeartCountDesc(perfumeId,PageRequest.of(page,size));
+                    commentRepository.findAllByPerfumeIdOrderByHeartCountDescIdAsc(perfumeId,PageRequest.of(page,size));
+            boolean isLastPage = PageUtil.isLastPage(foundComments);
             Long commentCount = foundComments.getTotalElements();
+
             List<PerfumeCommentResponseDto> dto = foundComments.stream().map(comment -> {
-                if (hasLike(comment,member)) {
+                if (hasLike(comment, member)) {
                     return new PerfumeCommentResponseDto(comment,true, member);
                 } else {
                     return new PerfumeCommentResponseDto(comment,false, member);
                 }
             }).collect(Collectors.toList());
-            return new PerfumeCommentGetResponseDto(commentCount,dto);
+
+            return new PerfumeCommentGetResponseDto(commentCount, isLastPage, dto);
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
         }
+    }
+
+    public PerfumeComment findOnePerfumeComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
     }
 
     public void deleteComment(Member member, Long commentId) {
@@ -182,11 +215,7 @@ public class PerfumeCommentService {
         commentRepository.delete(perfumeComment);
     }
 
-    public void deleteMemberComment(Member member){
-        Member deleteMember = memberRepository.findById(deleteMemberId).get();
-        List<PerfumeComment> comments = commentRepository.findAllByMemberId(member.getId());
-        for(PerfumeComment comment : comments){
-            comment.modifyCommentMember(deleteMember);
-        }
+    public boolean isPerfumeCommentLiked(PerfumeComment comment, Member member) {
+        return commentHeartRepository.findByPerfumeCommentAndMember(comment, member).isPresent();
     }
 }

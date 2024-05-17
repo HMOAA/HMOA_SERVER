@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.perfumer.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.perfumer.domain.Perfumer;
 import hmoa.hmoaserver.perfumer.dto.PerfumerDefaultResponseDto;
@@ -37,16 +39,33 @@ public class PerfumerController {
 
     @ApiOperation("조향사 목록 조회")
     @GetMapping
-    public ResponseEntity<ResultDto<Object>> findPerfumer(@RequestParam int pageNum) {
+    public ResponseEntity<PagingDto<Object>> findPerfumer(@RequestParam int pageNum) {
         Page<Perfumer> perfumers = perfumerService.findPerfumer(pageNum);
+        boolean isLastPage = PageUtil.isLastPage(perfumers);
 
         List<PerfumerDefaultResponseDto> responseDto = perfumers.stream()
-                .map(perfumer -> new PerfumerDefaultResponseDto(perfumer))
+                .map(PerfumerDefaultResponseDto::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(200)
-                .body(ResultDto.builder()
+        return ResponseEntity.ok(PagingDto.builder()
                         .data(responseDto)
+                        .isLastPage(isLastPage)
+                        .build());
+    }
+
+    @ApiOperation("조향사 목록 조회 (커서 페이징)")
+    @GetMapping("/cursor")
+    public ResponseEntity<PagingDto<Object>> findPerfumerByCursor(@RequestParam Long cursor) {
+        Page<Perfumer> perfumers = perfumerService.findPerfumerByCursor(cursor);
+        boolean isLastPage = PageUtil.isLastPage(perfumers);
+
+        List<PerfumerDefaultResponseDto> responseDtos = perfumers.stream()
+                .map(PerfumerDefaultResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(PagingDto.builder()
+                        .data(responseDtos)
+                        .isLastPage(isLastPage)
                         .build());
     }
 

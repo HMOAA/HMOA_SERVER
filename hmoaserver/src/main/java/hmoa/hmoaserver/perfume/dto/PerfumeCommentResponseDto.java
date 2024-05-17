@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.perfume.dto;
 
+import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import lombok.AccessLevel;
@@ -30,11 +31,9 @@ public class PerfumeCommentResponseDto {
         this.nickname = perfumeComment.getMember().getNickname();
         this.perfumeId = perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
-        this.createAt = formateDateTime(perfumeComment.getCreatedAt());
+        this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
-        if (perfumeComment.getMember().getId().equals(member.getId())) {
-            this.isWrited = true;
-        }
+        this.isWrited = perfumeComment.getMember().getId().equals(member.getId());
     }
 
     public PerfumeCommentResponseDto(PerfumeComment perfumeComment) {
@@ -43,12 +42,7 @@ public class PerfumeCommentResponseDto {
         this.heartCount = perfumeComment.getHeartCount();
         this.nickname = perfumeComment.getMember().getNickname();
         this.perfumeId = perfumeComment.getPerfume().getId();
-        this.createAt = formateDateTime(perfumeComment.getCreatedAt());
+        this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
-    }
-
-    private String formateDateTime(LocalDateTime time){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
-        return time.format(formatter);
     }
 }

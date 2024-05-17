@@ -35,6 +35,7 @@ public class MainPageController {
     private static final long FIRST_HOME_ID = 2L;
     private static final long SECOND_HOME_ID = 3L;
     private static final long THIRD_HOME_ID = 4L;
+    private static final long BANNER_ID = 5L;
 
     private final HomeMenuService homeMenuService;
     private final MemberService memberService;
@@ -47,8 +48,9 @@ public class MainPageController {
         HomeMenu homeMenu = homeMenuService.findHomeMenuById(BRAND_HOME_ID);
         List<PerfumeHomeMenu> perfumeHomeMenus = perfumeHomeMenuService.findPerfumeHomeMenuByHomeMenu(homeMenu);
         List<Perfume> perfumes = getPerfumes(perfumeHomeMenus);
+        String banner = homeMenuService.findHomeMenuById(BANNER_ID).getTitle();
         List<HomeMenuPerfumeResponseDto> perfumeResponseDtos = perfumes.stream().map(HomeMenuPerfumeResponseDto::new).collect(Collectors.toList());
-        HomeMenuFirstResponseDto result = new HomeMenuFirstResponseDto(new HomeMenuDefaultResponseDto(homeMenu.getTitle(), perfumeResponseDtos));
+        HomeMenuFirstResponseDto result = new HomeMenuFirstResponseDto(new HomeMenuDefaultResponseDto(homeMenu.getTitle(), perfumeResponseDtos), banner);
         return ResponseEntity.ok(result);
     }
 

@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PerfumeCommentGetResponseDto {
     private Long commentCount;
+    private boolean lastPage;
     private List<PerfumeCommentResponseDto> comments;
 }

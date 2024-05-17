@@ -15,13 +15,13 @@ public class PerfumeSearchResponseDto {
     private String brandName;
     private String perfumeName;
     private String perfumeImageUrl;
-    private boolean heart;
+    private boolean heart = false;
 
-    public PerfumeSearchResponseDto(Perfume perfume) {
+    public PerfumeSearchResponseDto(Perfume perfume, boolean heart) {
         this.perfumeId = perfume.getId();
         this.brandName = perfume.getBrand().getBrandName();
         this.perfumeName = perfume.getKoreanName();
         this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
-        this.heart=false;
+        this.heart = heart;
     }
 }

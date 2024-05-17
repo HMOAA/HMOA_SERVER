@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.homemenu.dto;
 
-import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.Data;
 

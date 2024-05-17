@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.perfume.controller;
 
-import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
@@ -24,10 +23,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,6 +73,30 @@ public class PerfumeController {
                         .build());
     }
 
+    @ApiOperation("향수 저장 새로운 버전")
+    @PostMapping("/newList")
+    public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody List<PerfumeNewRequestDto> dtos) {
+        for (PerfumeNewRequestDto dto : dtos) {
+            perfumeService.newSave(dto);
+        }
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("향수 사진 저장 (New)")
+    @PostMapping(value = "/newImage", consumes = "multipart/form-data")
+    public ResponseEntity<ResultDto<Object>> savePerfumeImages(@RequestPart(value = "image") List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            String name = file.getOriginalFilename();
+            log.info("{}", name);
+            Perfume perfume = perfumeService.findPerfumeName(removeBrand(name));
+            photoService.validateFileExistence(file);
+            photoService.validateFileType(file);
+            perfumePhotoService.savePerfumePhotos(perfume, file);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("향수 메인 사진 저장")
     @PostMapping("/{perfumeId}")
     public ResponseEntity<ResultDto<Object>> savePerfumePhoto(@RequestPart(value = "image") MultipartFile file, @PathVariable Long perfumeId) {
@@ -87,19 +112,11 @@ public class PerfumeController {
                         .build());
     }
 
-//    @ApiOperation("향수 저장 테스트")
-//    @PostMapping("/test")
-//    public ResponseEntity<PerfumeDetailResponseDto> testPerfume(@RequestBody PerfumeSaveRequestDto dto){
-//        Perfume perfume = perfumeService.testSave(dto);
-//        Brand brand = perfume.getBrand();
-//        PerfumeDetailResponseDto result = new PerfumeDetailResponseDto(perfume, false);
-//        return ResponseEntity.ok(result);
-//    }
-
-    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
+    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0부터 3까지 0은 노트 모두 null 1~3 은 top heart base 순으로 not null , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @GetMapping("/{perfumeId}")
     public ResponseEntity<PerfumeDetailResponseDto> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         Perfume perfume = perfumeService.findById(perfumeId);
+
         PerfumeDetailResponseDto responseDto = null;
         if (memberService.isTokenNullOrEmpty(token)) {
             responseDto = new PerfumeDetailResponseDto(perfume, false, perfumeReviewService.getReview(perfumeId));
@@ -114,11 +131,10 @@ public class PerfumeController {
         return ResponseEntity.ok(responseDto);
     }
 
+
     @ApiOperation(value = "향수 공감하기")
     @PutMapping("/{perfumeId}/like")
-    public ResponseEntity<ResultDto<Object>> savePerfumeLikes(
-            @PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token
-    ) {
+    public ResponseEntity<ResultDto<Object>> savePerfumeLikes(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
         Member member = memberService.findByEmail(email);
 
@@ -162,13 +178,14 @@ public class PerfumeController {
         List<Long> foundPerfumeIds = perfumeLikedMemberService.findLikedPerfumeIdsByMemberId(member.getId());
 
         List<Perfume> resultPerfumes = new ArrayList<>();
+
         for (Long perfumeId : foundPerfumeIds) {
             Perfume perfume = perfumeService.findById(perfumeId);
             resultPerfumes.add(perfume);
         }
 
         List<PerfumeDefaultResponseDto> response = resultPerfumes.stream()
-                .map(perfume -> new PerfumeDefaultResponseDto(perfume)).collect(Collectors.toList());
+                .map(PerfumeDefaultResponseDto::new).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
@@ -228,11 +245,11 @@ public class PerfumeController {
         return ResponseEntity.ok(perfumeAgeService.deletePerfumeAge(member, perfume));
     }
 
-    @ApiOperation(value = "향수 단건조회 2",notes = "댓글 정보와 같은 브랜드 향수 조회")
+    @ApiOperation(value = "향수 단건조회 2", notes = "댓글 정보와 같은 브랜드 향수 조회")
     @PostMapping("/{perfumeId}/2")
     public ResponseEntity<PerfumeDetailSecondResponseDto> findOnePerfume2(@PathVariable Long perfumeId, @RequestHeader(name = "X-AUTH-TOKEN",required = false) String token){
         Perfume perfume = perfumeService.findById(perfumeId);
-        Page<Perfume> similarPerfumes = perfumeService.findPerfumesByBrand(perfume.getBrand().getId(),0);
+        Page<Perfume> similarPerfumes = perfumeService.findSameBrandPerfume(perfume.getBrand().getId(), perfumeId);
         List<PerfumeSimilarResponseDto> similarDto = similarPerfumes.stream().map(PerfumeSimilarResponseDto::new).collect(Collectors.toList());
         PerfumeDetailSecondResponseDto result = null;
         if(memberService.isTokenNullOrEmpty(token)) {
@@ -242,5 +259,29 @@ public class PerfumeController {
         Member member = memberService.findByMember(token);
         result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3,member),similarDto);
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향수 출시일자 저장", notes = "향수 출시 일자 저장")
+    @PostMapping("/{perfumeId}/relase")
+    public ResponseEntity<ResultDto<Object>> saveRelase(@PathVariable Long perfumeId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate relase) {
+        Perfume perfume = perfumeService.findById(perfumeId);
+        perfumeService.saveRelase(perfume, relase);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "최신 향수 불러오기 (10개)", notes = "최신 향수 불러오기")
+    @GetMapping("/recentPerfume")
+    public ResponseEntity<List<RecentPerfumeResponseDto>> findRecentPerfume() {
+        Page<Perfume> perfumes = perfumeService.findRecentPerfumes();
+        List<RecentPerfumeResponseDto> result = perfumes.stream().map(RecentPerfumeResponseDto::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    private static String removeBrand(String name) {
+        String[] names = name.split("_");
+        String productName = names[1].substring(0, names[1].lastIndexOf("."));
+        log.info("{}", productName);
+        return productName;
     }
 }

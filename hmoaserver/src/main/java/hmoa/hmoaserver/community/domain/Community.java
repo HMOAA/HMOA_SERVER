@@ -35,11 +35,16 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPhoto> communityPhotos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.PERSIST)
     List<CommunityComment> communityComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityReport> communityReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityLikedMember> communityLikedMembers = new ArrayList<>();
+
+    private int heartCount;
 
     @Builder
     public Community(String title, String content, Member member, Category category){
@@ -47,11 +52,13 @@ public class Community extends BaseEntity {
         this.content = content;
         this.category = category;
         this.member = member;
+        this.heartCount = 0;
     }
 
     public void modifyContent(String content){
         this.content = content;
     }
+
     public void modifyTitle(String title){this.title = title;}
 
     public boolean isWrited(Member member){
@@ -76,4 +83,11 @@ public class Community extends BaseEntity {
         return count;
     }
 
+    public void increaseHeartCount() {
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount() {
+        this.heartCount -= 1;
+    }
 }

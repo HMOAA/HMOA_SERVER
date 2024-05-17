@@ -1,10 +1,8 @@
 package hmoa.hmoaserver.perfume.dto;
 
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeReviewResponseDto;
-import hmoa.hmoaserver.perfume.review.dto.PerfumeWeatherResponseDto;
+
 import lombok.*;
 
 import java.util.List;
@@ -34,9 +32,9 @@ public class PerfumeDetailResponseDto {
     private List<String> singleNote;
     private int sortType;
     private boolean isLiked = false;
-
     private PerfumeReviewResponseDto review;
-    public PerfumeDetailResponseDto(Perfume perfume, boolean isLiked,PerfumeReviewResponseDto review) {
+
+    public PerfumeDetailResponseDto(Perfume perfume, boolean isLiked, PerfumeReviewResponseDto review) {
         this.perfumeId = perfume.getId();
         this.heartNum = perfume.getHeartCount();
         this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
@@ -49,13 +47,10 @@ public class PerfumeDetailResponseDto {
         this.volume = perfume.getVolume();
         this.isLiked = isLiked;
         this.notePhotos = perfume.getNotePhotos();
-        if(perfume.getSortType()==0) {
-            this.topNote = perfume.getTopNote();
-            this.heartNote = perfume.getHeartNote();
-            this.baseNote = perfume.getBaseNote();
-        }else {
-            this.singleNote = perfume.getSingleNote();
-        }
+        this.topNote = perfume.getTopNote();
+        this.heartNote = perfume.getHeartNote();
+        this.baseNote = perfume.getBaseNote();
+        this.singleNote = perfume.getSingleNote();
         this.priceVolume=perfume.getPriceVolume();
         this.price = perfume.getPrice();
         this.sortType = perfume.getSortType();

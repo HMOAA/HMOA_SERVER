@@ -4,12 +4,19 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.fcm.domain.AlarmCategory;
+import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,25 +29,76 @@ import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 public class FCMNotificationService {
     private final FirebaseMessaging firebaseMessaging;
     private final MemberRepository memberRepository;
+    private final PushAlarmRepository pushAlarmRepository;
 
     public String sendNotification(FCMNotificationRequestDto requestDto) {
         Optional<Member> member = memberRepository.findById(requestDto.getId());
 
+        if (isSameMember(requestDto.getId(), requestDto.getSenderId())) {
+            return SEND_NOT_REQUIRED;
+        }
+
         if (member.isEmpty()) {
             return NOT_FOUND_MEMBER;
         }
+
         if (member.get().getFirebaseToken() == null) {
             return NOT_FOUND_TOKEN;
         }
 
+        String successControl = "";
+        String message = "";
+        AlarmCategory category = null;
+
         if (requestDto.getType() == COMMENT_LIKE) {
-            return sendCommentLike(member.get(), requestDto.getSender());
+            successControl = sendCommentLike(member.get(), requestDto.getSender());
+            message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
+            category = AlarmCategory.Like;
+        } else if (requestDto.getType() == COMMUNITY_LIKE) {
+            successControl = sendCommunityLike(member.get(), requestDto.getSender());
+            message = requestDto.getSender() + LIKE_COMMUNITY_ALARM_MESSAGE;
+            category = AlarmCategory.Like;
+        } else if (requestDto.getType() == COMMUNITY_COMMENT) {
+            successControl = sendAddComment(member.get(), requestDto.getSender());
+            message = requestDto.getSender() + ADD_COMMENT_ALARM_MESSAGE;
+            category = AlarmCategory.Comment;
         }
-        return sendAddComment(member.get(), requestDto.getSender());
+
+        savePushAlarm(message, category, member.get(), successControl);
+        log.info("{}", successControl);
+        return successControl;
+    }
+
+    @Transactional
+    public void savePushAlarm(String message, AlarmCategory category, Member member, String success) {
+        if (success.equals(SUCCESS_SEND)) {
+            PushAlarm alarm = PushAlarm.builder()
+                    .alarmCategory(category)
+                    .content(message)
+                    .member(member)
+                    .build();
+
+            pushAlarmRepository.save(alarm);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PushAlarm> findPushAlarms(Member member) {
+        return pushAlarmRepository.findAllByMemberOrderByCreatedAtDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Transactional
+    public void readPushAlarm(PushAlarm pushAlarm) {
+        pushAlarm.read();
     }
 
     private String sendCommentLike(Member member, String sender) {
         Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMENT_ALARM_MESSAGE);
+        return send(message);
+    }
+
+    private String sendCommunityLike(Member member, String sender) {
+        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE);
         return send(message);
     }
 
@@ -68,32 +126,11 @@ public class FCMNotificationService {
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
-        return FAIL_SEND;
+        return FAILE_SEND;
     }
 
-//    public String sendNotificationByToken(FCMNotificationRequestDto requestDto) {
-//        Optional<Member> member = memberRepository.findById(requestDto.getId());
-//
-//        if (member.isPresent()) {
-//            if (member.get().getFirebaseToken() != null) {
-//                Notification notification = Notification.builder()
-//                        .setTitle(requestDto.getTitle())
-//                        .setBody(requestDto.getContent())
-//                        .build();
-//
-//                Message message = Message.builder()
-//                        .setToken(member.get().getFirebaseToken())
-//                        .setNotification(notification)
-//                        .build();
-//
-//                try {
-//                    firebaseMessaging.send(message);
-//                    return "알림 전송 완료";
-//                } catch (FirebaseMessagingException e) {
-//                    e.printStackTrace();
-//                    return "알림 전송 실패";
-//                }
-//            } return "서버에 저장된 해당 유저의 FirebaseToken이 존재하지 않습니다.";
-//        } return "해당 유저가 존재하지 않습니다.";
-//    }
+    private static boolean isSameMember(Long id, Long senderId) {
+        return id.equals(senderId);
+    }
+
 }

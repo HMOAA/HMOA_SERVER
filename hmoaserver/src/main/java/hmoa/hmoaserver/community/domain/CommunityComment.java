@@ -23,6 +23,8 @@ public class CommunityComment extends BaseEntity {
 
     private String content;
 
+    private int heartCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "member_id")
     private Member member;
@@ -34,11 +36,15 @@ public class CommunityComment extends BaseEntity {
     @OneToMany(mappedBy = "communityComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityCommentReport> communityCommentReports = new ArrayList<>();
 
+    @OneToMany(mappedBy = "communityComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityCommentLikedMember> commentLikedMembers = new ArrayList<>();
+
     @Builder
     public CommunityComment(Member member, String content,Community community){
         this.content=content;
         this.member=member;
         this.community=community;
+        this.heartCount = 0;
     }
 
     public boolean isWrited(Member member){
@@ -47,5 +53,17 @@ public class CommunityComment extends BaseEntity {
 
     public void modifyComment(String content){
         this.content = content;
+    }
+
+    public void increaseHeartCount() {
+        this.heartCount += 1;
+    }
+
+    public void decreaseHeartCount() {
+        this.heartCount -= 1;
+    }
+
+    public void setCommunityIsNull() {
+        this.community = null;
     }
 }

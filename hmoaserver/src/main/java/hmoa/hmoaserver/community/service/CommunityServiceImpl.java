@@ -1,7 +1,9 @@
 package hmoa.hmoaserver.community.service;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.community.domain.Category;
 import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.dto.CommunityDefaultRequestDto;
 import hmoa.hmoaserver.community.dto.CommunityModifyRequestDto;
 import hmoa.hmoaserver.community.repository.CommunityRepository;
@@ -23,7 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommunityServiceImpl implements CommunityService {
-    private final static String DELETE_SUCCESS = "삭제 성공";
+    private static final String DELETE_SUCCESS = "삭제 성공";
+    private static final PageRequest pageRequest = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize());
     private final CommunityRepository communityRepository;
     private final CommunityPhotoService communityPhotoService;
 
@@ -39,12 +42,35 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Page<Community> getAllCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByCreatedAtDesc(category, PageRequest.of(page,10));
+        return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<Community> getAllCommunitysByCategory(Long cursor, Category category) {
+        if (isFirstCursor(cursor)) {
+            return communityRepository.findAllByCategoryOrderByCreatedAtDescIdDesc(category, pageRequest);
+        }
+        return communityRepository.findCommunityNextPage(cursor, category, pageRequest);
+    }
+
+    @Override
+    public Page<Community> getTopCommunitysByCategory(int page, Category category) {
+        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     @Override
     public Page<Community> getCommunityByHome() {
-        return communityRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 10));
+        return communityRepository.findAllByOrderByCreatedAtDescIdAsc(pageRequest);
+    }
+
+    @Override
+    public Page<Community> getCommunityByMember(Member member, int page) {
+        return communityRepository.findAllByMemberOrderByCreatedAtDescIdDesc(member, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Override
+    public Page<Community> getCommunityByMemberAndCursor(Member member, Long cursor) {
+        return communityRepository.findCommunityNextPageByMember(member, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
     }
 
     @Override
@@ -82,9 +108,11 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public String deleteCommunity(Member member, Long communityId) {
         Community community = getCommunityById(communityId);
-        if(!community.isWrited(member)){
-            throw new CustomException(null,Code.FORBIDDEN_AUTHORIZATION);
+        if (!community.isWrited(member)){
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
         }
+        List<CommunityComment> comments = community.getCommunityComments();
+        comments.forEach(CommunityComment::setCommunityIsNull);
         communityRepository.delete(community);
         return DELETE_SUCCESS;
     }
@@ -93,5 +121,9 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public List<CommunityPhoto> findAllCommunityPhotosFromCommunity(Community community) {
         return community.getCommunityPhotos();
+    }
+
+    private static boolean isFirstCursor(Long cursor) {
+        return cursor == 0;
     }
 }

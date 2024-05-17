@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.perfumer.service;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.perfumer.domain.Perfumer;
 import hmoa.hmoaserver.perfumer.dto.PerfumerSaveRequestDto;
@@ -19,20 +21,28 @@ import static hmoa.hmoaserver.exception.Code.PERFUMER_NOT_FOUND;
 public class PerfumerService {
 
     private final PerfumerRepository perfumerRepository;
+    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIFTY_SIZE.getSize());
 
     public Perfumer save(PerfumerSaveRequestDto requestDto) {
         return perfumerRepository.save(requestDto.toEntity());
     }
 
     public Page<Perfumer> findPerfumer(int pageNum) {
-        return perfumerRepository.findAll(PageRequest.of(pageNum, 15));
+        return perfumerRepository.findAll(PageRequest.of(pageNum, PageSize.FIFTY_SIZE.getSize()));
     }
 
+    public Page<Perfumer> findPerfumerByCursor(Long cursor) {
+        if (PageUtil.isFistCursor(cursor)) {
+            return perfumerRepository.findAllByOrderByIdDesc(DEFAULT_PAGE_REQUEST);
+        }
+        return perfumerRepository.findPerfumerNextPage(cursor, DEFAULT_PAGE_REQUEST);
+
+    }
     public Perfumer findById(Long perfumerId) {
         Perfumer perfumer = perfumerRepository.findById(perfumerId)
                 .orElseThrow(() -> new CustomException(null, PERFUMER_NOT_FOUND));
 
-        if (perfumer.isDeleted() == true) {
+        if (perfumer.isDeleted()) {
             throw new CustomException(null, PERFUMER_NOT_FOUND);
         }
 

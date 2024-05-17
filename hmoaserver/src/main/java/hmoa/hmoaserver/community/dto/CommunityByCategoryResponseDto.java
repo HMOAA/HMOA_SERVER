@@ -9,9 +9,24 @@ public class CommunityByCategoryResponseDto {
     private Long communityId;
     private Category category;
     private String title;
+    private int commentCount;
+    private int heartCount;
+    private boolean liked = false;
+
     public CommunityByCategoryResponseDto(Community community){
         this.communityId = community.getId();
         this.category = community.getCategory();
         this.title = community.getTitle();
+        this.commentCount = community.getCommunityComments().size();
+        this.heartCount = community.getHeartCount();
+    }
+
+    public CommunityByCategoryResponseDto(Community community, boolean liked){
+        this.communityId = community.getId();
+        this.category = community.getCategory();
+        this.title = community.getTitle();
+        this.commentCount = community.getCommunityComments().size();
+        this.heartCount = community.getHeartCount();
+        this.liked = liked;
     }
 }

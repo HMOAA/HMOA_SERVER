@@ -84,7 +84,7 @@ public class JwtService {
 
     public Authentication getAuthentication(String token){
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getEmail(token));
-        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getEmail(String token){
@@ -127,10 +127,10 @@ public class JwtService {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return JwtResultType.VALID_JWT;
-        }catch (ExpiredJwtException e){
+        }catch (ExpiredJwtException e) {
             log.info("만료된 jwt 토큰");
             return JwtResultType.EXPIRED_JWT;
-        }catch (Exception e){
+        }catch (Exception e) {
             log.info("잘못된 jwt 토큰");
             return JwtResultType.INVALID_JWT;
         }

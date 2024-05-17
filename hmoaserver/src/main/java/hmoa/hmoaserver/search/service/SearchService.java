@@ -87,30 +87,27 @@ public class SearchService {
         return searchBrandList;
     }
 
-    public List<PerfumeSearchResponseDto> perfumeSearch(String perfumeName, String englishName,int page){
-        Pageable pageable = PageRequest.of(page,6);
-        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,englishName,pageable);
-        List<PerfumeSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeSearchResponseDto(perfume)).collect(Collectors.toList());
-        return dto;
+    public Page<Perfume> perfumeSearch(String perfumeName, String englishName, int page) {
+        Pageable pageable = PageRequest.of(page, 6);
+        return perfumeRepository.findAllSearch(perfumeName, englishName, pageable);
     }
 
     public List<PerfumeNameSearchResponseDto> perfumeNameSearch(String perfumeName, int page){
-        Pageable pageable = PageRequest.of(page,20);
-        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName,perfumeName,pageable);
-        List<PerfumeNameSearchResponseDto> dto = perfumes.stream().map(perfume -> new PerfumeNameSearchResponseDto(perfume)).collect(Collectors.toList());
-        return dto;
+        Pageable pageable = PageRequest.of(page, 20);
+        Page<Perfume> perfumes = perfumeRepository.findAllSearch(perfumeName, perfumeName, pageable);
+        return perfumes.stream().map(PerfumeNameSearchResponseDto::new).collect(Collectors.toList());
     }
 
     public Page<Community> communitySearchForCategory(Category category, String searchContent, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        return communityRepository.findByCategoryAndTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
                 category, searchContent, searchContent, pageable
         );
     }
 
     public Page<Community> communitySearch(String keyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        return communityRepository.findByTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
                 keyword, keyword, pageable
         );
     }

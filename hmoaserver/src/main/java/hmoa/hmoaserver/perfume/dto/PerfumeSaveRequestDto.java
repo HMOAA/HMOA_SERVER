@@ -53,7 +53,7 @@ public class PerfumeSaveRequestDto {
                     .brand(brand)
                     .notePhotos(notePhotos)
                     .build();
-        }else{
+        } else {
             return Perfume.builder()
                     .koreanName(bKoreanName)
                     .englishName(cEnglishName)
