@@ -32,7 +32,7 @@ public class FCMController {
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
 
         pushAlarms.forEach(fcmNotificationService::readPushAlarm);
-        
+
         return ResponseEntity.ok(pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList()));
     }
 

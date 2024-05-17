@@ -47,13 +47,10 @@ public class PerfumeDetailResponseDto {
         this.volume = perfume.getVolume();
         this.isLiked = isLiked;
         this.notePhotos = perfume.getNotePhotos();
-        if (perfume.getSortType() == 0) {
-            this.topNote = perfume.getTopNote();
-            this.heartNote = perfume.getHeartNote();
-            this.baseNote = perfume.getBaseNote();
-        } else {
-            this.singleNote = perfume.getSingleNote();
-        }
+        this.topNote = perfume.getTopNote();
+        this.heartNote = perfume.getHeartNote();
+        this.baseNote = perfume.getBaseNote();
+        this.singleNote = perfume.getSingleNote();
         this.priceVolume=perfume.getPriceVolume();
         this.price = perfume.getPrice();
         this.sortType = perfume.getSortType();

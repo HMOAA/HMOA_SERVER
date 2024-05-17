@@ -4,11 +4,13 @@ import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.Data;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @ToString
 @Data
+@Slf4j
 public class PerfumeNewRequestDto {
     private String brandName;
     private String koreanName;
@@ -23,9 +25,12 @@ public class PerfumeNewRequestDto {
     private String notePhotos;
 
     public Perfume toEntity(Brand brand, int sortType, List<Integer> volumes, List<Integer> notePhotos, int priceVolume) {
+
         if (price.equals("가격미정")) {
             price = "0";
         }
+
+        log.info("{}", price);
 
         if (sortType == 0) {
             return Perfume.builder()
@@ -38,7 +43,6 @@ public class PerfumeNewRequestDto {
                     .searchName(removeSpace(koreanName))
                     .brand(brand)
                     .notePhotos(notePhotos)
-                    .expected(true)
                     .build();
         } else if (sortType == 1) {
             return Perfume.builder()
@@ -52,7 +56,6 @@ public class PerfumeNewRequestDto {
                     .searchName(removeSpace(koreanName))
                     .brand(brand)
                     .notePhotos(notePhotos)
-                    .expected(true)
                     .build();
         } else if (sortType == 2) {
             return Perfume.builder()
@@ -67,7 +70,6 @@ public class PerfumeNewRequestDto {
                     .searchName(removeSpace(koreanName))
                     .brand(brand)
                     .notePhotos(notePhotos)
-                    .expected(true)
                     .build();
         } else {
             return Perfume.builder()
@@ -83,7 +85,6 @@ public class PerfumeNewRequestDto {
                     .searchName(removeSpace(koreanName))
                     .brand(brand)
                     .notePhotos(notePhotos)
-                    .expected(true)
                     .build();
         }
     }

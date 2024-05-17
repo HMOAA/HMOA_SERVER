@@ -9,6 +9,7 @@ import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class PerfumeService {
@@ -46,7 +48,7 @@ public class PerfumeService {
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
         int sortType = 0;
         List<Integer> notePhoto = new ArrayList<>(), volume;
-        if (dto.getNotePhotos() != null) {
+        if (!(dto.getNotePhotos() == null || dto.getNotePhotos().equals(""))) {
             String[] notePhotos = dto.getNotePhotos().split(",");
             sortType = notePhotos.length;
             notePhoto = Arrays.stream(notePhotos).map(Integer::parseInt).collect(Collectors.toList());
@@ -56,7 +58,7 @@ public class PerfumeService {
         int priceVolume = 0;
         for (int i = 0; i < volume.size(); i++) {
             if (dto.getPriceVolume() == volume.get(i)) {
-                priceVolume = i;
+                priceVolume = i + 1;
             }
         }
         return perfumeRepository.save(dto.toEntity(brand, sortType, volume, notePhoto, priceVolume));

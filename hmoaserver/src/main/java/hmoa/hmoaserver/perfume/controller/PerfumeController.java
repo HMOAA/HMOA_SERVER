@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.perfume.controller;
 
-import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
@@ -78,7 +77,6 @@ public class PerfumeController {
     @PostMapping("/newList")
     public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody List<PerfumeNewRequestDto> dtos) {
         for (PerfumeNewRequestDto dto : dtos) {
-            log.info("{}", dto.getBaseNote());
             perfumeService.newSave(dto);
         }
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -114,14 +112,10 @@ public class PerfumeController {
                         .build());
     }
 
-    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0은 노트 3개 구분, 1은 singleNotes로 String 배열 , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
+    @ApiOperation(value = "향수 단건 조회",notes = "sortType 0부터 3까지 0은 노트 모두 null 1~3 은 top heart base 순으로 not null , priceVolume은 Volume 배열 중 몇번째인지 (1부터 시작)\n notes = weather,gender,age 는 int 퍼센트로 리턴 , writed와 liked 는 boolean 으로 true면 내가 썻거나 좋아요 한거 , false 면 반대")
     @GetMapping("/{perfumeId}")
     public ResponseEntity<PerfumeDetailResponseDto> findOnePerfume(@PathVariable Long perfumeId, @RequestHeader(value = "X-AUTH-TOKEN", required = false) String token) {
         Perfume perfume = perfumeService.findById(perfumeId);
-
-        if (perfume.isExpected()) {
-            throw new CustomException(null, PERFUME_NOT_FOUND);
-        }
 
         PerfumeDetailResponseDto responseDto = null;
         if (memberService.isTokenNullOrEmpty(token)) {
@@ -136,6 +130,7 @@ public class PerfumeController {
         }
         return ResponseEntity.ok(responseDto);
     }
+
 
     @ApiOperation(value = "향수 공감하기")
     @PutMapping("/{perfumeId}/like")
