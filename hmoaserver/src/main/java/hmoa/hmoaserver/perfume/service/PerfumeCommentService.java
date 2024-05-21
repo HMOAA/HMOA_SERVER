@@ -77,7 +77,7 @@ public class PerfumeCommentService {
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
-            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), findMember.getId(), NotificationType.COMMENT_LIKE));
+            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), findMember.getId(), NotificationType.PERFUME_COMMENT_LIKE, commentId));
             return CREATE_LIKE_SUCCESS;
         }
 

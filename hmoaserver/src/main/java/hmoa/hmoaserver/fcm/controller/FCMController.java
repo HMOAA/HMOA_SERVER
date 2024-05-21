@@ -1,11 +1,13 @@
 package hmoa.hmoaserver.fcm.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTokenSaveRequestDto;
 import hmoa.hmoaserver.fcm.dto.PushAlarmResponseDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
+import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +31,11 @@ public class FCMController {
     public ResponseEntity<List<PushAlarmResponseDto>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
-        List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
+        List<PushAlarmResponseDto> result = pushAlarms.stream().map(pushAlarm -> new PushAlarmResponseDto(pushAlarm, getCategoryName(pushAlarm))).collect(Collectors.toList());
 
         pushAlarms.forEach(fcmNotificationService::readPushAlarm);
 
-        return ResponseEntity.ok(pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList()));
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/save")
@@ -49,5 +51,14 @@ public class FCMController {
         Member member = memberService.findByMember(token);
         memberService.deleteFCMToken(member);
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    private static String getCategoryName(PushAlarm pushAlarm) {
+
+        if (pushAlarm.getAlarmCategory().equals(AlarmCategory.COMMUNITY_COMMENT)) {
+            return NotificationConstants.ADD_COMMENT_ALARM_TITLE;
+        }
+
+        return NotificationConstants.LIKE_ALARM_TITLE;
     }
 }

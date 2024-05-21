@@ -5,6 +5,9 @@ import lombok.Getter;
 @Getter
 public enum NotificationType {
     COMMUNITY_LIKE,
-    COMMENT_LIKE,
-    COMMUNITY_COMMENT
+    PERFUME_COMMENT_LIKE,
+    COMMUNITY_COMMENT_LIKE,
+    COMMUNITY_COMMENT,
+    EVENT,
+    SHOP
 }
