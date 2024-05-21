@@ -1,5 +1,5 @@
 package hmoa.hmoaserver.fcm.domain;
 
 public enum AlarmCategory {
-    Event, Comment, Like
+    EVENT, COMMUNITY_COMMENT_LIKE, PERFUME_COMMENT_LIKE, COMMUNITY_LIKE, COMMUNITY_COMMENT, SHOP
 }

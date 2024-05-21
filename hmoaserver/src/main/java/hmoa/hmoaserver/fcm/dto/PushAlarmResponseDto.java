@@ -7,14 +7,18 @@ import lombok.Data;
 @Data
 public class PushAlarmResponseDto {
     private String category;
+    private String target;
     private String content;
     private String createdAt;
+    private long parentId;
     private boolean isRead;
 
-    public PushAlarmResponseDto(PushAlarm alarm) {
-        this.category = alarm.getAlarmCategory().name();
+    public PushAlarmResponseDto(PushAlarm alarm, String category) {
+        this.target = alarm.getAlarmCategory().name();
+        this.category = category;
         this.content = alarm.getContent();
         this.createdAt = DateUtils.extractAlarmDate(alarm.getCreatedAt());
+        this.parentId = alarm.getParentId();
         this.isRead = alarm.isRead();
     }
 }

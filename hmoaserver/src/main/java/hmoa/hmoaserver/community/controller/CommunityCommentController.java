@@ -10,7 +10,6 @@ import hmoa.hmoaserver.community.dto.*;
 import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
-import hmoa.hmoaserver.fcm.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -44,7 +43,7 @@ public class CommunityCommentController {
         Member member = memberService.findByMember(token);
         Community community = communityService.getCommunityById(communityId);
         CommunityComment comment = commentService.saveCommunityComment(member, dto, community);
-        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_COMMENT));
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_COMMENT, communityId));
         CommunityCommentDefaultResponseDto result = new CommunityCommentDefaultResponseDto(comment, true, false);
 
         return ResponseEntity.ok(result);
@@ -167,7 +166,7 @@ public class CommunityCommentController {
         CommunityComment comment = commentService.findOneComunityComment(commentId);
 
         commentLikedMemberService.save(member, comment);
-        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(comment.getMember().getId(), member.getNickname(), member.getId(), COMMENT_LIKE));
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(comment.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_COMMENT_LIKE, commentId));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }

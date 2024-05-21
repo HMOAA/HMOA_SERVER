@@ -21,7 +21,7 @@ public class PushAlarm extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private AlarmCategory alarmCategory;
-
+    private long parentId;
     private String content;
     private boolean isRead;
 
@@ -30,8 +30,9 @@ public class PushAlarm extends BaseEntity {
     private Member member;
 
     @Builder
-    public PushAlarm(AlarmCategory alarmCategory, String content, Member member) {
+    public PushAlarm(AlarmCategory alarmCategory, String content, Member member, long parentId) {
         this.alarmCategory = alarmCategory;
+        this.parentId = parentId;
         this.content = content;
         this.member = member;
         this.isRead = false;

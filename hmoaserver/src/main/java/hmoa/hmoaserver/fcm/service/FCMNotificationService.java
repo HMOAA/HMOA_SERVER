@@ -50,32 +50,37 @@ public class FCMNotificationService {
         String message = "";
         AlarmCategory category = null;
 
-        if (requestDto.getType() == COMMENT_LIKE) {
+        if (requestDto.getType() == PERFUME_COMMENT_LIKE) {
             successControl = sendCommentLike(member.get(), requestDto.getSender());
             message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
-            category = AlarmCategory.Like;
+            category = AlarmCategory.PERFUME_COMMENT_LIKE;
+        } else if (requestDto.getType() == COMMUNITY_COMMENT_LIKE) {
+            successControl = sendCommentLike(member.get(), requestDto.getSender());
+            message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
+            category = AlarmCategory.COMMUNITY_COMMENT_LIKE;
         } else if (requestDto.getType() == COMMUNITY_LIKE) {
             successControl = sendCommunityLike(member.get(), requestDto.getSender());
             message = requestDto.getSender() + LIKE_COMMUNITY_ALARM_MESSAGE;
-            category = AlarmCategory.Like;
+            category = AlarmCategory.COMMUNITY_LIKE;
         } else if (requestDto.getType() == COMMUNITY_COMMENT) {
             successControl = sendAddComment(member.get(), requestDto.getSender());
             message = requestDto.getSender() + ADD_COMMENT_ALARM_MESSAGE;
-            category = AlarmCategory.Comment;
+            category = AlarmCategory.COMMUNITY_COMMENT;
         }
 
-        savePushAlarm(message, category, member.get(), successControl);
+        savePushAlarm(message, category, member.get(), successControl, requestDto.getTargetId());
         log.info("{}", successControl);
         return successControl;
     }
 
     @Transactional
-    public void savePushAlarm(String message, AlarmCategory category, Member member, String success) {
+    public void savePushAlarm(String message, AlarmCategory category, Member member, String success, Long targetId) {
         if (success.equals(SUCCESS_SEND)) {
             PushAlarm alarm = PushAlarm.builder()
                     .alarmCategory(category)
                     .content(message)
                     .member(member)
+                    .parentId(targetId)
                     .build();
 
             pushAlarmRepository.save(alarm);
