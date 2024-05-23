@@ -17,7 +17,7 @@ public class RecentPerfumeResponseDto {
         this.perfumeId = perfume.getId();
         this.brandName = perfume.getBrand().getBrandName();
         this.perfumeName = perfume.getKoreanName();
-        this.relaseDate = perfume.getRelaseDate();
+        this.relaseDate = perfume.getReleaseDate();
         this.perfumeImgUrl = perfume.getPerfumePhoto().getPhotoUrl();
     }
 }
