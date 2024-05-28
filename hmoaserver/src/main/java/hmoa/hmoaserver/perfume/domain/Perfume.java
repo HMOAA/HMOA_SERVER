@@ -27,15 +27,13 @@ public class Perfume extends BaseEntity {
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumePhoto> perfumePhotos = new ArrayList<>();
-    private LocalDate relaseDate;
+    private LocalDate releaseDate;
 
     private String koreanName;
     private String englishName;
     private int price;
     @ElementCollection
     private List<Integer> volume;
-    @ElementCollection
-    private List<String> singleNote;
     @ElementCollection
     private List<Integer> notePhotos;
     private int priceVolume;
@@ -60,7 +58,7 @@ public class Perfume extends BaseEntity {
     private List<PerfumeHomeMenu> perfumeHomeMenuList = new ArrayList<>();
 
     @Builder
-    public Perfume(String koreanName, List<Integer> notePhotos, int sortType, List<String> singleNote, String englishName, int price,List<Integer> volume, int priceVolume, String topNote, String heartNote, String baseNote, Brand brand, String searchName) {
+    public Perfume(String koreanName, List<Integer> notePhotos, int sortType, String englishName, int price,List<Integer> volume, int priceVolume, String topNote, String heartNote, String baseNote, Brand brand, String searchName) {
         this.koreanName = koreanName;
         this.englishName = englishName;
         this.price = price;
@@ -73,7 +71,6 @@ public class Perfume extends BaseEntity {
         this.heartCount = 0;
         this.searchName=searchName;
         this.sortType=sortType;
-        this.singleNote=singleNote;
         this.notePhotos = notePhotos;
     }
     public PerfumePhoto getPerfumePhoto() {
@@ -109,6 +106,6 @@ public class Perfume extends BaseEntity {
     }
 
     public void setRelaseDate(LocalDate localDate) {
-        this.relaseDate = localDate;
+        this.releaseDate = localDate;
     }
 }

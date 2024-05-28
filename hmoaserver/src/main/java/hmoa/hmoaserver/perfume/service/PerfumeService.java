@@ -138,7 +138,7 @@ public class PerfumeService {
     }
 
     public Page<Perfume> findRecentPerfumes() {
-        return perfumeRepository.findAllByOrderByRelaseDateDescIdAsc(DEFAULT_PAGEABLE);
+        return perfumeRepository.findAllByOrderByReleaseDateDescIdAsc(DEFAULT_PAGEABLE);
     }
 
     public Perfume findPerfumeName(String name) {

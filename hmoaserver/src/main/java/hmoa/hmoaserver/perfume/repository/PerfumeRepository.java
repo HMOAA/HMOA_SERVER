@@ -24,7 +24,7 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
 
     Optional<Perfume> findByKoreanName(String koreanName);
 
-    Page<Perfume> findAllByOrderByRelaseDateDescIdAsc(Pageable pageable);
+    Page<Perfume> findAllByOrderByReleaseDateDescIdAsc(Pageable pageable);
 
     Page<Perfume> findAllByBrandIdOrderByCreatedAtDescIdAsc(Long brandId, Pageable pageable);
 
