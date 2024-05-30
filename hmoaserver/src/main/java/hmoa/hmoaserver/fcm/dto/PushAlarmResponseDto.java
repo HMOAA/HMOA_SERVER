@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class PushAlarmResponseDto {
+    private long id;
     private String category;
     private String target;
     private String content;
@@ -14,6 +15,7 @@ public class PushAlarmResponseDto {
     private boolean isRead;
 
     public PushAlarmResponseDto(PushAlarm alarm, String category) {
+        this.id = alarm.getId();
         this.target = alarm.getAlarmCategory().name();
         this.category = category;
         this.content = alarm.getContent();
