@@ -53,6 +53,7 @@ public class FCMController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+
 //    private static String getCategoryName(PushAlarm pushAlarm) {
 //
 //        if (pushAlarm.getAlarmCategory().equals(AlarmCategory.COMMUNITY_COMMENT)) {

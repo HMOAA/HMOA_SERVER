@@ -73,6 +73,7 @@ public class FCMNotificationService {
         return successControl;
     }
 
+
 //    @Transactional
 //    public void savePushAlarm(String message, AlarmCategory category, Member member, String success, Long targetId) {
 //        if (success.equals(SUCCESS_SEND)) {
