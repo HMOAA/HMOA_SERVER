@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static hmoa.hmoaserver.fcm.NotificationType.*;
+import static hmoa.hmoaserver.fcm.domain.AlarmCategory.*;
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
 @Slf4j
@@ -32,9 +33,9 @@ public class FCMNotificationService {
     private final PushAlarmRepository pushAlarmRepository;
 
     public String sendNotification(FCMNotificationRequestDto requestDto) {
-        Optional<Member> member = memberRepository.findById(requestDto.getId());
+        Optional<Member> member = memberRepository.findById(requestDto.getReceiverId());
 
-        if (isSameMember(requestDto.getId(), requestDto.getSenderId())) {
+        if (isSameMember(requestDto.getReceiverId(), requestDto.getSenderId())) {
             return SEND_NOT_REQUIRED;
         }
 
@@ -53,19 +54,19 @@ public class FCMNotificationService {
         if (requestDto.getType() == PERFUME_COMMENT_LIKE) {
             successControl = sendCommentLike(member.get(), requestDto.getSender());
             message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
-            category = AlarmCategory.PERFUME_COMMENT_LIKE;
+            category = perfume_comment_like;
         } else if (requestDto.getType() == COMMUNITY_COMMENT_LIKE) {
             successControl = sendCommentLike(member.get(), requestDto.getSender());
             message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
-            category = AlarmCategory.COMMUNITY_COMMENT_LIKE;
+            category = community_comment;
         } else if (requestDto.getType() == COMMUNITY_LIKE) {
             successControl = sendCommunityLike(member.get(), requestDto.getSender());
             message = requestDto.getSender() + LIKE_COMMUNITY_ALARM_MESSAGE;
-            category = AlarmCategory.COMMUNITY_LIKE;
+            category = community_like;
         } else if (requestDto.getType() == COMMUNITY_COMMENT) {
             successControl = sendAddComment(member.get(), requestDto.getSender());
             message = requestDto.getSender() + ADD_COMMENT_ALARM_MESSAGE;
-            category = AlarmCategory.COMMUNITY_COMMENT;
+            category = community_comment_like;
         }
 
 //        savePushAlarm(message, category, member.get(), successControl, requestDto.getTargetId());
@@ -98,22 +99,26 @@ public class FCMNotificationService {
         pushAlarm.read();
     }
 
-    private String sendCommentLike(Member member, String sender) {
-        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMENT_ALARM_MESSAGE);
+    private String sendCommunityCommentLike(Member member, String sender, Long targetId) {
+        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMENT_ALARM_MESSAGE, makeUri(community_comment_like.name(), targetId));
         return send(message);
     }
 
-    private String sendCommunityLike(Member member, String sender) {
-        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE);
+    private String sendCommunityLike(Member member, String sender, Long targetId) {
+        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE, makeUri(community_like.name(), targetId));
         return send(message);
     }
 
-    private String sendAddComment(Member member, String sender) {
-        Message message = makeMessage(member, ADD_COMMENT_ALARM_TITLE, sender + ADD_COMMENT_ALARM_MESSAGE);
+    private String sendAddComment(Member member, String sender, Long targetId) {
+        Message message = makeMessage(member, ADD_COMMENT_ALARM_TITLE, sender + ADD_COMMENT_ALARM_MESSAGE, makeUri(community_comment.name(), targetId));
         return send(message);
     }
 
-    private static Message makeMessage(Member member, String title, String body) {
+    private static String makeUri(String category, long id) {
+        return String.format(URI_MAPPING, category, id);
+    }
+
+    private static Message makeMessage(Member member, String title, String body, String uri) {
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
@@ -122,6 +127,7 @@ public class FCMNotificationService {
         return Message.builder()
                 .setToken(member.getFirebaseToken())
                 .setNotification(notification)
+                .putData(DEEPLINK_TITLE, uri)
                 .build();
     }
 
@@ -135,8 +141,8 @@ public class FCMNotificationService {
         return FAILE_SEND;
     }
 
-    private static boolean isSameMember(Long id, Long senderId) {
-        return id.equals(senderId);
+    private static boolean isSameMember(Long receiverId, Long senderId) {
+        return receiverId.equals(senderId);
     }
 
 }
