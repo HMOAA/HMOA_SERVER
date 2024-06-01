@@ -105,12 +105,12 @@ public class FCMNotificationService {
     }
 
     private String sendCommunityLike(Member member, String sender, Long targetId) {
-        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE, makeUri(community_like.name(), targetId));
+        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE, makeUri(community_comment_like.name(), targetId));
         return send(message);
     }
 
     private String sendAddComment(Member member, String sender, Long targetId) {
-        Message message = makeMessage(member, ADD_COMMENT_ALARM_TITLE, sender + ADD_COMMENT_ALARM_MESSAGE, makeUri(community_comment.name(), targetId));
+        Message message = makeMessage(member, ADD_COMMENT_ALARM_TITLE, sender + ADD_COMMENT_ALARM_MESSAGE);
         return send(message);
     }
 

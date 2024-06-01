@@ -1,8 +1,8 @@
 package hmoa.hmoaserver.fcm.service.constant;
 
 public class NotificationConstants {
-    public static final String LIKE_ALARM_TITLE = "LIKE";
-    public static final String ADD_COMMENT_ALARM_TITLE = "COMMENT";
+    public static final String LIKE_ALARM_TITLE = "Like";
+    public static final String ADD_COMMENT_ALARM_TITLE = "Comment";
     public static final String DEEPLINK_TITLE = "deeplink";
     public static final String URI_MAPPING = "hmoa://%s/%d";
     public static final String LIKE_COMMENT_ALARM_MESSAGE = "님이 내 댓글에 좋아요를 남겼어요";
