@@ -68,24 +68,24 @@ public class FCMNotificationService {
             category = AlarmCategory.COMMUNITY_COMMENT;
         }
 
-        savePushAlarm(message, category, member.get(), successControl, requestDto.getTargetId());
+//        savePushAlarm(message, category, member.get(), successControl, requestDto.getTargetId());
         log.info("{}", successControl);
         return successControl;
     }
 
-    @Transactional
-    public void savePushAlarm(String message, AlarmCategory category, Member member, String success, Long targetId) {
-        if (success.equals(SUCCESS_SEND)) {
-            PushAlarm alarm = PushAlarm.builder()
-                    .alarmCategory(category)
-                    .content(message)
-                    .member(member)
-                    .parentId(targetId)
-                    .build();
-
-            pushAlarmRepository.save(alarm);
-        }
-    }
+//    @Transactional
+//    public void savePushAlarm(String message, AlarmCategory category, Member member, String success, Long targetId) {
+//        if (success.equals(SUCCESS_SEND)) {
+//            PushAlarm alarm = PushAlarm.builder()
+//                    .alarmCategory(category)
+//                    .content(message)
+//                    .member(member)
+//                    .parentId(targetId)
+//                    .build();
+//
+//            pushAlarmRepository.save(alarm);
+//        }
+//    }
 
     @Transactional(readOnly = true)
     public Page<PushAlarm> findPushAlarms(Member member) {

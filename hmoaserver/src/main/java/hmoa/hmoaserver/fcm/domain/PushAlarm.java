@@ -18,11 +18,9 @@ public class PushAlarm extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "push_alarm_id")
     private long id;
-
-    @Enumerated(EnumType.STRING)
-    private AlarmCategory alarmCategory;
-    private long parentId;
+    private String title;
     private String content;
+    private String deeplink;
     private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,9 +28,9 @@ public class PushAlarm extends BaseEntity {
     private Member member;
 
     @Builder
-    public PushAlarm(AlarmCategory alarmCategory, String content, Member member, long parentId) {
-        this.alarmCategory = alarmCategory;
-        this.parentId = parentId;
+    public PushAlarm(String title, String content, String deeplink, Member member) {
+        this.title = title;
+        this.deeplink = deeplink;
         this.content = content;
         this.member = member;
         this.isRead = false;
