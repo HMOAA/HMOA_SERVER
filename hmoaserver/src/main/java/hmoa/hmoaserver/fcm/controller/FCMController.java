@@ -50,14 +50,4 @@ public class FCMController {
         memberService.deleteFCMToken(member);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
-
-
-//    private static String getCategoryName(PushAlarm pushAlarm) {
-//
-//        if (pushAlarm.getAlarmCategory().equals(AlarmCategory.COMMUNITY_COMMENT)) {
-//            return NotificationConstants.ADD_COMMENT_ALARM_TITLE;
-//        }
-//
-//        return NotificationConstants.LIKE_ALARM_TITLE;
-//    }
 }

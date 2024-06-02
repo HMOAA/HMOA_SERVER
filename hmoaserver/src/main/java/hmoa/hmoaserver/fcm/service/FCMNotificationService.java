@@ -5,6 +5,8 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
@@ -37,6 +39,7 @@ public class FCMNotificationService {
     private final PushAlarmRepository pushAlarmRepository;
 
     public void sendNotification(FCMNotificationRequestDto requestDto) {
+        log.info("알림 보내기");
         Optional<Member> member = memberService.findById(requestDto.getReceiverId());
 
         if (!isValidNotification(requestDto, member)) {
@@ -66,8 +69,19 @@ public class FCMNotificationService {
     }
 
     @Transactional(readOnly = true)
+    public PushAlarm findById(Long id) {
+        return pushAlarmRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.PUSH_ALARM_NOT_FOUND));
+    }
+
+
+    @Transactional(readOnly = true)
     public Page<PushAlarm> findPushAlarms(Member member) {
         return pushAlarmRepository.findAllByMemberOrderByCreatedAtDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
+    @Transactional
+    public void readPushAlarm(PushAlarm pushAlarm) {
+        pushAlarm.read();
     }
 
     private static boolean isValidNotification(FCMNotificationRequestDto requestDto, Optional<Member> member) {
@@ -109,111 +123,6 @@ public class FCMNotificationService {
         }
     }
 
-//    public String sendNotification(FCMNotificationRequestDto requestDto) {
-//        Optional<Member> member = memberRepository.findById(requestDto.getReceiverId());
-//
-//        if (isSameMember(requestDto.getReceiverId(), requestDto.getSenderId())) {
-//            return SEND_NOT_REQUIRED;
-//        }
-//
-//        if (member.isEmpty()) {
-//            return NOT_FOUND_MEMBER;
-//        }
-//
-//        if (member.get().getFirebaseToken() == null) {
-//            return NOT_FOUND_TOKEN;
-//        }
-//
-//        String successControl = "";
-//        String message = "";
-//        AlarmCategory category = null;
-//
-//        if (requestDto.getType() == PERFUME_COMMENT_LIKE) {
-//            successControl = sendCommentLike(member.get(), requestDto.getSender());
-//            message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
-//            category = perfume_comment_like;
-//        } else if (requestDto.getType() == COMMUNITY_COMMENT_LIKE) {
-//            successControl = sendCommentLike(member.get(), requestDto.getSender());
-//            message = requestDto.getSender() + LIKE_COMMENT_ALARM_MESSAGE;
-//            category = community_comment;
-//        } else if (requestDto.getType() == COMMUNITY_LIKE) {
-//            successControl = sendCommunityLike(member.get(), requestDto.getSender());
-//            message = requestDto.getSender() + LIKE_COMMUNITY_ALARM_MESSAGE;
-//            category = community_like;
-//        } else if (requestDto.getType() == COMMUNITY_COMMENT) {
-//            successControl = sendAddComment(member.get(), requestDto.getSender());
-//            message = requestDto.getSender() + ADD_COMMENT_ALARM_MESSAGE;
-//            category = community_comment_like;
-//        }
-//
-////        savePushAlarm(message, category, member.get(), successControl, requestDto.getTargetId());
-//        log.info("{}", successControl);
-//        return successControl;
-//    }
-//
-//
-////    @Transactional
-////    public void savePushAlarm(String message, AlarmCategory category, Member member, String success, Long targetId) {
-////        if (success.equals(SUCCESS_SEND)) {
-////            PushAlarm alarm = PushAlarm.builder()
-////                    .alarmCategory(category)
-////                    .content(message)
-////                    .member(member)
-////                    .parentId(targetId)
-////                    .build();
-////
-////            pushAlarmRepository.save(alarm);
-////        }
-////    }
-//
-//
-//    @Transactional
-//    public void readPushAlarm(PushAlarm pushAlarm) {
-//        pushAlarm.read();
-//    }
-//
-//    private String sendCommunityCommentLike(Member member, String sender, Long targetId) {
-//        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMENT_ALARM_MESSAGE, makeUri(community_comment_like.name(), targetId));
-//        return send(message);
-//    }
-//
-//    private String sendCommunityLike(Member member, String sender, Long targetId) {
-//        Message message = makeMessage(member, LIKE_ALARM_TITLE, sender + LIKE_COMMUNITY_ALARM_MESSAGE, makeUri(community_comment_like.name(), targetId));
-//        return send(message);
-//    }
-//
-//    private String sendAddComment(Member member, String sender, Long targetId) {
-//        Message message = makeMessage(member, ADD_COMMENT_ALARM_TITLE, sender + ADD_COMMENT_ALARM_MESSAGE);
-//        return send(message);
-//    }
-//
-//    private static String makeUri(String category, long id) {
-//        return String.format(URI_MAPPING, category, id);
-//    }
-//
-//    private static Message makeMessage(Member member, String title, String body, String uri) {
-//        Notification notification = Notification.builder()
-//                .setTitle(title)
-//                .setBody(body)
-//                .build();
-//
-//        return Message.builder()
-//                .setToken(member.getFirebaseToken())
-//                .setNotification(notification)
-//                .putData(DEEPLINK_TITLE, uri)
-//                .build();
-//    }
-//
-//    private String send(Message message) {
-//        try {
-//            firebaseMessaging.send(message);
-//            return SUCCESS_SEND;
-//        } catch (FirebaseMessagingException e) {
-//            e.printStackTrace();
-//        }
-//        return FAILE_SEND;
-//    }
-//
     private static boolean isSameMember(Long receiverId, Long senderId) {
         return receiverId.equals(senderId);
     }
