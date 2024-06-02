@@ -45,10 +45,24 @@ public class FCMNotificationService {
 
         NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
 
-        Message message = makeMessage(requestDto.getSender(), member.get().getFirebaseToken(), notificationMessage, requestDto.getTargetId());
+        PushAlarm pushAlarm = savePushAlarm(notificationMessage, member.get(), requestDto.getSender(), requestDto.getTargetId());
+
+        Message message = makeMessage(pushAlarm, member.get().getFirebaseToken());
 
         sendMessage(message);
-        
+
+    }
+
+    @Transactional
+    public PushAlarm savePushAlarm(NotificationMessage message, Member member, String sender, Long targetId) {
+        PushAlarm pushAlarm = PushAlarm.builder()
+                .member(member)
+                .title(message.getTitle())
+                .content(message.getContent(sender))
+                .deeplink(message.getDeeplinkUrl(targetId))
+                .build();
+
+        return pushAlarmRepository.save(pushAlarm);
     }
 
     private static boolean isValidNotification(FCMNotificationRequestDto requestDto, Optional<Member> member) {
@@ -67,16 +81,16 @@ public class FCMNotificationService {
         return true;
     }
 
-    private static Message makeMessage(String sender, String token, NotificationMessage message, Long targetId) {
+    private static Message makeMessage(PushAlarm pushAlarm, String token) {
         Notification notification = Notification.builder()
-                .setTitle(message.getTitle())
-                .setBody(message.getContent(sender))
+                .setTitle(pushAlarm.getTitle())
+                .setBody(pushAlarm.getContent())
                 .build();
 
         return Message.builder()
                 .setToken(token)
                 .setNotification(notification)
-                .putData(DEEPLINK_TITLE, message.getDeeplinkUrl(targetId))
+                .putData(DEEPLINK_TITLE, pushAlarm.getDeeplink())
                 .build();
     }
 
@@ -89,7 +103,6 @@ public class FCMNotificationService {
             log.info("푸쉬 알림 실패");
         }
     }
-
 
 //    public String sendNotification(FCMNotificationRequestDto requestDto) {
 //        Optional<Member> member = memberRepository.findById(requestDto.getReceiverId());
