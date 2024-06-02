@@ -13,7 +13,7 @@ public class PushAlarmResponseDto {
     private String createdAt;
     private boolean isRead;
 
-    public PushAlarmResponseDto(PushAlarm alarm, String category) {
+    public PushAlarmResponseDto(PushAlarm alarm) {
         this.id = alarm.getId();
         this.title = alarm.getTitle();
         this.content = alarm.getContent();

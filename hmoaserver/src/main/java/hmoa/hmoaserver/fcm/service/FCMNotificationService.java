@@ -65,6 +65,11 @@ public class FCMNotificationService {
         return pushAlarmRepository.save(pushAlarm);
     }
 
+    @Transactional(readOnly = true)
+    public Page<PushAlarm> findPushAlarms(Member member) {
+        return pushAlarmRepository.findAllByMemberOrderByCreatedAtDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
+    }
+
     private static boolean isValidNotification(FCMNotificationRequestDto requestDto, Optional<Member> member) {
         if (isSameMember(requestDto.getReceiverId(), requestDto.getSenderId())) {
             return false;
@@ -161,10 +166,6 @@ public class FCMNotificationService {
 ////        }
 ////    }
 //
-//    @Transactional(readOnly = true)
-//    public Page<PushAlarm> findPushAlarms(Member member) {
-//        return pushAlarmRepository.findAllByMemberOrderByCreatedAtDesc(member, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize()));
-//    }
 //
 //    @Transactional
 //    public void readPushAlarm(PushAlarm pushAlarm) {

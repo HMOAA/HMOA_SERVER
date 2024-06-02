@@ -27,16 +27,14 @@ public class FCMController {
     private final FCMNotificationService fcmNotificationService;
     private final MemberService memberService;
 
-//    @GetMapping("/list")
-//    public ResponseEntity<List<PushAlarmResponseDto>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
-//        Member member = memberService.findByMember(token);
-//        Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
-//        List<PushAlarmResponseDto> result = pushAlarms.stream().map(pushAlarm -> new PushAlarmResponseDto(pushAlarm, getCategoryName(pushAlarm))).collect(Collectors.toList());
-//
-//        pushAlarms.forEach(fcmNotificationService::readPushAlarm);
-//
-//        return ResponseEntity.ok(result);
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<List<PushAlarmResponseDto>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
+        List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveFcmToken(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTokenSaveRequestDto dto) {
