@@ -4,7 +4,7 @@ import hmoa.hmoaserver.fcm.NotificationType;
 
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
-public class CommunityNotificationMessage implements NotificationMessage{
+public class CommunityLikeNotificationMessage implements NotificationMessage{
     @Override
     public String getTitle() {
         return LIKE_ALARM_TITLE;
