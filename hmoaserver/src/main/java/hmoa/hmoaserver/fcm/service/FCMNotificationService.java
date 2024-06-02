@@ -47,8 +47,8 @@ public class FCMNotificationService {
 
         Message message = makeMessage(requestDto.getSender(), member.get().getFirebaseToken(), notificationMessage, requestDto.getTargetId());
 
-
-
+        sendMessage(message);
+        
     }
 
     private static boolean isValidNotification(FCMNotificationRequestDto requestDto, Optional<Member> member) {
@@ -78,6 +78,16 @@ public class FCMNotificationService {
                 .setNotification(notification)
                 .putData(DEEPLINK_TITLE, message.getDeeplinkUrl(targetId))
                 .build();
+    }
+
+    private void sendMessage(Message message) {
+        try {
+            firebaseMessaging.send(message);
+            log.info("푸쉬 알림 성공");
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+            log.info("푸쉬 알림 실패");
+        }
     }
 
 
