@@ -59,7 +59,6 @@ public class PerfumeSaveRequestDto {
                     .englishName(cEnglishName)
                     .volume(volume)
                     .topNote(eTopNote)
-                    .singleNote(hSingleNote)
                     .price(dPrice)
                     .sortType(sortType)
                     .searchName(removeSpace(bKoreanName))
