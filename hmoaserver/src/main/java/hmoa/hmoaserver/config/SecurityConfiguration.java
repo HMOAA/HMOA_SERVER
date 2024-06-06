@@ -63,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/fcm/**",
                 "/appleTest/**",
                 "/magazine/**",
-                "/.well-known/acme-challenge/*"
+                "/.well-known/acme-challenge/**"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
