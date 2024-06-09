@@ -299,6 +299,13 @@ public class PerfumeController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiOperation(value = "제외된 단어가 포함된 향수 제거")
+    @PutMapping("/delete/excluded")
+    public ResponseEntity<ResultDto<Object>> deleteExcludedPerfumes() {
+        perfumeService.deleteExcludedPerfumes();
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     private static String removeBrand(String name) {
         String[] names = name.split("_");
         String productName = names[1].substring(0, names[1].lastIndexOf("."));
