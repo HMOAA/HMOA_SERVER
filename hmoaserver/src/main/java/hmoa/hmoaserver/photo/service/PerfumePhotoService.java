@@ -62,6 +62,19 @@ public class PerfumePhotoService {
         return save(savedPerfumePhoto);
     }
 
+    @Transactional
+    public PerfumePhoto savePerfumePhotoFromS3(Perfume perfume) {
+        String perfumeName = perfume.getKoreanName();
+        String url = photoService.getPhotoUrl(perfumePhotoBucketName, perfumeName);
+
+        PerfumePhoto photo = PerfumePhoto.builder()
+                .perfume(perfume)
+                .photoUrl(url)
+                .build();
+
+        return save(photo);
+    }
+    
     private static String reduceName(String str) {
         String result = str.length() > 6 ? str.substring(0, 6) : str;
         return result;
