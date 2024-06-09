@@ -77,7 +77,7 @@ public class PerfumeController {
     }
 
     @ApiOperation("향수 이미지 브랜드 별로 매핑")
-    @PostMapping("/{brandId}")
+    @PostMapping("/save/{brandId}")
     public ResponseEntity<ResultDto<Object>> MappingPerfumeImages(@PathVariable Long brandId) {
         Brand brand = brandService.findById(brandId);
         List<Perfume> perfumes = brand.getPerfumeList();
@@ -93,7 +93,7 @@ public class PerfumeController {
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
-    
+
     @ApiOperation("향수 저장 새로운 버전")
     @PostMapping("/newList")
     public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody List<PerfumeNewRequestDto> dtos) {
