@@ -74,7 +74,7 @@ public class PerfumePhotoService {
 
         return save(photo);
     }
-    
+
     private static String reduceName(String str) {
         String result = str.length() > 6 ? str.substring(0, 6) : str;
         return result;
