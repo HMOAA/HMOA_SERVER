@@ -242,7 +242,14 @@ public class BrandController {
                         .isLastPage(isLastPage)
                         .build()
                 );
-        }
-
     }
+
+    @ApiOperation(value = "브랜드 S3 URL 매핑")
+    @PutMapping("/save/s3")
+    public ResponseEntity<ResultDto<Object>> saveS3Url() {
+        List<Brand> brands = brandService.getAllBrands();
+        
+    }
+}
+
 

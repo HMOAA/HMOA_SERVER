@@ -62,4 +62,12 @@ public class BrandPhotoService {
 
         return save(savedBrandPhoto);
     }
+
+    @Transactional
+    public BrandPhoto saveS3BrandPhotos(Brand brand) {
+
+        String url = photoService.getPhotoUrl(brandPhotoBucketName, brand.getBrandName());
+
+        return save(BrandPhoto.builder().brand(brand).photoUrl(url).build());
+    }
 }
