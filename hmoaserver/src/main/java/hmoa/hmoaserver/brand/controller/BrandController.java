@@ -248,7 +248,13 @@ public class BrandController {
     @PutMapping("/save/s3")
     public ResponseEntity<ResultDto<Object>> saveS3Url() {
         List<Brand> brands = brandService.getAllBrands();
-        
+
+        for (Brand brand : brands) {
+            log.info("{}", brand.getBrandName());
+            brandPhotoService.saveS3BrandPhotos(brand);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
 
