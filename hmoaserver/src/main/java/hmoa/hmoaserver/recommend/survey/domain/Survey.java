@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.recommend.survey.domain;
 
-import hmoa.hmoaserver.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,9 +7,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-public class Survey extends BaseEntity {
+public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "survey_id")
@@ -20,4 +17,10 @@ public class Survey extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private SurveyType surveyType;
+
+    @Builder
+    public Survey(String title, SurveyType surveyType) {
+        this.title = title;
+        this.surveyType = surveyType;
+    }
 }

@@ -57,6 +57,9 @@ dependencies {
 
 	//push
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+	//h2
+	implementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
