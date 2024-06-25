@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.recommend.survey.domain;
 
+import hmoa.hmoaserver.note.domain.Note;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,22 +11,24 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer {
+public class AnswerNote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "answer_id")
+    @Column(name = "answer_note_id")
     private Long id;
 
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @JoinColumn(name = "note_id")
+    private Note note;
 
     @Builder
-    public Answer(String content, Question question) {
-        this.content = content;
-        this.question = question;
+    public AnswerNote(Answer answer, Note note) {
+        this.answer = answer;
+        this.note = note;
     }
 }
