@@ -16,11 +16,15 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
 
     @Transactional
-    public Survey save(SurveySaveRequestDto dto) {
+    public Survey save(final SurveySaveRequestDto dto) {
         try {
             return surveyRepository.save(dto.toEntity());
         } catch (RuntimeException e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+    
+    public Survey findById(final Long surveyId) {
+        return surveyRepository.findById(surveyId).orElseThrow(() -> new CustomException(null, Code.SURVEY_NOT_FOUND));
     }
 }
