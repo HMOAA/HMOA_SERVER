@@ -19,6 +19,7 @@ public class Question {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
+    @Builder
     public Question(String content, Survey survey) {
         this.content = content;
         this.survey = survey;
