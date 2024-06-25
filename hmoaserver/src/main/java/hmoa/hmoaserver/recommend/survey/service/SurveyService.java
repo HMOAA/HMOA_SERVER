@@ -23,7 +23,7 @@ public class SurveyService {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
     }
-    
+
     public Survey findById(final Long surveyId) {
         return surveyRepository.findById(surveyId).orElseThrow(() -> new CustomException(null, Code.SURVEY_NOT_FOUND));
     }

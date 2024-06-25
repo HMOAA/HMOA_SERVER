@@ -1,16 +1,16 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.recommend.survey.domain.Question;
 import hmoa.hmoaserver.recommend.survey.domain.Survey;
+import hmoa.hmoaserver.recommend.survey.dto.QuestionSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.SurveySaveRequestDto;
+import hmoa.hmoaserver.recommend.survey.service.QuestionService;
 import hmoa.hmoaserver.recommend.survey.service.SurveyService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"설문"})
 @RestController
@@ -19,10 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class SurveyController {
 
     private final SurveyService surveyService;
+    private final QuestionService questionService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
         surveyService.save(dto);
+        
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @PostMapping("/save-question/{surveyId}")
+    public ResponseEntity<ResultDto<Object>> saveQuestion(@PathVariable Long surveyId, @RequestBody QuestionSaveRequestDto dto) {
+        Survey survey = surveyService.findById(surveyId);
+        questionService.save(dto, survey);
+
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
