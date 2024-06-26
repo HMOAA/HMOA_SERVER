@@ -3,6 +3,8 @@ package hmoa.hmoaserver.recommend.survey.service;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.recommend.survey.domain.Answer;
+import hmoa.hmoaserver.recommend.survey.domain.Question;
+import hmoa.hmoaserver.recommend.survey.dto.AnswerSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.repository.AnswerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,9 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
 
     @Transactional
-    public Answer save(Answer answer) {
+    public Answer save(AnswerSaveRequestDto dto, Question question) {
         try {
-            return answerRepository.save(answer);
+            return answerRepository.save(dto.toEntity(question));
         } catch (RuntimeException e) {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
