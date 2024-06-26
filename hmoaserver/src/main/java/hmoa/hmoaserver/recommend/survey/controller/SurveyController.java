@@ -1,12 +1,14 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.recommend.survey.domain.Answer;
 import hmoa.hmoaserver.recommend.survey.domain.Question;
 import hmoa.hmoaserver.recommend.survey.domain.Survey;
 import hmoa.hmoaserver.recommend.survey.dto.AnswerSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.QuestionSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.SurveySaveRequestDto;
+import hmoa.hmoaserver.recommend.survey.service.AnswerNoteService;
 import hmoa.hmoaserver.recommend.survey.service.AnswerService;
 import hmoa.hmoaserver.recommend.survey.service.QuestionService;
 import hmoa.hmoaserver.recommend.survey.service.SurveyService;
@@ -24,6 +26,8 @@ public class SurveyController {
     private final SurveyService surveyService;
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final AnswerNoteService answerNoteService;
+    private final NoteService noteService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
