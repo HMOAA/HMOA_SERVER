@@ -8,16 +8,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FCMNotificationRequestDto {
-    private Long id;
+    private Long receiverId;
     private Long senderId;
     private String sender;
     private NotificationType type;
+    private Long targetId;
 
     @Builder
-    public FCMNotificationRequestDto(Long id, String sender, Long senderId, NotificationType notificationType) {
-        this.id = id;
+    public FCMNotificationRequestDto(Long receiverId, String sender, Long senderId, NotificationType notificationType, Long targetId) {
+        this.receiverId = receiverId;
         this.senderId = senderId;
         this.sender = sender;
         this.type = notificationType;
+        this.targetId = targetId;
     }
 }

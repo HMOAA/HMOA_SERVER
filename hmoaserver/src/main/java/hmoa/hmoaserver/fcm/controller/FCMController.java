@@ -1,11 +1,15 @@
 package hmoa.hmoaserver.fcm.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTokenSaveRequestDto;
 import hmoa.hmoaserver.fcm.dto.PushAlarmResponseDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
+import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +35,21 @@ public class FCMController {
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
 
-        pushAlarms.forEach(fcmNotificationService::readPushAlarm);
+        return ResponseEntity.ok(result);
+    }
 
-        return ResponseEntity.ok(pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList()));
+    @PutMapping("/read/{alarmId}")
+    public ResponseEntity<ResultDto<Object>> readPushAlarm(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long alarmId) {
+        Member member = memberService.findByMember(token);
+        PushAlarm pushAlarm = fcmNotificationService.findById(alarmId);
+
+        if (!member.isSameMember(pushAlarm.getMember())) {
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+        }
+
+        fcmNotificationService.readPushAlarm(pushAlarm);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     @PostMapping("/save")

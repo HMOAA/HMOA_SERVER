@@ -225,7 +225,7 @@ public class CommunityController {
         Community community = communityService.getCommunityById(communityId);
 
         communityLikedMemberService.save(member, community);
-        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_LIKE));
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_LIKE, communityId));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
