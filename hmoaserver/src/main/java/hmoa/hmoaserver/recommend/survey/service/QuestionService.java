@@ -26,5 +26,7 @@ public class QuestionService {
         }
     }
 
-
+    public Question findById(Long id) {
+        return questionRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.QUESTION_NOT_DOUNT));
+    }
 }
