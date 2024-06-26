@@ -1,10 +1,13 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.recommend.survey.domain.Answer;
+import hmoa.hmoaserver.recommend.survey.domain.AnswerNote;
 import hmoa.hmoaserver.recommend.survey.domain.Question;
 import hmoa.hmoaserver.recommend.survey.domain.Survey;
+import hmoa.hmoaserver.recommend.survey.dto.AnswerNoteSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.AnswerSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.QuestionSaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.dto.SurveySaveRequestDto;
@@ -16,6 +19,8 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = {"설문"})
 @RestController
@@ -48,6 +53,21 @@ public class SurveyController {
     public ResponseEntity<ResultDto<Object>> saveAnswer(@PathVariable Long questionId, @RequestBody AnswerSaveRequestDto dto) {
         Question question = questionService.findById(questionId);
         answerService.save(dto, question);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @PostMapping("/save-answer-note")
+    public ResponseEntity<ResultDto<Object>> saveAnswerNote(@RequestBody List<AnswerNoteSaveRequestDto> dtos) {
+        Note note;
+        Answer answer;
+
+        for (AnswerNoteSaveRequestDto dto : dtos) {
+            note = noteService.findByTitle(dto.getNoteTitle());
+            answer = answerService.findById(dto.getAnswerId());
+
+            answerNoteService.save(AnswerNote.builder().note(note).answer(answer).build());
+        }
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
