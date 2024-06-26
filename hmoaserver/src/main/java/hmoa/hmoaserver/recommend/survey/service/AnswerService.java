@@ -25,4 +25,8 @@ public class AnswerService {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
     }
+
+    public Answer findById(Long id) {
+        return answerRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.ANSWER_NOT_FOUND));
+    }
 }
