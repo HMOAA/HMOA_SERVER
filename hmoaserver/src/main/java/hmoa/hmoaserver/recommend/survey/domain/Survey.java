@@ -3,6 +3,8 @@ package hmoa.hmoaserver.recommend.survey.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,6 +19,9 @@ public class Survey {
 
     @Enumerated(EnumType.STRING)
     private SurveyType surveyType;
+
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<Question> questions = new ArrayList<>();
 
     @Builder
     public Survey(String title, SurveyType surveyType) {

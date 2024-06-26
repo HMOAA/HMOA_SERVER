@@ -3,6 +3,7 @@ package hmoa.hmoaserver.recommend.survey.service;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.recommend.survey.domain.Survey;
+import hmoa.hmoaserver.recommend.survey.domain.SurveyType;
 import hmoa.hmoaserver.recommend.survey.dto.SurveySaveRequestDto;
 import hmoa.hmoaserver.recommend.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,9 @@ public class SurveyService {
 
     public Survey findById(final Long surveyId) {
         return surveyRepository.findById(surveyId).orElseThrow(() -> new CustomException(null, Code.SURVEY_NOT_FOUND));
+    }
+
+    public Survey findBySurveyType(final SurveyType surveyType) {
+        return surveyRepository.findBySurveyType(surveyType).orElseThrow(() -> new CustomException(null, Code.SURVEY_NOT_FOUND));
     }
 }

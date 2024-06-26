@@ -3,14 +3,8 @@ package hmoa.hmoaserver.recommend.survey.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
-import hmoa.hmoaserver.recommend.survey.domain.Answer;
-import hmoa.hmoaserver.recommend.survey.domain.AnswerNote;
-import hmoa.hmoaserver.recommend.survey.domain.Question;
-import hmoa.hmoaserver.recommend.survey.domain.Survey;
-import hmoa.hmoaserver.recommend.survey.dto.AnswerNoteSaveRequestDto;
-import hmoa.hmoaserver.recommend.survey.dto.AnswerSaveRequestDto;
-import hmoa.hmoaserver.recommend.survey.dto.QuestionSaveRequestDto;
-import hmoa.hmoaserver.recommend.survey.dto.SurveySaveRequestDto;
+import hmoa.hmoaserver.recommend.survey.domain.*;
+import hmoa.hmoaserver.recommend.survey.dto.*;
 import hmoa.hmoaserver.recommend.survey.service.AnswerNoteService;
 import hmoa.hmoaserver.recommend.survey.service.AnswerService;
 import hmoa.hmoaserver.recommend.survey.service.QuestionService;
@@ -70,5 +64,13 @@ public class SurveyController {
         }
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @GetMapping("/note")
+    public ResponseEntity<SurveyResponseDto> getNoteRecommendSurvey() {
+        Survey survey = surveyService.findBySurveyType(SurveyType.NOTE);
+        SurveyResponseDto result = new SurveyResponseDto(survey);
+
+        return ResponseEntity.ok(result);
     }
 }
