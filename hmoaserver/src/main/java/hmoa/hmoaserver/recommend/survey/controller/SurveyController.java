@@ -1,15 +1,15 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.recommend.survey.domain.*;
 import hmoa.hmoaserver.recommend.survey.dto.*;
-import hmoa.hmoaserver.recommend.survey.service.AnswerNoteService;
-import hmoa.hmoaserver.recommend.survey.service.AnswerService;
-import hmoa.hmoaserver.recommend.survey.service.QuestionService;
-import hmoa.hmoaserver.recommend.survey.service.SurveyService;
+import hmoa.hmoaserver.recommend.survey.service.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +27,8 @@ public class SurveyController {
     private final AnswerService answerService;
     private final AnswerNoteService answerNoteService;
     private final NoteService noteService;
+    private final MemberService memberService;
+    private final MemberAnswerService memberAnswerService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -66,11 +68,27 @@ public class SurveyController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "향료 추천 설문 조회")
     @GetMapping("/note")
     public ResponseEntity<SurveyResponseDto> getNoteRecommendSurvey() {
         Survey survey = surveyService.findBySurveyType(SurveyType.NOTE);
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향료 추천 응답 API")
+    @PostMapping("/note/respond")
+    public ResponseEntity<ResultDto<Object>> respondNoteRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberAnswerRequestDto dto) {
+        Member member = memberService.findByMember(token);
+        Answer answer;
+
+        for (Long optionId : dto.getOptionIds()) {
+            answer = answerService.findById(optionId);
+
+            memberAnswerService.save(MemberAnswer.builder().member(member).answer(answer).build());
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
