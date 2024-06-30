@@ -1,8 +1,6 @@
 package hmoa.hmoaserver.fcm.service.constant;
 
-import hmoa.hmoaserver.fcm.NotificationType;
-
-import static hmoa.hmoaserver.fcm.NotificationType.*;
+import static hmoa.hmoaserver.fcm.service.constant.NotificationType.*;
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
 public class CommunityCommentLikeNotificationMessage implements NotificationMessage{

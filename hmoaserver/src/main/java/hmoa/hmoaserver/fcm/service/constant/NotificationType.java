@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.fcm;
+package hmoa.hmoaserver.fcm.service.constant;
 
 import lombok.Getter;
 

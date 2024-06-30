@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hmoa.hmoaserver.fcm.NotificationType.*;
+import static hmoa.hmoaserver.fcm.service.constant.NotificationType.*;
 
 @Api(tags = "커뮤니티 답변")
 @RestController

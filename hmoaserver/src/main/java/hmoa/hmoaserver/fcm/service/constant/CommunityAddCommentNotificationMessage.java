@@ -1,7 +1,5 @@
 package hmoa.hmoaserver.fcm.service.constant;
 
-import hmoa.hmoaserver.fcm.NotificationType;
-
 public class CommunityAddCommentNotificationMessage implements NotificationMessage{
     @Override
     public String getTitle() {
