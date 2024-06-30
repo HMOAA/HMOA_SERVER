@@ -7,15 +7,12 @@ import com.google.firebase.messaging.Notification;
 import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
-import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessage;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessageFactory;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static hmoa.hmoaserver.fcm.NotificationType.*;
-import static hmoa.hmoaserver.fcm.domain.AlarmCategory.*;
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
 @Slf4j

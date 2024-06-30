@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hmoa.hmoaserver.fcm.NotificationType.COMMUNITY_LIKE;
+import static hmoa.hmoaserver.fcm.service.constant.NotificationType.COMMUNITY_LIKE;
 
 @Api(tags = "커뮤니티")
 @RestController

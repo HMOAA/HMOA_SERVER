@@ -2,7 +2,6 @@ package hmoa.hmoaserver.fcm.service.constant;
 
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.NotificationType;
 
 public class NotificationMessageFactory {
     public static NotificationMessage getMessage(NotificationType type) {
