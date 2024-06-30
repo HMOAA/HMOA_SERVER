@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.fcm.dto;
 
-import hmoa.hmoaserver.fcm.NotificationType;
+import hmoa.hmoaserver.fcm.service.constant.NotificationType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

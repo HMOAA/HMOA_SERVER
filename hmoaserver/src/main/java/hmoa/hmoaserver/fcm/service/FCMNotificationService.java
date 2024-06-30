@@ -7,15 +7,12 @@ import com.google.firebase.messaging.Notification;
 import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
-import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessage;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessageFactory;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static hmoa.hmoaserver.fcm.NotificationType.*;
-import static hmoa.hmoaserver.fcm.domain.AlarmCategory.*;
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
 @Slf4j
@@ -41,6 +36,7 @@ public class FCMNotificationService {
     public void sendNotification(FCMNotificationRequestDto requestDto) {
         log.info("알림 보내기");
         Optional<Member> member = memberService.findById(requestDto.getReceiverId());
+        Optional<Member> sender = memberService.findById(requestDto.getSenderId());
 
         if (!isValidNotification(requestDto, member)) {
             return;
@@ -48,21 +44,21 @@ public class FCMNotificationService {
 
         NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
 
-        PushAlarm pushAlarm = savePushAlarm(notificationMessage, member.get(), requestDto.getSender(), requestDto.getTargetId());
+        PushAlarm pushAlarm = savePushAlarm(notificationMessage, member.get(), sender.get(), requestDto.getTargetId());
 
         Message message = makeMessage(pushAlarm, member.get().getFirebaseToken());
 
         sendMessage(message);
-
     }
 
     @Transactional
-    public PushAlarm savePushAlarm(NotificationMessage message, Member member, String sender, Long targetId) {
+    public PushAlarm savePushAlarm(NotificationMessage message, Member receiver, Member sender, Long targetId) {
         PushAlarm pushAlarm = PushAlarm.builder()
-                .member(member)
+                .member(receiver)
                 .title(message.getTitle())
-                .content(message.getContent(sender))
+                .content(message.getContent(sender.getNickname()))
                 .deeplink(message.getDeeplinkUrl(targetId))
+                .senderProfileImgUrl(sender.getMemberPhoto().getPhotoUrl())
                 .build();
 
         return pushAlarmRepository.save(pushAlarm);
@@ -89,15 +85,8 @@ public class FCMNotificationService {
             return false;
         }
 
-        if (member.isEmpty()) {
-            return false;
-        }
+        return member.filter(value -> value.getFirebaseToken() != null).isPresent();
 
-        if (member.get().getFirebaseToken() == null) {
-            return false;
-        }
-
-        return true;
     }
 
     private static Message makeMessage(PushAlarm pushAlarm, String token) {
@@ -110,6 +99,7 @@ public class FCMNotificationService {
                 .setToken(token)
                 .setNotification(notification)
                 .putData(DEEPLINK_TITLE, pushAlarm.getDeeplink())
+                .putData(SENDER_PROFILE_TITLE, pushAlarm.getSenderProfileImgUrl())
                 .build();
     }
 
