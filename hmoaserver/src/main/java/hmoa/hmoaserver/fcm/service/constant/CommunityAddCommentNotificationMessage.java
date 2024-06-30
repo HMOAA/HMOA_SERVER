@@ -13,6 +13,6 @@ public class CommunityAddCommentNotificationMessage implements NotificationMessa
 
     @Override
     public String getDeeplinkUrl(long targetId) {
-        return String.format(NotificationConstants.URI_MAPPING, NotificationType.COMMUNITY_COMMENT, targetId);
+        return String.format(NotificationConstants.URI_MAPPING, NotificationLink.community, targetId);
     }
 }

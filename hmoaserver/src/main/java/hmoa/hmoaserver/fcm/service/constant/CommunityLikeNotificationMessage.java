@@ -15,6 +15,6 @@ public class CommunityLikeNotificationMessage implements NotificationMessage{
 
     @Override
     public String getDeeplinkUrl(long targetId) {
-        return String.format(URI_MAPPING, NotificationType.COMMUNITY_LIKE, targetId);
+        return String.format(URI_MAPPING, NotificationLink.community, targetId);
     }
 }
