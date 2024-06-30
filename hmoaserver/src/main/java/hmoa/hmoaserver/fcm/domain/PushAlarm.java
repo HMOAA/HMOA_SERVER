@@ -21,6 +21,7 @@ public class PushAlarm extends BaseEntity {
     private String title;
     private String content;
     private String deeplink;
+    private String senderProfileImgUrl;
     private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,11 +29,12 @@ public class PushAlarm extends BaseEntity {
     private Member member;
 
     @Builder
-    public PushAlarm(String title, String content, String deeplink, Member member) {
+    public PushAlarm(String title, String content, String deeplink, Member member, String senderProfileImgUrl) {
         this.title = title;
         this.deeplink = deeplink;
         this.content = content;
         this.member = member;
+        this.senderProfileImgUrl = senderProfileImgUrl;
         this.isRead = false;
     }
 
