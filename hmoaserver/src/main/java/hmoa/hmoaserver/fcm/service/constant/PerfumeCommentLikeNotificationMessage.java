@@ -15,6 +15,6 @@ public class PerfumeCommentLikeNotificationMessage implements NotificationMessag
 
     @Override
     public String getDeeplinkUrl(long targetId) {
-        return String.format(URI_MAPPING, NotificationType.PERFUME_COMMENT_LIKE, targetId);
+        return String.format(URI_MAPPING, NotificationLink.perfume_comment, targetId);
     }
 }

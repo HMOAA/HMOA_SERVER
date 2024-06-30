@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.fcm.service.constant;
 
-import static hmoa.hmoaserver.fcm.service.constant.NotificationType.*;
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
 public class CommunityCommentLikeNotificationMessage implements NotificationMessage{
@@ -16,6 +15,6 @@ public class CommunityCommentLikeNotificationMessage implements NotificationMess
 
     @Override
     public String getDeeplinkUrl(long targetId) {
-        return String.format(URI_MAPPING, COMMUNITY_COMMENT_LIKE, targetId);
+        return String.format(URI_MAPPING, NotificationLink.community_comment, targetId);
     }
 }
