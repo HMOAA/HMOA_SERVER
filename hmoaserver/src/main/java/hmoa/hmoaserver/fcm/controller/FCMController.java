@@ -6,6 +6,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.dto.FCMTestRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTokenSaveRequestDto;
 import hmoa.hmoaserver.fcm.dto.PushAlarmResponseDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
@@ -36,6 +37,15 @@ public class FCMController {
         Member member = memberService.findByMember(token);
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(ResultDto.builder().data(result).build());
+    }
+
+    @ApiOperation(value = "푸시 알림 테스트")
+    @PostMapping("/test")
+    public ResponseEntity<ResultDto<Object>> testPushAlarm(@RequestBody FCMTestRequestDto dto) {
+        PushAlarm pushAlarm = fcmNotificationService.testNotification(dto);
+        PushAlarmResponseDto result = new PushAlarmResponseDto(pushAlarm);
 
         return ResponseEntity.ok(ResultDto.builder().data(result).build());
     }
