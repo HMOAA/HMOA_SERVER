@@ -9,9 +9,11 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.dto.FCMTestRequestDto;
 import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessage;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessageFactory;
+import hmoa.hmoaserver.fcm.service.constant.NotificationType;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,31 @@ public class FCMNotificationService {
         Message message = makeMessage(pushAlarm, member.get().getFirebaseToken());
 
         sendMessage(message);
+    }
+
+    public PushAlarm testNotification(FCMTestRequestDto requestDto) {
+        log.info("테스트 알림");
+        Member testMember = memberService.findById(0l).get();
+
+        NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
+        PushAlarm pushAlarm = savePushAlarm(notificationMessage, testMember, testMember, 40l);
+        Message message = makeMessage(pushAlarm, requestDto.getToken());
+        sendMessage(message);
+
+        return pushAlarm;
+    }
+
+    public PushAlarm testNotification(FCMTestRequestDto requestDto, String token) {
+        log.info("테스트 알림 (저장까지)");
+        Member receiver = memberService.findByMember(token);
+        Member testMember = memberService.findById(0l).get();
+
+        NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
+        PushAlarm pushAlarm = savePushAlarm(notificationMessage, receiver, testMember, requestDto.getTargetId());
+        Message message = makeMessage(pushAlarm, requestDto.getToken());
+        sendMessage(message);
+
+        return pushAlarm;
     }
 
     @Transactional

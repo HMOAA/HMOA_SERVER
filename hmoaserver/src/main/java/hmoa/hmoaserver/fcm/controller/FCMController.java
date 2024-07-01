@@ -6,6 +6,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.domain.AlarmCategory;
 import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.dto.FCMTestRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTokenSaveRequestDto;
 import hmoa.hmoaserver.fcm.dto.PushAlarmResponseDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
@@ -36,6 +37,24 @@ public class FCMController {
         Member member = memberService.findByMember(token);
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(ResultDto.builder().data(result).build());
+    }
+
+    @ApiOperation(value = "푸시 알림 테스트 (단순 알림 받아 보기용)")
+    @PostMapping("/test")
+    public ResponseEntity<ResultDto<Object>> testPushAlarm(@RequestBody FCMTestRequestDto dto) {
+        PushAlarm pushAlarm = fcmNotificationService.testNotification(dto);
+        PushAlarmResponseDto result = new PushAlarmResponseDto(pushAlarm);
+
+        return ResponseEntity.ok(ResultDto.builder().data(result).build());
+    }
+
+    @ApiOperation(value = "푸시 알림 테스트 (리스트에서 볼 수 있도록 저장까지 되는)")
+    @PostMapping("/test-save")
+    public ResponseEntity<ResultDto<Object>> testPushAlarmSave(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTestRequestDto dto) {
+        PushAlarm pushAlarm = fcmNotificationService.testNotification(dto, token);
+        PushAlarmResponseDto result = new PushAlarmResponseDto(pushAlarm);
 
         return ResponseEntity.ok(ResultDto.builder().data(result).build());
     }
