@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,6 +24,9 @@ public class Answer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<AnswerNote> answerNotes = new ArrayList<>();
 
     @Builder
     public Answer(String content, Question question) {
