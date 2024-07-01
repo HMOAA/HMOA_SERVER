@@ -12,6 +12,7 @@ import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,15 +30,17 @@ public class FCMController {
     private final FCMNotificationService fcmNotificationService;
     private final MemberService memberService;
 
+    @ApiOperation(value = "푸쉬 알림 목록 조회")
     @GetMapping("/list")
-    public ResponseEntity<List<PushAlarmResponseDto>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<ResultDto<Object>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ResultDto.builder().data(result).build());
     }
 
+    @ApiOperation(value = "푸쉬 알림 읽음 표시")
     @PutMapping("/read/{alarmId}")
     public ResponseEntity<ResultDto<Object>> readPushAlarm(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long alarmId) {
         Member member = memberService.findByMember(token);
@@ -52,6 +55,7 @@ public class FCMController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "fcm 토큰 저장")
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveFcmToken(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTokenSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
@@ -60,6 +64,7 @@ public class FCMController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "fcm 토큰 제거")
     @DeleteMapping("/delete")
     public ResponseEntity<ResultDto<Object>> deleteFcmToken(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
