@@ -83,14 +83,14 @@ public class SurveyController {
     @PostMapping("/note/respond")
     public ResponseEntity<ResultDto<Object>> respondNoteRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberAnswerRequestDto dto) {
         Member member = memberService.findByMember(token);
-        Answer answer;
-
-        //이미 응답이 존재하면 지우기
-        if (member.getMemberAnswers().size() > 0) {
-            for (MemberAnswer memberAnswer : member.getMemberAnswers()) {
-                memberAnswerService.deleteMemberAnswer(memberAnswer);
+        if (memberAnswerService.isExistingMemberAnswer(member)) {
+            for (MemberAnswer memberAnswer : memberAnswerService.findByMember(member)) {
+                Answer answer = answerService.findById(memberAnswer.getAnswer().getId());
+                memberAnswerService.deleteMemberAnswer(member, answer);
             }
         }
+
+        Answer answer;
 
         for (Long optionId : dto.getOptionIds()) {
             answer = answerService.findById(optionId);

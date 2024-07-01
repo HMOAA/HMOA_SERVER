@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,6 +26,10 @@ public class AnswerService {
         } catch (RuntimeException e) {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
+    }
+
+    public List<Answer> findAll() {
+        return answerRepository.findAll();
     }
 
     public Answer findById(Long id) {

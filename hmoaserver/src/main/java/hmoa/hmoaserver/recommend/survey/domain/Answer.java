@@ -28,6 +28,9 @@ public class Answer {
     @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<AnswerNote> answerNotes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<MemberAnswer> memberAnswers = new ArrayList<>();
+
     @Builder
     public Answer(String content, Question question) {
         this.content = content;
