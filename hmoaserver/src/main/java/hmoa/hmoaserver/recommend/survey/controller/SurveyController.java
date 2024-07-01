@@ -11,6 +11,7 @@ import hmoa.hmoaserver.recommend.survey.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @Api(tags = {"설문"})
 @RestController
 @RequestMapping("/survey")
+@Slf4j
 @RequiredArgsConstructor
 public class SurveyController {
 
@@ -83,12 +85,18 @@ public class SurveyController {
         Member member = memberService.findByMember(token);
         Answer answer;
 
+        //이미 응답이 존재하면 지우기
+        if (member.getMemberAnswers().size() > 0) {
+            for (MemberAnswer memberAnswer : member.getMemberAnswers()) {
+                memberAnswerService.deleteMemberAnswer(memberAnswer);
+            }
+        }
+
         for (Long optionId : dto.getOptionIds()) {
             answer = answerService.findById(optionId);
 
             memberAnswerService.save(MemberAnswer.builder().member(member).answer(answer).build());
         }
-
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
