@@ -31,6 +31,7 @@ public class SurveyController {
     private final NoteService noteService;
     private final MemberService memberService;
     private final MemberAnswerService memberAnswerService;
+    private final NoteRecommendService noteRecommendService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -97,6 +98,10 @@ public class SurveyController {
 
             memberAnswerService.save(MemberAnswer.builder().member(member).answer(answer).build());
         }
+
+        List<String> notePoints = noteRecommendService.calculateNoteScoreFromMemberAnswer(member.getMemberAnswers());
+        noteRecommendService.save(notePoints, member);
+
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
