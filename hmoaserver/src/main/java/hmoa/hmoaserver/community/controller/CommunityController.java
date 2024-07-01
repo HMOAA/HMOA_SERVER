@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hmoa.hmoaserver.fcm.NotificationType.COMMUNITY_LIKE;
+import static hmoa.hmoaserver.fcm.service.constant.NotificationType.COMMUNITY_LIKE;
 
 @Api(tags = "커뮤니티")
 @RestController
@@ -225,7 +225,7 @@ public class CommunityController {
         Community community = communityService.getCommunityById(communityId);
 
         communityLikedMemberService.save(member, community);
-        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_LIKE));
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(community.getMember().getId(), member.getNickname(), member.getId(), COMMUNITY_LIKE, communityId));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
