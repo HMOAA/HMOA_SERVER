@@ -65,6 +65,19 @@ public class FCMNotificationService {
         return pushAlarm;
     }
 
+    public PushAlarm testNotification(FCMTestRequestDto requestDto, String token) {
+        log.info("테스트 알림 (저장까지)");
+        Member receiver = memberService.findByMember(token);
+        Member testMember = memberService.findById(0l).get();
+
+        NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
+        PushAlarm pushAlarm = savePushAlarm(notificationMessage, receiver, testMember, requestDto.getTargetId());
+        Message message = makeMessage(pushAlarm, requestDto.getToken());
+        sendMessage(message);
+
+        return pushAlarm;
+    }
+
     @Transactional
     public PushAlarm savePushAlarm(NotificationMessage message, Member receiver, Member sender, Long targetId) {
         PushAlarm pushAlarm = PushAlarm.builder()

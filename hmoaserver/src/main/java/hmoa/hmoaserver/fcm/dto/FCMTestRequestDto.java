@@ -8,4 +8,5 @@ import lombok.Data;
 public class FCMTestRequestDto {
     private NotificationType type;
     private String token;
+    private Long targetId;
 }

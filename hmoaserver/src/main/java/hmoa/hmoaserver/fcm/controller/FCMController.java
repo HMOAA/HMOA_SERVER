@@ -41,10 +41,19 @@ public class FCMController {
         return ResponseEntity.ok(ResultDto.builder().data(result).build());
     }
 
-    @ApiOperation(value = "푸시 알림 테스트")
+    @ApiOperation(value = "푸시 알림 테스트 (단순 알림 받아 보기용)")
     @PostMapping("/test")
     public ResponseEntity<ResultDto<Object>> testPushAlarm(@RequestBody FCMTestRequestDto dto) {
         PushAlarm pushAlarm = fcmNotificationService.testNotification(dto);
+        PushAlarmResponseDto result = new PushAlarmResponseDto(pushAlarm);
+
+        return ResponseEntity.ok(ResultDto.builder().data(result).build());
+    }
+
+    @ApiOperation(value = "푸시 알림 테스트 (리스트에서 볼 수 있도록 저장까지 되는)")
+    @PostMapping("/test-save")
+    public ResponseEntity<ResultDto<Object>> testPushAlarmSave(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTestRequestDto dto) {
+        PushAlarm pushAlarm = fcmNotificationService.testNotification(dto, token);
         PushAlarmResponseDto result = new PushAlarmResponseDto(pushAlarm);
 
         return ResponseEntity.ok(ResultDto.builder().data(result).build());
