@@ -95,6 +95,14 @@ public class SurveyController {
             }
         }
 
+        //이미 추천 노트가 존재하면 지우기
+        List<NoteRecommend> noteRecommends = noteRecommendService.findByMember(member);
+        if (noteRecommends.size() > 0) {
+            for (NoteRecommend noteRecommend : noteRecommends) {
+                noteRecommendService.delete(noteRecommend);
+            }
+        }
+
         Answer answer;
 
         //optionId로 멤버가 응답한 답변 저장

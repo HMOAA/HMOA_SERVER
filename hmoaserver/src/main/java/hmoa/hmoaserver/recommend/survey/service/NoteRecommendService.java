@@ -33,6 +33,15 @@ public class NoteRecommendService {
         }
     }
 
+    @Transactional
+    public void delete(NoteRecommend noteRecommend) {
+        noteRecommendRepository.delete(noteRecommend);
+    }
+
+    public List<NoteRecommend> findByMember(Member member) {
+        return noteRecommendRepository.findAllByMember(member);
+    }
+
     public List<String> calculateNoteScoreFromMemberAnswer(List<MemberAnswer> memberAnswers) {
         Map<String, Double> pointMap = new HashMap<>();
         String note;
