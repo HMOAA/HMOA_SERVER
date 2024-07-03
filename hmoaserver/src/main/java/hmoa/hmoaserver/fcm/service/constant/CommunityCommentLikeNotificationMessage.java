@@ -15,6 +15,6 @@ public class CommunityCommentLikeNotificationMessage implements NotificationMess
 
     @Override
     public String getDeeplinkUrl(long targetId) {
-        return String.format(URI_MAPPING, NotificationLink.community_comment, targetId);
+        return String.format(URI_MAPPING, NotificationLink.community, targetId);
     }
 }
