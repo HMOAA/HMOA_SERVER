@@ -42,7 +42,7 @@ public class NotePhotoService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public NotePhoto saveBrandPhotos(Note note, MultipartFile file) {
+    public NotePhoto saveNotePhoto(Note note, MultipartFile file) {
 
         String folderName = note.getTitle() + "/" + "note-" + note.getId();
         String fileName = UUID.randomUUID() + file.getContentType().replace("image/", ".");

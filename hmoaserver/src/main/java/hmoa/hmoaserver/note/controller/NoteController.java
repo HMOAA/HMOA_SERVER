@@ -9,12 +9,15 @@ import hmoa.hmoaserver.note.dto.NoteDetailResponseDto;
 import hmoa.hmoaserver.note.dto.NoteSaveRequestDto;
 import hmoa.hmoaserver.note.dto.NoteUpdateRequestDto;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.photo.service.NotePhotoService;
+import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
 public class NoteController {
 
     private final NoteService noteService;
+    private final PhotoService photoService;
+    private final NotePhotoService notePhotoService;
 
     @ApiOperation("노트 저장")
     @PostMapping("/new")
@@ -100,5 +105,19 @@ public class NoteController {
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation("노트 사진 저장")
+    @PostMapping("/{noteId}/photo")
+    public ResponseEntity<ResultDto<Object>> saveNoteImage(@PathVariable Long noteId, @RequestPart(value="image",required = false) MultipartFile file) {
+        Note note = noteService.findById(noteId);
+        if (file != null) {
+            photoService.validateFileExistence(file);
+            photoService.validateFileType(file);
+
+            notePhotoService.saveNotePhoto(note, file);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
