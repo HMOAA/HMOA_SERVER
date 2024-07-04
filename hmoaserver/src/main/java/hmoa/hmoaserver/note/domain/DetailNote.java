@@ -9,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
-public class DeatilNote {
+public class DetailNote {
 
     @Id
     @Column(name = "detail_note_id")
