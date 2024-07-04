@@ -3,9 +3,12 @@ package hmoa.hmoaserver.note.controller;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.note.domain.DetailNote;
 import hmoa.hmoaserver.note.domain.Note;
+import hmoa.hmoaserver.note.domain.NoteDetailNote;
 import hmoa.hmoaserver.note.dto.*;
 import hmoa.hmoaserver.note.service.DetailNoteService;
+import hmoa.hmoaserver.note.service.NoteDetailNoteService;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.photo.service.NotePhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -30,6 +33,7 @@ public class NoteController {
     private final PhotoService photoService;
     private final NotePhotoService notePhotoService;
     private final DetailNoteService detailNoteService;
+    private final NoteDetailNoteService noteDetailNoteService;
 
     @ApiOperation("노트 저장")
     @PostMapping("/new")
@@ -120,9 +124,9 @@ public class NoteController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
-    @ApiOperation("노트 사진 저장")
+    @ApiOperation("세부 노트 저장")
     @PostMapping("/detail/save")
-    public ResponseEntity<ResultDto<Object>> saveDetailNote(@PathVariable Long noteId, @RequestBody List<DetailNoteSaveRequestDto> dtos) {
+    public ResponseEntity<ResultDto<Object>> saveDetailNote(@RequestBody List<DetailNoteSaveRequestDto> dtos) {
 
         for (DetailNoteSaveRequestDto dto : dtos) {
             detailNoteService.save(dto.toEntity());
@@ -130,4 +134,19 @@ public class NoteController {
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
+
+    @ApiOperation("노트 세부 노트 매핑")
+    @PostMapping("/{noteId}/detail")
+    public ResponseEntity<ResultDto<Object>> mappingDetailNote(@PathVariable Long noteId, @RequestBody NoteDetailNoteSaveRequestDto dto) {
+        Note note = noteService.findById(noteId);
+
+        for (Long detailNoteId : dto.getDetailNotes()) {
+            DetailNote detailNote = detailNoteService.findById(detailNoteId);
+            NoteDetailNote noteDetailNote = NoteDetailNote.builder().detailNote(detailNote).note(note).build();
+            noteDetailNoteService.save(noteDetailNote);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
 }

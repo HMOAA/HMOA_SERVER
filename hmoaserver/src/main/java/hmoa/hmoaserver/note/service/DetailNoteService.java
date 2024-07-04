@@ -22,4 +22,9 @@ public class DetailNoteService {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
     }
+
+    @Transactional(readOnly = true)
+    public DetailNote findById(Long id) {
+        return detailNoteRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.NOTE_NOT_FOUND));
+    }
 }
