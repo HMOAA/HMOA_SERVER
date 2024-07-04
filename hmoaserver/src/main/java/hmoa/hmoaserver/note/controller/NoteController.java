@@ -4,10 +4,8 @@ import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.note.domain.Note;
-import hmoa.hmoaserver.note.dto.NoteDefaultResponseDto;
-import hmoa.hmoaserver.note.dto.NoteDetailResponseDto;
-import hmoa.hmoaserver.note.dto.NoteSaveRequestDto;
-import hmoa.hmoaserver.note.dto.NoteUpdateRequestDto;
+import hmoa.hmoaserver.note.dto.*;
+import hmoa.hmoaserver.note.service.DetailNoteService;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.photo.service.NotePhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
@@ -31,6 +29,7 @@ public class NoteController {
     private final NoteService noteService;
     private final PhotoService photoService;
     private final NotePhotoService notePhotoService;
+    private final DetailNoteService detailNoteService;
 
     @ApiOperation("노트 저장")
     @PostMapping("/new")
@@ -116,6 +115,17 @@ public class NoteController {
             photoService.validateFileType(file);
 
             notePhotoService.saveNotePhoto(note, file);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("노트 사진 저장")
+    @PostMapping("/detail/save")
+    public ResponseEntity<ResultDto<Object>> saveDetailNote(@PathVariable Long noteId, @RequestBody List<DetailNoteSaveRequestDto> dtos) {
+
+        for (DetailNoteSaveRequestDto dto : dtos) {
+            detailNoteService.save(dto.toEntity());
         }
 
         return ResponseEntity.ok(ResultDto.builder().build());
