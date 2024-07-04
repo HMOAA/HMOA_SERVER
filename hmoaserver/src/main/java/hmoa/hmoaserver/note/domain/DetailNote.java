@@ -3,6 +3,8 @@ package hmoa.hmoaserver.note.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,4 +20,7 @@ public class DetailNote {
 
     private String title;
     private String content;
+
+    @OneToMany(mappedBy = "detailNote", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<NoteDetailNote> noteDetailNotes = new ArrayList<>();
 }

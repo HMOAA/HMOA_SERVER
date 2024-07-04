@@ -29,6 +29,9 @@ public class Note extends BaseEntity {
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<NotePhoto> notePhotos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<NoteDetailNote> noteDetailNotes = new ArrayList<>();
+
     public void updateContent(String content) {
         this.content = content;
     }
