@@ -5,6 +5,11 @@ public class NotificationConstants {
     public static final String ADD_COMMENT_ALARM_TITLE = "Comment";
     public static final String DEEPLINK_TITLE = "deeplink";
     public static final String SENDER_PROFILE_TITLE = "senderProfileImg";
+    public static final String PUSH_ALARM_ID_TITLE = "id";
+    public static final String TITLE_TITLE = "title";
+    public static final String CONTENT_TITLE = "content";
+    public static final String CREATED_AT_TITLE = "createdAt";
+    public static final String IS_READ_TITLE = "isRead";
     public static final String URI_MAPPING = "hmoa://%s/%d";
     public static final String LIKE_COMMENT_ALARM_MESSAGE = "님이 내 댓글에 좋아요를 남겼어요";
     public static final String LIKE_COMMUNITY_ALARM_MESSAGE = "님이 내 게시글에 좋아요를 남겼어요";
