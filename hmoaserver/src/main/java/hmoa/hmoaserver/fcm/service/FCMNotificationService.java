@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -11,6 +12,7 @@ import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTestRequestDto;
 import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
+import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessage;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessageFactory;
 import hmoa.hmoaserver.fcm.service.constant.NotificationType;
@@ -125,6 +127,11 @@ public class FCMNotificationService {
         return Message.builder()
                 .setToken(token)
                 .setNotification(notification)
+                .putData(PUSH_ALARM_ID_TITLE, String.valueOf(pushAlarm.getId()))
+                .putData(TITLE_TITLE, pushAlarm.getTitle())
+                .putData(CONTENT_TITLE, pushAlarm.getContent())
+                .putData(CREATED_AT_TITLE, DateUtils.extractAlarmDate(pushAlarm.getCreatedAt()))
+                .putData(IS_READ_TITLE, String.valueOf(pushAlarm.isRead()))
                 .putData(DEEPLINK_TITLE, pushAlarm.getDeeplink())
                 .putData(SENDER_PROFILE_TITLE, pushAlarm.getSenderProfileImgUrl())
                 .build();
