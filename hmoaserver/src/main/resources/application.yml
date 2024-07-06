@@ -11,4 +11,4 @@ spring:
         - jwt
         - oauth2
         - s3
-    active: local
+    active: @active.profiles@
