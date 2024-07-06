@@ -6,14 +6,20 @@ import lombok.Data;
 
 @Data
 public class PushAlarmResponseDto {
-    private String category;
+    private long id;
+    private String title;
     private String content;
+    private String deeplink;
+    private String senderProfileImg;
     private String createdAt;
     private boolean isRead;
 
     public PushAlarmResponseDto(PushAlarm alarm) {
-        this.category = alarm.getAlarmCategory().name();
+        this.id = alarm.getId();
+        this.title = alarm.getTitle();
         this.content = alarm.getContent();
+        this.deeplink = alarm.getDeeplink();
+        this.senderProfileImg = alarm.getSenderProfileImgUrl();
         this.createdAt = DateUtils.extractAlarmDate(alarm.getCreatedAt());
         this.isRead = alarm.isRead();
     }

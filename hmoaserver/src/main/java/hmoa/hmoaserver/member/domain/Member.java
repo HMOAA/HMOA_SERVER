@@ -13,6 +13,7 @@ import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.photo.domain.MemberPhoto;
+import hmoa.hmoaserver.recommend.survey.domain.MemberAnswer;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -93,14 +94,17 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumeAge> perfumeAges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerfumeGender> perfumeGenders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerfumeWeather> perfumeWeathers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshRequest> refreshRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberAnswer> memberAnswers = new ArrayList<>();
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);

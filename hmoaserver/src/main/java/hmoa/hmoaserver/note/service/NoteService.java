@@ -30,10 +30,17 @@ public class NoteService {
         return noteRepository.save(requestDto.toEntity());
     }
 
+    @Transactional(readOnly = true)
     public Page<Note> findNote(int pageNum) {
         return noteRepository.findAll(PageRequest.of(pageNum, PageSize.FIFTY_SIZE.getSize()));
     }
 
+    @Transactional(readOnly = true)
+    public Note findByTitle(String title) {
+        return noteRepository.findByTitle(title).orElseThrow(() -> new CustomException(null, NOTE_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
     public Page<Note> findNoteByCursor(Long cursor) {
         if (PageUtil.isFistCursor(cursor)) {
             return noteRepository.findAllByOrderByIdDesc(DEFAULT_PAGE_REQUEST);
@@ -41,6 +48,7 @@ public class NoteService {
         return noteRepository.findNoteNextPage(cursor, DEFAULT_PAGE_REQUEST);
     }
 
+    @Transactional(readOnly = true)
     public Note findById(Long noteId) {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new CustomException(null, NOTE_NOT_FOUND));

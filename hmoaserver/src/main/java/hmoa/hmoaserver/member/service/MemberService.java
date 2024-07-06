@@ -218,6 +218,10 @@ public class MemberService {
         memberRepository.updateFirebaseTokenToNull(member.getId());
     }
 
+    public Optional<Member> findById(Long id) {
+        return memberRepository.findById(id);
+    }
+
     public boolean isTokenNullOrEmpty(String token){
         if(token == null || token == ""){
             return true;

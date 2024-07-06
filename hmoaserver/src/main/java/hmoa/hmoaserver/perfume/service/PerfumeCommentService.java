@@ -4,7 +4,7 @@ package hmoa.hmoaserver.perfume.service;
 import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.NotificationType;
+import hmoa.hmoaserver.fcm.service.constant.NotificationType;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -77,7 +77,7 @@ public class PerfumeCommentService {
                     .perfumeComment(findComment)
                     .build();
             commentHeartRepository.save(heart);
-            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), findMember.getId(), NotificationType.COMMENT_LIKE));
+            fcmNotificationService.sendNotification(new FCMNotificationRequestDto(findComment.getMember().getId(), findMember.getNickname(), findMember.getId(), NotificationType.PERFUME_COMMENT_LIKE, commentId));
             return CREATE_LIKE_SUCCESS;
         }
 
