@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.perfume.controller;
 
+import hmoa.hmoaserver.brand.domain.Brand;
+import hmoa.hmoaserver.brand.service.BrandService;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
@@ -43,6 +45,7 @@ import static hmoa.hmoaserver.exception.Code.*;
 public class PerfumeController {
 
     private final PerfumeService perfumeService;
+    private final BrandService brandService;
     private final PhotoService photoService;
     private final PerfumePhotoService perfumePhotoService;
     private final JwtService jwtService;
@@ -71,6 +74,24 @@ public class PerfumeController {
         return ResponseEntity.status(200)
                 .body(ResultDto.builder()
                         .build());
+    }
+
+    @ApiOperation("향수 이미지 브랜드 별로 매핑")
+    @PostMapping("/save/{brandId}")
+    public ResponseEntity<ResultDto<Object>> MappingPerfumeImages(@PathVariable Long brandId) {
+        Brand brand = brandService.findById(brandId);
+        List<Perfume> perfumes = brand.getPerfumeList();
+
+        try {
+            for (Perfume perfume : perfumes) {
+                perfumePhotoService.savePerfumePhotoFromS3(perfume);
+                log.info("{}", perfume.getKoreanName());
+            }
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     @ApiOperation("향수 저장 새로운 버전")
@@ -276,6 +297,13 @@ public class PerfumeController {
         List<RecentPerfumeResponseDto> result = perfumes.stream().map(RecentPerfumeResponseDto::new).collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "제외된 단어가 포함된 향수 제거")
+    @PutMapping("/delete/excluded")
+    public ResponseEntity<ResultDto<Object>> deleteExcludedPerfumes() {
+        perfumeService.deleteExcludedPerfumes();
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     private static String removeBrand(String name) {

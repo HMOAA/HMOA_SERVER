@@ -35,8 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### resourses ###
 application-jwt.yml
 application-local.yml
 application-oauth2.yml
+application-s3.yml
+application-aws.yml
 firebase/
 

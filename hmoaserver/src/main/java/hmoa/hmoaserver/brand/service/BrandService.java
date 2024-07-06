@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static hmoa.hmoaserver.exception.Code.*;
 
 @Service
@@ -32,4 +34,8 @@ public class BrandService {
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public List<Brand> getAllBrands() {
+        return brandRepository.findAll();
+    }
 }

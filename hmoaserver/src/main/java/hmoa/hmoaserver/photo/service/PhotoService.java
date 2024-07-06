@@ -93,6 +93,10 @@ public class PhotoService {
         }
     }
 
+    public String getPhotoUrl(String bucketName, String fileName) {
+        return amazonS3Client.getUrl(bucketName, fileName).toString();
+    }
+
     /**
      * S3에 파일 삭제 |
      * 500(SERVER_ERROR)
