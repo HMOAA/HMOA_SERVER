@@ -5,9 +5,11 @@ import lombok.Data;
 
 @Data
 public class AnswerResponseDto {
-    String content;
+    Long optionId;
+    String option;
 
     public AnswerResponseDto(Answer answer) {
-        this.content = answer.getContent();
+        this.optionId = answer.getId();
+        this.option = answer.getContent();
     }
 }

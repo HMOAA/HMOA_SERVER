@@ -1,39 +1,33 @@
 package hmoa.hmoaserver.recommend.survey.domain;
 
-
-import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberAnswer extends BaseEntity {
-
+public class NoteRecommend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_answer_id")
+    @Column(name = "note_recommend_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "answer_id")
-    private Answer answer;
+    @ElementCollection
+    private List<String> recommendNotes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @Builder
-    public MemberAnswer(Answer answer, Member member) {
-        this.answer = answer;
+    public NoteRecommend(List<String> recommendNotes, Member member) {
+        this.recommendNotes = recommendNotes;
         this.member = member;
     }
 }

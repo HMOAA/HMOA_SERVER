@@ -15,6 +15,8 @@ public class Question {
     @Column(name = "question_id")
     private Long id;
 
+    private float point;
+
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
