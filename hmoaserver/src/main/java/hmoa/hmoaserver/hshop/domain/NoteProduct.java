@@ -2,6 +2,7 @@ package hmoa.hmoaserver.hshop.domain;
 
 import hmoa.hmoaserver.note.domain.Note;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class NoteProduct {
     @ManyToOne
     @JoinColumn(name = "note_id")
     private Note note;
+
+    @Builder
+    public NoteProduct(int price, Note note) {
+        this.price = price;
+        this.note = note;
+    }
 }
