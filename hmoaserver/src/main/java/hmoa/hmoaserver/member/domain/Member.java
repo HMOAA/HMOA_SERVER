@@ -14,6 +14,7 @@ import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.photo.domain.MemberPhoto;
 import hmoa.hmoaserver.recommend.survey.domain.MemberAnswer;
+import hmoa.hmoaserver.recommend.survey.domain.NoteRecommend;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -106,6 +107,9 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberAnswer> memberAnswers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteRecommend> noteRecommends = new ArrayList<>();
+
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
     }
@@ -172,6 +176,16 @@ public class Member extends BaseEntity implements UserDetails {
         if (memberPhoto.isDeleted())
             return null;
         return memberPhoto;
+    }
+
+    public NoteRecommend getNoteRecommend() {
+        int noteRecommendSize = this.noteRecommends.size();
+
+        if (noteRecommendSize == 0) {
+            return null;
+        }
+
+        return noteRecommends.get(noteRecommendSize - 1);
     }
 
     public boolean isSameMember(Member member) {
