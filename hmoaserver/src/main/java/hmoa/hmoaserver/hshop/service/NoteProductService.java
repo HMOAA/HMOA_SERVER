@@ -4,6 +4,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.repository.NoteProductRepository;
+import hmoa.hmoaserver.note.domain.Note;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,10 @@ public class NoteProductService {
     @Transactional(readOnly = true)
     public List<NoteProduct> getAllNoteProducts() {
         return noteProductRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public NoteProduct getNoteProduct(Long id) {
+        return noteProductRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.NOTE_NOT_FOUND));
     }
 }
