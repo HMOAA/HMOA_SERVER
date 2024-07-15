@@ -2,11 +2,10 @@ package hmoa.hmoaserver.note.service;
 
 import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.note.domain.Note;
-import hmoa.hmoaserver.note.dto.NoteSaveRequestDto;
-import hmoa.hmoaserver.note.dto.NoteUpdateRequestDto;
+import hmoa.hmoaserver.note.domain.NoteDetailNote;
+import hmoa.hmoaserver.note.dto.*;
 import hmoa.hmoaserver.note.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.NOTE_NOT_FOUND;
 
@@ -58,6 +59,22 @@ public class NoteService {
         }
 
         return note;
+    }
+
+    //join fetch로 N + 1 문제 방지
+    @Transactional(readOnly = true)
+    public Note findByIdWithDetail(Long noteId) {
+        return noteRepository.findByIdWithDetails(noteId).orElseThrow(() -> new CustomException(null, NOTE_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public NoteWithDetailNotesDto getDetailNotes(Long noteId) {
+        Note note = findByIdWithDetail(noteId);
+        List<NoteDetailNote> noteDetailNotes = note.getNoteDetailNotes();
+        List<DetailNoteResponseDto> dto = noteDetailNotes.stream()
+                .map(noteDetailNote -> new DetailNoteResponseDto(noteDetailNote.getDetailNote())).collect(Collectors.toList());
+
+        return new NoteWithDetailNotesDto(note, dto);
     }
 
     public void updateNoteContent(Long noteId, NoteUpdateRequestDto requestDto) {
