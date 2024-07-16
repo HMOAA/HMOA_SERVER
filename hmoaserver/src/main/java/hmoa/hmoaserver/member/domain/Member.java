@@ -110,6 +110,9 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NoteRecommend> noteRecommends = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberAddress> memberAddresses = new ArrayList<>();
+
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
     }
