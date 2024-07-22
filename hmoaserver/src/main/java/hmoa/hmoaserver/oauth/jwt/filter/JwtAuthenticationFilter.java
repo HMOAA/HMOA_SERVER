@@ -2,20 +2,15 @@ package hmoa.hmoaserver.oauth.jwt.filter;
 
 
 import com.google.gson.JsonObject;
-import hmoa.hmoaserver.exception.Code;
-import hmoa.hmoaserver.member.repository.MemberRepository;
+
 import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
-import hmoa.hmoaserver.oauth.jwt.util.PasswordUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -23,15 +18,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final static String ERROR_CODE = "401";
     private final static String BAD_ERROR_CODE = "404";
 
