@@ -3,11 +3,8 @@ package hmoa.hmoaserver.exception;
 import com.google.gson.JsonObject;
 import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -38,8 +35,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         JsonObject json = getJsonObject(errorType);
         response.setStatus(json.get(CODE_MESSAGE).getAsInt());
-
-        log.info("{}", json.toString());
 
         response.getWriter().print(json);
     }
