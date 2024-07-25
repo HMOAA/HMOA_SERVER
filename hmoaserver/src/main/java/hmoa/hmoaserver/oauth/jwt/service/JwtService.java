@@ -1,7 +1,6 @@
 package hmoa.hmoaserver.oauth.jwt.service;
 
 
-import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Role;
 import io.jsonwebtoken.*;

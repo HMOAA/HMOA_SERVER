@@ -89,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint(jwtService));
 //        http.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
