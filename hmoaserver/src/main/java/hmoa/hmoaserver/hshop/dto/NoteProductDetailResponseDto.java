@@ -13,11 +13,13 @@ public class NoteProductDetailResponseDto {
     private String productName;
     private String productPhotoUrl;
     private List<DetailNoteResponseDto> notes;
+    private int price;
 
-    public NoteProductDetailResponseDto(long productId, NoteWithDetailNotesDto dto) {
+    public NoteProductDetailResponseDto(long productId, NoteWithDetailNotesDto dto, int price) {
         this.productId = productId;
         this.productName = dto.getNoteName();
         this.productPhotoUrl = dto.getNotePhotoUrl();
         this.notes = dto.getDetailNotes();
+        this.price = price;
     }
 }
