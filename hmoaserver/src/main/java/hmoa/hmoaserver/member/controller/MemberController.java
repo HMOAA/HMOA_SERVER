@@ -16,6 +16,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberAddressService;
+import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
@@ -55,6 +56,7 @@ public class MemberController {
     private final PerfumeCommentLikedMemberService perfumeCommentLikedMemberService;
     private final CommunityCommentLikedMemberService commentLikedMemberService;
     private final MemberAddressService memberAddressService;
+    private final MemberInfoService memberInfoService;
 
     @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
@@ -532,12 +534,26 @@ public class MemberController {
      * 주소 저장
      */
     @ApiOperation(value = "배송지 주소 저장")
-    @PostMapping("/save-address")
+    @PostMapping("/address")
     public ResponseEntity<ResultDto<Object>> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberAddressSaveRequestDto dto) {
 
         Member member = memberService.findByMember(token);
 
         memberAddressService.save(dto.toEntity(member));
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    /**
+     * 멤버 주문 정보 저장
+     */
+    @ApiOperation(value = "주문자 정보 저장")
+    @PostMapping("/orderInfo")
+    public ResponseEntity<ResultDto<Object>> saveOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberInfoRequestDto dto) {
+
+        Member member = memberService.findByMember(token);
+
+        memberInfoService.save(dto.toEntity(member));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
