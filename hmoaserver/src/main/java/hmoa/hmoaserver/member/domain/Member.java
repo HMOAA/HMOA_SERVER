@@ -44,15 +44,10 @@ public class Member extends BaseEntity implements UserDetails {
 
 
     private String email;
-
     private String password;
-
     private String nickname;
-
     private int age;
-
     private boolean sex;
-
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -112,6 +107,9 @@ public class Member extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberAddress> memberAddresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberInfo> memberInfos = new ArrayList<>();
 
     public void passwordEncode(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
@@ -189,6 +187,26 @@ public class Member extends BaseEntity implements UserDetails {
         }
 
         return noteRecommends.get(noteRecommendSize - 1);
+    }
+
+    public MemberAddress getMemberAddress() {
+        int memberAddressSize = this.memberAddresses.size();
+
+        if (memberAddressSize == 0) {
+            return null;
+        }
+
+        return memberAddresses.get(memberAddressSize - 1);
+    }
+
+    public MemberInfo getMemberInfo() {
+        int memberInfoSize = this.memberInfos.size();
+
+        if (memberInfoSize == 0) {
+            return null;
+        }
+
+        return memberInfos.get(memberInfoSize - 1);
     }
 
     public boolean isSameMember(Member member) {
