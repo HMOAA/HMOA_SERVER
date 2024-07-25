@@ -21,8 +21,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private final JwtService jwtService;
 
-    private static final int ERROR_CODE = 401;
-    private static final int EMPTY_CODE = 404;
+    private static final String ERROR_CODE = "401";
+    private static final String EMPTY_CODE = "404";
     private static final String CODE_MESSAGE = "code";
     private static final String MESSAGE_MESSAGE = "message";
 
