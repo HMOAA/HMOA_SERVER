@@ -21,7 +21,7 @@ public class OrderEntity extends BaseEntity {
     private Long id;
 
     @ElementCollection
-    List<Integer> productIds;
+    List<Long> productIds;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -34,7 +34,7 @@ public class OrderEntity extends BaseEntity {
     private Member member;
 
     @Builder
-    public OrderEntity(List<Integer> productIds, OrderStatus status, Long addressId, int totalPrice, Member member) {
+    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Member member) {
         this.productIds = productIds;
         this.status = status;
         this.addressId = addressId;
