@@ -69,8 +69,8 @@ public class HShopController {
 
     @ApiOperation(value = "구매할 향료 보내기", notes = "상품 조회 시 받은 Product Id 보내주시면 됩니다")
     @PostMapping("/note/select")
-    public ResponseEntity<ResultDto<Object>> selectNoteProduct(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody NoteProductSelectRequestDto dto) {
-        return ResponseEntity.ok(ResultDto.builder().data(getNoteProductDetails(dto)).build());
+    public ResponseEntity<NoteProductsResponseDto> selectNoteProduct(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody NoteProductSelectRequestDto dto) {
+        return ResponseEntity.ok(getNoteProductDetails(dto));
     }
 
     @ApiOperation(value = "주문 요청", notes = "선택한 향료 확인 후 결제 페이지로 넘어가는 API")
