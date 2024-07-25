@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 @Data
 public class MemberAddressSaveRequestDto {
 
+    private String name;
     @Nullable
     private String addressName;
     private String phoneNumber;
@@ -20,6 +21,7 @@ public class MemberAddressSaveRequestDto {
     public MemberAddress toEntity(Member member) {
 
         return MemberAddress.builder()
+                .name(name)
                 .addressName(addressName != null ? addressName : "")
                 .phoneNumber(phoneNumber)
                 .zipCode(zipCode)

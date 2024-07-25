@@ -18,6 +18,7 @@ public class MemberAddress {
     @Column(name = "member_address_id")
     private Long id;
 
+    private String name;
     private String addressName;
     private String phoneNumber;
     private String zipCode;
@@ -30,7 +31,8 @@ public class MemberAddress {
     private Member member;
 
     @Builder
-    public MemberAddress(String addressName, String phoneNumber, String zipCode, String streetAddress, String detailAddress, String request, Member member) {
+    public MemberAddress(String name, String addressName, String phoneNumber, String zipCode, String streetAddress, String detailAddress, String request, Member member) {
+        this.name = name;
         this.addressName = addressName;
         this.phoneNumber = phoneNumber;
         this.zipCode = zipCode;
