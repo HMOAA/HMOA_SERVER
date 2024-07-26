@@ -58,6 +58,7 @@ public enum Code {
     SURVEY_NOT_FOUND(NOT_FOUND, "등록된 설문이 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "등록된 질문이 없습니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "등록된 답변이 없습니다."),
+    CART_NOT_FOUND(NOT_FOUND, "저장된 장바구니가 없습니다."),
 
     /**
      * 409 CONFLICT
