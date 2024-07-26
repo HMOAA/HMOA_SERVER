@@ -1,9 +1,11 @@
 package hmoa.hmoaserver.hshop.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.hshop.domain.Cart;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.*;
+import hmoa.hmoaserver.hshop.service.CartService;
 import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = {"H-shop"})
 @Slf4j
@@ -36,6 +39,7 @@ public class HShopController {
     private final NoteService noteService;
     private final MemberService memberService;
     private final OrderService orderService;
+    private final CartService cartService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -70,7 +74,18 @@ public class HShopController {
     @ApiOperation(value = "구매할 향료 보내기", notes = "상품 조회 시 받은 Product Id 보내주시면 됩니다")
     @PostMapping("/note/select")
     public ResponseEntity<NoteProductsResponseDto> selectNoteProduct(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody NoteProductSelectRequestDto dto) {
-        return ResponseEntity.ok(getNoteProductDetails(dto));
+
+        Member member = memberService.findByMember(token);
+        Optional<Cart> cart = cartService.findOneCartByMemberId(member.getId());
+        NoteProductsResponseDto result = getNoteProductDetails(dto);
+
+        if (cart.isPresent()) {
+            cartService.updateCart(cart.get(), dto.getProductIds(), result.getTotalPrice());
+            return ResponseEntity.ok(result);
+        }
+
+        cartService.save(dto.toCartEntity(member.getId(), result.getTotalPrice()));
+        return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value = "주문 요청", notes = "선택한 향료 확인 후 결제 페이지로 넘어가는 API")
