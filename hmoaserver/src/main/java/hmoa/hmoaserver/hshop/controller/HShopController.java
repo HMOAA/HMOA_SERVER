@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.hshop.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.Cart;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
@@ -77,7 +79,7 @@ public class HShopController {
 
         Member member = memberService.findByMember(token);
         Optional<Cart> cart = cartService.findOneCartByMemberId(member.getId());
-        NoteProductsResponseDto result = getNoteProductDetails(dto);
+        NoteProductsResponseDto result = getNoteProductDetails(dto.getProductIds());
 
         if (cart.isPresent()) {
             cartService.updateCart(cart.get(), dto.getProductIds(), result.getTotalPrice());
@@ -94,7 +96,7 @@ public class HShopController {
 
         Member member = memberService.findByMember(token);
 
-        NoteProductsResponseDto noteProducts = getNoteProductDetails(dto);
+        NoteProductsResponseDto noteProducts = getNoteProductDetails(dto.getProductIds());
         OrderEntity order = orderService.firstOrderSave(member, dto.getProductIds(), noteProducts.getTotalPrice());
         MemberAddressResponseDto memberAddress = new MemberAddressResponseDto(memberService.getMemberAddress(member));
         MemberInfoResponseDto memberInfo = new MemberInfoResponseDto(memberService.getMemberInfo(member));
@@ -102,12 +104,23 @@ public class HShopController {
         return ResponseEntity.ok(new OrderResponseDto(order, memberInfo, memberAddress, noteProducts, SHIPPING_FEE));
     }
 
-    private NoteProductsResponseDto getNoteProductDetails(NoteProductSelectRequestDto dto) {
+    @ApiOperation(value = "장바구니 조회", notes = "이전에 선택했던 향료가 존재할 시 없으면 404 에러")
+    @GetMapping("/cart")
+    public ResponseEntity<NoteProductsResponseDto> findCart(@RequestHeader("X-AUTH-TOKEN") String token) {
+
+        Member member = memberService.findByMember(token);
+
+        Cart cart = cartService.findOneCartByMemberId(member.getId()).orElseThrow(() -> new CustomException(null, Code.CART_NOT_FOUND));
+
+        return ResponseEntity.ok(getNoteProductDetails(cart.getProductIds()));
+    }
+
+    private NoteProductsResponseDto getNoteProductDetails(List<Long> productIds) {
 
         int totalPrice = 0;
         List<NoteProductDetailResponseDto> noteProducts = new ArrayList<>();
 
-        for (Long productId : dto.getProductIds()) {
+        for (Long productId : productIds) {
             NoteProductDetailResponseDto noteProductDetailResponseDto = noteProductService.getNoteProductDetail(productId);
             noteProducts.add(noteProductDetailResponseDto);
             totalPrice += noteProductDetailResponseDto.getPrice();
