@@ -12,6 +12,7 @@ public class NoteProductDetailResponseDto {
     private long productId;
     private String productName;
     private String productPhotoUrl;
+    private int notesCount;
     private List<DetailNoteResponseDto> notes;
     private int price;
 
@@ -20,6 +21,7 @@ public class NoteProductDetailResponseDto {
         this.productName = dto.getNoteName();
         this.productPhotoUrl = dto.getNotePhotoUrl();
         this.notes = dto.getDetailNotes();
+        this.notesCount = notes.size();
         this.price = price;
     }
 }
