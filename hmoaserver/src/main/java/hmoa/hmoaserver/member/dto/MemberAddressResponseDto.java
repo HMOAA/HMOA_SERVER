@@ -12,6 +12,7 @@ public class MemberAddressResponseDto {
     private String name;
     private String addressName;
     private String phoneNumber;
+    private String landlineNumber;
     private String zipCode;
     private String streetAddress;
     private String detailAddress;
@@ -22,6 +23,7 @@ public class MemberAddressResponseDto {
             this.name = memberAddress.getName();
             this.addressName = memberAddress.getAddressName();
             this.phoneNumber = memberAddress.getPhoneNumber();
+            this.landlineNumber = memberAddress.getLandlineNumber();
             this.zipCode = memberAddress.getZipCode();
             this.streetAddress = memberAddress.getStreetAddress();
             this.detailAddress = memberAddress.getDetailAddress();
