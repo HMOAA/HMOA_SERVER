@@ -13,6 +13,7 @@ public class MemberAddressSaveRequestDto {
     @Nullable
     private String addressName;
     private String phoneNumber;
+    private String landlineNumber;
     private String zipCode;
     private String streetAddress;
     private String detailAddress;
@@ -24,10 +25,11 @@ public class MemberAddressSaveRequestDto {
                 .name(name)
                 .addressName(addressName != null ? addressName : "")
                 .phoneNumber(phoneNumber)
+                .landlineNumber(landlineNumber != null ? landlineNumber : "")
                 .zipCode(zipCode)
                 .streetAddress(streetAddress)
                 .detailAddress(detailAddress)
-                .request(request)
+                .request(request != null ? request : "")
                 .member(member)
                 .build();
     }
