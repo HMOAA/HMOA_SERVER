@@ -13,10 +13,12 @@ public class MemberAddressSaveRequestDto {
     @Nullable
     private String addressName;
     private String phoneNumber;
+    @Nullable
     private String landlineNumber;
     private String zipCode;
     private String streetAddress;
     private String detailAddress;
+    @Nullable
     private String request;
 
     public MemberAddress toEntity(Member member) {
