@@ -21,6 +21,7 @@ public class MemberAddress {
     private String name;
     private String addressName;
     private String phoneNumber;
+    private String landlineNumber;
     private String zipCode;
     private String streetAddress;
     private String detailAddress;
@@ -31,10 +32,11 @@ public class MemberAddress {
     private Member member;
 
     @Builder
-    public MemberAddress(String name, String addressName, String phoneNumber, String zipCode, String streetAddress, String detailAddress, String request, Member member) {
+    public MemberAddress(String name, String addressName, String phoneNumber, String landlineNumber, String zipCode, String streetAddress, String detailAddress, String request, Member member) {
         this.name = name;
         this.addressName = addressName;
         this.phoneNumber = phoneNumber;
+        this.landlineNumber = landlineNumber;
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
