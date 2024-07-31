@@ -18,12 +18,14 @@ public class MemberAddressResponseDto {
     private String request;
 
     public MemberAddressResponseDto(MemberAddress memberAddress) {
-        this.name = memberAddress.getName();
-        this.addressName = memberAddress.getAddressName();
-        this.phoneNumber = memberAddress.getPhoneNumber();
-        this.zipCode = memberAddress.getZipCode();
-        this.streetAddress = memberAddress.getStreetAddress();
-        this.detailAddress = memberAddress.getDetailAddress();
-        this.request = memberAddress.getRequest();
+        if (memberAddress != null) {
+            this.name = memberAddress.getName();
+            this.addressName = memberAddress.getAddressName();
+            this.phoneNumber = memberAddress.getPhoneNumber();
+            this.zipCode = memberAddress.getZipCode();
+            this.streetAddress = memberAddress.getStreetAddress();
+            this.detailAddress = memberAddress.getDetailAddress();
+            this.request = memberAddress.getRequest();
+        }
     }
 }

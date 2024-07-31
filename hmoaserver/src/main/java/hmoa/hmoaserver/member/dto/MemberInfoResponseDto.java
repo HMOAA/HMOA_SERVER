@@ -13,7 +13,9 @@ public class MemberInfoResponseDto {
     private String phoneNumber;
 
     public MemberInfoResponseDto(MemberInfo memberInfo) {
-        this.name = memberInfo.getName();
-        this.phoneNumber = memberInfo.getPhoneNumber();
+        if (memberInfo != null) {
+            this.name = memberInfo.getName();
+            this.phoneNumber = memberInfo.getPhoneNumber();
+        }
     }
 }
