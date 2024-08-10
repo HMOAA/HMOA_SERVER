@@ -26,4 +26,8 @@ public class MemberAddressService {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
     }
+
+    public boolean isExistMemberAddress(Long memberId) {
+        return !memberAddressRepository.findByMemberId(memberId).isEmpty();
+    }
 }
