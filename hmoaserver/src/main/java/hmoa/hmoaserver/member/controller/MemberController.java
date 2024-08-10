@@ -13,6 +13,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.MemberInfo;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.*;
 import hmoa.hmoaserver.member.service.MemberAddressService;
@@ -556,5 +557,19 @@ public class MemberController {
         memberInfoService.save(dto.toEntity(member));
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    /**
+     * 주문자 정보 조회
+     */
+    @ApiOperation(value = "주문자 정보 조회")
+    @GetMapping("/orderInfo")
+    public ResponseEntity<ResultDto<Object>> getOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token) {
+
+        Member member = memberService.findByMember(token);
+
+        MemberInfo memberInfo = memberInfoService.findByMemberId(member.getId());
+
+        return ResponseEntity.ok(ResultDto.builder().data(new MemberInfoResponseDto(memberInfo)).build());
     }
 }
