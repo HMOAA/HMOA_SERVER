@@ -24,6 +24,7 @@ public enum Code {
     EXPIRED_TOKEN(UNAUTHORIZED, "ACCESS Token이 만료되었습니다."),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
     UNAUTHORIZED_COMMENT(UNAUTHORIZED, "자신이 쓴 댓글만 수정이 가능합니다."),
+    UNAUTHORIZED_ORDER(UNAUTHORIZED, "자신이 주문한 것만 조회가 가능합니다."),
 
     /**
      * 403 FORBIDDEN
@@ -61,6 +62,7 @@ public enum Code {
     CART_NOT_FOUND(NOT_FOUND, "저장된 장바구니가 없습니다."),
     MEMBER_INFO_NOT_FOUND(NOT_FOUND, "저장된 주문자 정보가 없습니다"),
     ADDRESS_NOT_FOUND(NOT_FOUND, "저장된 주소가 없습니다"),
+    ORDER_NOT_FOUND(NOT_FOUND, "저장된 주문이 없습니다"),
 
     /**
      * 409 CONFLICT

@@ -30,7 +30,11 @@ public class OrderService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public OrderEntity findById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.ORDER_NOT_FOUND));
+    }
+
     public OrderEntity firstOrderSave(Member member, List<Long> productIds, int totalPrice) {
         return save(OrderEntity.builder()
                 .member(member)
