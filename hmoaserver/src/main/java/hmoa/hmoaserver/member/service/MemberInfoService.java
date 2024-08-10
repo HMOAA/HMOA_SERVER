@@ -25,4 +25,8 @@ public class MemberInfoService {
             throw new CustomException(e, Code.SERVER_ERROR);
         }
     }
+
+    public MemberInfo findByMemberId(Long memberId) {
+        return memberInfoRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_INFO_NOT_FOUND));
+    }
 }
