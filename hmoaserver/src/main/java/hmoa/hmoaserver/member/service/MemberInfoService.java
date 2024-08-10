@@ -29,4 +29,8 @@ public class MemberInfoService {
     public MemberInfo findByMemberId(Long memberId) {
         return memberInfoRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_INFO_NOT_FOUND));
     }
+
+    public boolean isExistMemberInfo(Long memberId) {
+        return memberInfoRepository.findByMemberId(memberId).isPresent();
+    }
 }
