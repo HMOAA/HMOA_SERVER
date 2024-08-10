@@ -91,7 +91,7 @@ public class HShopController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "주문 요청", notes = "선택한 향료 확인 후 결제 페이지로 넘어가는 API")
+    @ApiOperation(value = "향료 주문 요청", notes = "선택한 향료 확인 후 결제 페이지로 넘어가는 API")
     @PostMapping("note/order")
     public ResponseEntity<OrderResponseDto> orderNote(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody NoteProductSelectRequestDto dto) {
 
@@ -103,6 +103,22 @@ public class HShopController {
         boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
 
         return ResponseEntity.ok(new OrderResponseDto(order, isExistMemberInfo, isExistMemberAddress));
+    }
+
+    @ApiOperation(value = "향료 주문 정보 조회")
+    @GetMapping("note/order/{orderId}")
+    public ResponseEntity<OrderInfoResponseDto> getOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId) {
+
+        Member member = memberService.findByMember(token);
+        OrderEntity order = orderService.findById(orderId);
+
+        if (!order.getMember().getId().equals(member.getId())) {
+            throw new CustomException(null, Code.UNAUTHORIZED_ORDER);
+        }
+
+        NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
+
+        return ResponseEntity.ok(new OrderInfoResponseDto(noteProducts, order.getTotalPrice(), SHIPPING_FEE));
     }
 
     @ApiOperation(value = "장바구니 조회", notes = "이전에 선택했던 향료가 존재할 시 없으면 404 에러")
