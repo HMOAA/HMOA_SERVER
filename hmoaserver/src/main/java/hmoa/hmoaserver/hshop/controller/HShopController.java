@@ -11,9 +11,8 @@ import hmoa.hmoaserver.hshop.service.CartService;
 import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.domain.MemberAddress;
-import hmoa.hmoaserver.member.dto.MemberAddressResponseDto;
-import hmoa.hmoaserver.member.dto.MemberInfoResponseDto;
+import hmoa.hmoaserver.member.service.MemberAddressService;
+import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
@@ -40,6 +39,8 @@ public class HShopController {
     private final NoteProductService noteProductService;
     private final NoteService noteService;
     private final MemberService memberService;
+    private final MemberInfoService memberInfoService;
+    private final MemberAddressService memberAddressService;
     private final OrderService orderService;
     private final CartService cartService;
 
@@ -98,10 +99,10 @@ public class HShopController {
 
         NoteProductsResponseDto noteProducts = getNoteProductDetails(dto.getProductIds());
         OrderEntity order = orderService.firstOrderSave(member, dto.getProductIds(), noteProducts.getTotalPrice());
-        MemberAddressResponseDto memberAddress = new MemberAddressResponseDto(memberService.getMemberAddress(member));
-        MemberInfoResponseDto memberInfo = new MemberInfoResponseDto(memberService.getMemberInfo(member));
+        boolean isExistMemberInfo = memberInfoService.isExistMemberInfo(member.getId());
+        boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
 
-        return ResponseEntity.ok(new OrderResponseDto(order, memberInfo, memberAddress, noteProducts, SHIPPING_FEE));
+        return ResponseEntity.ok(new OrderResponseDto(order, isExistMemberInfo, isExistMemberAddress));
     }
 
     @ApiOperation(value = "장바구니 조회", notes = "이전에 선택했던 향료가 존재할 시 없으면 404 에러")
