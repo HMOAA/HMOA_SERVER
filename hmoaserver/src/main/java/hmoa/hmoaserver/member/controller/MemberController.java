@@ -13,6 +13,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.MemberAddress;
 import hmoa.hmoaserver.member.domain.MemberInfo;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.*;
@@ -564,12 +565,26 @@ public class MemberController {
      */
     @ApiOperation(value = "주문자 정보 조회")
     @GetMapping("/orderInfo")
-    public ResponseEntity<ResultDto<Object>> getOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<MemberInfoResponseDto> getOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token) {
 
         Member member = memberService.findByMember(token);
 
         MemberInfo memberInfo = memberInfoService.findByMemberId(member.getId());
 
-        return ResponseEntity.ok(ResultDto.builder().data(new MemberInfoResponseDto(memberInfo)).build());
+        return ResponseEntity.ok(new MemberInfoResponseDto(memberInfo));
+    }
+
+    /**
+     * 배송지 정보 조회
+     */
+    @ApiOperation(value = "배송지 정보 조회")
+    @GetMapping("/address")
+    public ResponseEntity<MemberAddressResponseDto> getAdress(@RequestHeader("X-AUTH-TOKEN") String token) {
+
+        Member member = memberService.findByMember(token);
+
+        MemberAddress memberAddress = memberAddressService.findByMemberId(member.getId());
+
+        return ResponseEntity.ok(new MemberAddressResponseDto(memberAddress));
     }
 }
