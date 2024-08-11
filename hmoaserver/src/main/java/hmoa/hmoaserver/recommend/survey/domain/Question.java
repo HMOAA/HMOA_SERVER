@@ -19,6 +19,9 @@ public class Question {
 
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
     private Survey survey;
@@ -27,8 +30,9 @@ public class Question {
     private List<Answer> answers = new ArrayList<>();
 
     @Builder
-    public Question(String content, Survey survey) {
+    public Question(String content, QuestionType questionType, Survey survey) {
         this.content = content;
+        this.questionType = questionType;
         this.survey = survey;
     }
 }
