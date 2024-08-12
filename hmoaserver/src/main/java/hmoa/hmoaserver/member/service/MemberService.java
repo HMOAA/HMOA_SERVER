@@ -226,6 +226,12 @@ public class MemberService {
         memberRepository.updateFirebaseTokenToNull(member.getId());
     }
 
+    public void checkAuthorization(Member member, Member checkMember) {
+        if (!member.equals(checkMember)) {
+            throw new CustomException(null, UNAUTHORIZED_ORDER);
+        }
+    }
+
     public Optional<Member> findById(Long id) {
         return memberRepository.findById(id);
     }

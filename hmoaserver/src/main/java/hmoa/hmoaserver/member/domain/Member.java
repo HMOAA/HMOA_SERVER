@@ -212,4 +212,12 @@ public class Member extends BaseEntity implements UserDetails {
     public boolean isSameMember(Member member) {
         return this.id.equals(member.getId());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return id.equals(member.getId());
+    }
 }
