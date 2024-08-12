@@ -41,4 +41,9 @@ public class OrderEntity extends BaseEntity {
         this.totalPrice = totalPrice;
         this.member = member;
     }
+
+    public void deleteProductId(final NoteProduct product) {
+        this.productIds.remove(product.getId());
+        this.totalPrice -= product.getPrice();
+    }
 }
