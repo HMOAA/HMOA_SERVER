@@ -112,9 +112,23 @@ public class HShopController {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
 
-        if (!order.getMember().getId().equals(member.getId())) {
-            throw new CustomException(null, Code.UNAUTHORIZED_ORDER);
-        }
+        memberService.checkAuthorization(member, order.getMember());
+
+        NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
+
+        return ResponseEntity.ok(new OrderInfoResponseDto(noteProducts, order.getTotalPrice(), SHIPPING_FEE));
+    }
+
+    @ApiOperation(value = "결제 페이지에서 선택한 향료 지우기")
+    @DeleteMapping("note/order/{orderId}/product/{productId}")
+    public ResponseEntity<OrderInfoResponseDto> deleteProduct(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId, @PathVariable Long productId) {
+
+        Member member = memberService.findByMember(token);
+        OrderEntity order = orderService.findById(orderId);
+        NoteProduct product = noteProductService.getNoteProduct(productId);
+
+        memberService.checkAuthorization(member, order.getMember());
+        orderService.deleteProduct(order, product);
 
         NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
 
