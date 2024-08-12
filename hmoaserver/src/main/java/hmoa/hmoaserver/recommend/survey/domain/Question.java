@@ -35,4 +35,8 @@ public class Question {
         this.questionType = questionType;
         this.survey = survey;
     }
+
+    public boolean isMultiple() {
+        return questionType == QuestionType.MULTIPLE;
+    }
 }
