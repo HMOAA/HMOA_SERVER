@@ -63,6 +63,9 @@ dependencies {
 
 	//h2
 	implementation 'com.h2database:h2'
+
+	//aop
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

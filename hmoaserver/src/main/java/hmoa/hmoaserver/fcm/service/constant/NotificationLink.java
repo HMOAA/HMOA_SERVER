@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum NotificationLink {
     community,
+    perfume,
     perfume_comment,
     community_comment,
     event,

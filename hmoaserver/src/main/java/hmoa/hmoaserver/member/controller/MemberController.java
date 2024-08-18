@@ -1,14 +1,11 @@
 package hmoa.hmoaserver.member.controller;
 
-import hmoa.hmoaserver.common.PageSize;
-import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.domain.CommunityCommentLikedMember;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentDefaultResponseDto;
 import hmoa.hmoaserver.community.service.CommunityCommentLikedMemberService;
 import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
@@ -16,10 +13,13 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.MemberAddress;
+import hmoa.hmoaserver.member.domain.MemberInfo;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.dto.*;
+import hmoa.hmoaserver.member.service.MemberAddressService;
+import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.service.MemberService;
-import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
 import hmoa.hmoaserver.perfume.dto.PerfumeCommentByMemberResponseDto;
@@ -40,8 +40,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
-    private final JwtService jwtService;
     private final MemberService memberService;
     private final PhotoService photoService;
     private final MemberPhotoService memberPhotoService;
@@ -60,6 +57,8 @@ public class MemberController {
     private final PerfumeCommentService perfumeCommentService;
     private final PerfumeCommentLikedMemberService perfumeCommentLikedMemberService;
     private final CommunityCommentLikedMemberService commentLikedMemberService;
+    private final MemberAddressService memberAddressService;
+    private final MemberInfoService memberInfoService;
 
     @Value("${default.profile}")
     private String DEFALUT_PROFILE_URL;
@@ -525,11 +524,67 @@ public class MemberController {
      */
     @ApiOperation(value = "회원 탈퇴")
     @DeleteMapping("/delete")
-    public ResponseEntity<ResultDto<Object>> deleteMember(@RequestHeader("X-AUTH-TOKEN") String token){
+    public ResponseEntity<ResultDto<Object>> deleteMember(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         String code = memberService.delete(member);
 
         return ResponseEntity.status(200)
                 .body(ResultDto.builder().data(code).build());
+    }
+
+    /**
+     * 주소 저장
+     */
+    @ApiOperation(value = "배송지 주소 저장")
+    @PostMapping("/address")
+    public ResponseEntity<ResultDto<Object>> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberAddressSaveRequestDto dto) {
+
+        Member member = memberService.findByMember(token);
+
+        memberAddressService.save(dto.toEntity(member));
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    /**
+     * 멤버 주문 정보 저장
+     */
+    @ApiOperation(value = "주문자 정보 저장")
+    @PostMapping("/orderInfo")
+    public ResponseEntity<ResultDto<Object>> saveOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberInfoRequestDto dto) {
+
+        Member member = memberService.findByMember(token);
+
+        memberInfoService.save(dto.toEntity(member));
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    /**
+     * 주문자 정보 조회
+     */
+    @ApiOperation(value = "주문자 정보 조회")
+    @GetMapping("/orderInfo")
+    public ResponseEntity<MemberInfoResponseDto> getOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token) {
+
+        Member member = memberService.findByMember(token);
+
+        MemberInfo memberInfo = memberInfoService.findByMemberId(member.getId());
+
+        return ResponseEntity.ok(new MemberInfoResponseDto(memberInfo));
+    }
+
+    /**
+     * 배송지 정보 조회
+     */
+    @ApiOperation(value = "배송지 정보 조회")
+    @GetMapping("/address")
+    public ResponseEntity<MemberAddressResponseDto> getAdress(@RequestHeader("X-AUTH-TOKEN") String token) {
+
+        Member member = memberService.findByMember(token);
+
+        MemberAddress memberAddress = memberAddressService.findByMemberId(member.getId());
+
+        return ResponseEntity.ok(new MemberAddressResponseDto(memberAddress));
     }
 }

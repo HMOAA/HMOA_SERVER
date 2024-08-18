@@ -30,4 +30,9 @@ public class NoteRecommend {
         this.recommendNotes = recommendNotes;
         this.member = member;
     }
+
+    // 내림차순 정렬한 Note 3개만 뽑기.
+    public List<String> getRecommendNotes() {
+        return recommendNotes.subList(0, 3);
+    }
 }

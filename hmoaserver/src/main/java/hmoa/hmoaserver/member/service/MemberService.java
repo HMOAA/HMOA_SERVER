@@ -6,9 +6,7 @@ import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.member.domain.Member;
-import hmoa.hmoaserver.member.domain.ProviderType;
-import hmoa.hmoaserver.member.domain.Role;
+import hmoa.hmoaserver.member.domain.*;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.jwt.Token;
@@ -164,6 +162,16 @@ public class MemberService {
     public void updateSex(Member member, boolean sex){
         member.updateSex(sex);
         save(member);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberAddress getMemberAddress(Member member) {
+        return member.getMemberAddress();
+    }
+
+    @Transactional(readOnly = true)
+    public MemberInfo getMemberInfo(Member member) {
+        return member.getMemberInfo();
     }
 
     /**
