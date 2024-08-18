@@ -4,6 +4,10 @@ import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.homemenu.domain.PerfumeHomeMenu;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
+import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,6 +60,18 @@ public class Perfume extends BaseEntity {
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerfumeHomeMenu> perfumeHomeMenuList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeAge> perfumeAges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeGender> perfumeGenders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeWeather> perfumeWeathers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerfumeReview> perfumeReviews = new ArrayList<>();
 
     @Builder
     public Perfume(String koreanName, List<Integer> notePhotos, int sortType, String englishName, int price,List<Integer> volume, int priceVolume, String topNote, String heartNote, String baseNote, Brand brand, String searchName) {

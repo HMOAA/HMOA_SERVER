@@ -31,6 +31,7 @@ import static hmoa.hmoaserver.exception.Code.*;
 @RequiredArgsConstructor
 @Transactional
 public class PerfumeService {
+    private static final List<String> EXCLUDED_KEYWORD = List.of("단종");
 
     private final PerfumeRepository perfumeRepository;
     private final BrandRepository brandRepository;
@@ -124,6 +125,15 @@ public class PerfumeService {
             return perfumeRepository.findAllByBrandIdAndIdNot(brandId, perfumeId, PageRequest.of(0, 6));
         } catch (DataAccessException | ConstraintViolationException e) {
             throw new CustomException(null, SERVER_ERROR);
+        }
+    }
+
+    public void deleteExcludedPerfumes() {
+        List<Perfume> perfumes;
+
+        for (String keyword : EXCLUDED_KEYWORD) {
+            perfumes = perfumeRepository.findByKoreanNameContaining(keyword);
+            perfumes.forEach(perfumeRepository::delete);
         }
     }
 
