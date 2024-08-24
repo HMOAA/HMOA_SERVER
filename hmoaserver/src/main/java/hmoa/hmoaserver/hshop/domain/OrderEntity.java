@@ -29,17 +29,15 @@ public class OrderEntity extends BaseEntity {
     private Long addressId;
     private int totalPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Long memberId;
 
     @Builder
-    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Member member) {
+    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId) {
         this.productIds = productIds;
         this.status = status;
         this.addressId = addressId;
         this.totalPrice = totalPrice;
-        this.member = member;
+        this.memberId = memberId;
     }
 
     public void deleteProductId(final NoteProduct product) {
