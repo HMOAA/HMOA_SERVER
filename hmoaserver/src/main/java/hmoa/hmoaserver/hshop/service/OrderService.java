@@ -36,6 +36,10 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.ORDER_NOT_FOUND));
     }
 
+    public void updateOrderStatus(OrderEntity order, OrderStatus status) {
+        order.updateOrderStatus(status);
+    }
+
     public void deleteProduct(OrderEntity order, final NoteProduct product) {
 
         if (order.getProductIds().contains(product.getId())) {

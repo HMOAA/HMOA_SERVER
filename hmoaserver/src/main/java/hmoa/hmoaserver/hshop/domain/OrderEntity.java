@@ -44,4 +44,8 @@ public class OrderEntity extends BaseEntity {
         this.productIds.remove(product.getId());
         this.totalPrice -= product.getPrice();
     }
+
+    public void updateOrderStatus(final OrderStatus status) {
+        this.status = status;
+    }
 }
