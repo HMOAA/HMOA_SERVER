@@ -112,7 +112,7 @@ public class HShopController {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
 
-        memberService.checkAuthorization(member, order.getMember());
+        memberService.checkAuthorization(member.getId(), order.getMemberId());
 
         NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
 
@@ -127,7 +127,7 @@ public class HShopController {
         OrderEntity order = orderService.findById(orderId);
         NoteProduct product = noteProductService.getNoteProduct(productId);
 
-        memberService.checkAuthorization(member, order.getMember());
+        memberService.checkAuthorization(member.getId(), order.getMemberId());
         orderService.deleteProduct(order, product);
 
         NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());

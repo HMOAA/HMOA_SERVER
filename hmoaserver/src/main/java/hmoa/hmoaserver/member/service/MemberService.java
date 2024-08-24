@@ -226,8 +226,8 @@ public class MemberService {
         memberRepository.updateFirebaseTokenToNull(member.getId());
     }
 
-    public void checkAuthorization(Member member, Member checkMember) {
-        if (!member.equals(checkMember)) {
+    public void checkAuthorization(Long memberId, Long checkMemberId) {
+        if (!memberId.equals(checkMemberId)) {
             throw new CustomException(null, UNAUTHORIZED_ORDER);
         }
     }
