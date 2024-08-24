@@ -15,6 +15,7 @@ public enum Code {
     BOARD_NOT_FOUND(BAD_REQUEST, "게시글을 찾을 수 없습니다."),
     ACCESS_DENIED(BAD_REQUEST, "권한이 없습니다."),
     APPLE_DECODE_ERROR(BAD_REQUEST, "애플 소셜 로그인 호출 오류"),
+    BOOTPAY_ERROR(BAD_REQUEST, "부트페이 결제 에러"),
 
     /**
      * 401 UNAUTHORIZED
