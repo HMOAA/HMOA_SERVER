@@ -45,7 +45,7 @@ public class OrderService {
 
     public OrderEntity firstOrderSave(Member member, List<Long> productIds, int totalPrice) {
         return save(OrderEntity.builder()
-                .member(member)
+                .memberId(member.getId())
                 .status(OrderStatus.CREATED)
                 .totalPrice(totalPrice)
                 .productIds(productIds)
