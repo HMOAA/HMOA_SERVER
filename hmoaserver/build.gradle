@@ -68,6 +68,9 @@ dependencies {
 	//aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+	//bootpay
+	implementation 'io.github.bootpay:backend:+'
+
 }
 
 tasks.named('test') {
