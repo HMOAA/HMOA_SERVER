@@ -45,12 +45,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	// database 설정
-	if (activeProfile == 'local') {
-		runtimeOnly 'com.mysql:mysql-connector-j'
-	} else if (activeProfile == 'prod') {
-		runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
-	}
+    // database 설정
+    if (activeProfile == 'local') {
+        runtimeOnly 'com.mysql:mysql-connector-j'
+    } else if (activeProfile == 'prod') {
+        runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
+    }
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
