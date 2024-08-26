@@ -28,23 +28,29 @@ repositories {
 	mavenCentral()
 }
 
+def activeProfile = project.findProperty('activeProfile') ?: 'local'
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'com.google.code.gson:gson'
 	implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
 	implementation 'org.apache.httpcomponents:httpclient:4.5'
 	compileOnly 'org.projectlombok:lombok'
-//	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	//mariadb
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    // database 설정
+    if (activeProfile == 'local') {
+        runtimeOnly 'com.mysql:mysql-connector-j'
+    } else if (activeProfile == 'prod') {
+        runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
+    }
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -66,6 +72,10 @@ dependencies {
 
 	//aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	//bootpay
+	implementation 'io.github.bootpay:backend:+'
+
 }
 
 tasks.named('test') {

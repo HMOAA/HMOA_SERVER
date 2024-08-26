@@ -3,6 +3,7 @@ package hmoa.hmoaserver.hshop.service;
 
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.repository.OrderRepository;
@@ -35,9 +36,20 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.ORDER_NOT_FOUND));
     }
 
+    public void updateOrderStatus(OrderEntity order, OrderStatus status) {
+        order.updateOrderStatus(status);
+    }
+
+    public void deleteProduct(OrderEntity order, final NoteProduct product) {
+
+        if (order.getProductIds().contains(product.getId())) {
+            order.deleteProductId(product);
+        }
+    }
+
     public OrderEntity firstOrderSave(Member member, List<Long> productIds, int totalPrice) {
         return save(OrderEntity.builder()
-                .member(member)
+                .memberId(member.getId())
                 .status(OrderStatus.CREATED)
                 .totalPrice(totalPrice)
                 .productIds(productIds)

@@ -6,9 +6,11 @@ spring:
         - jwt
         - oauth2
         - s3
+        - payment
       prod:
         - aws
         - jwt
         - oauth2
         - s3
+        - payment
     active: ${active.profiles}

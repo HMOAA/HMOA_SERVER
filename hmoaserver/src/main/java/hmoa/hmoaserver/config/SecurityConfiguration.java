@@ -65,6 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/magazine/**",
                 "/survey/**",
                 "/shop/**",
+                "/addressSearch.html",
                 "/.well-known/acme-challenge/**"
         };
         web.ignoring()
