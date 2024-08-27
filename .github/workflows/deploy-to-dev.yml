@@ -27,7 +27,7 @@ jobs:
         run: ./gradlew bootjar -PactiveProfile=dev
 
       - name: Set Tag
-        run: echo "DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITGUB_ENV
+        run: echo "DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Docker build & push
         env:
