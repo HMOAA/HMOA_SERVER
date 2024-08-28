@@ -1,7 +1,7 @@
 services:
   green:
     container_name: hmoa_green
-    image: ${DOCKERHUB_USERNAME}/hmoa:${DOCKER_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
     ports:
       - "8080:8080"
     environment:
@@ -32,7 +32,7 @@ services:
 
   blue:
     container_name: hmoa_blue
-    image: ${DOCKERHUB_USERNAME}/hmoa:${DOCKER_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
     ports:
       - "8081:8080"
     environment:
