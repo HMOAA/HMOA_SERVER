@@ -3,6 +3,11 @@
 source /home/${SERVER_USER_NAME}/deploy/env_vars.sh
 
 sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/env_vars.sh > /home/${SERVER_USER_NAME}/docker/.env
+
+source /home/${SERVER_USER_NAME}/deploy/firebase.sh
+
+sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/firebase.sh >> /home/${SERVER_USER_NAME}/docker/.env
+
 cd ../docker
 
 sudo docker pull ${DOCKERHUB_USER_NAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
