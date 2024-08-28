@@ -114,7 +114,7 @@ jobs:
             echo "export S3_MAIN_TEST=${{ secrets.S3_MAIN_TEST }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export S3_PROFILE=${{ secrets.S3_PROFILE }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             
-            export SERVER_USER_NAME=${{ secrets.SERVER_USERNAME }}
+            export SERVER_USER_NAME=${{ secrets.SERVER_USER_NAME }}
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
             cd /home/${{ secrets.SERVER_USER_NAME }}/deploy
