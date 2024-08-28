@@ -35,7 +35,7 @@ jobs:
         working-directory: ./hmoaserver
         run: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOKCERHUB_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$DOCKER_TAG .
+          docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOKCERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
 
 #       ec2에 깃허브 ip 연결
