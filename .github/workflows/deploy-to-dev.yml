@@ -1,4 +1,4 @@
-name: JAVA CI with gradle & docker
+name: JAVA CI-CD with gradle & docker
 
 # PR이 발생했을 경우 실행
 on:
@@ -36,7 +36,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_TAG }}:$DOCKER_TAG .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_TAG }}:$DOCKER_TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG
 
 #       ec2에 깃허브 ip 연결
       - name: Get Github IP
