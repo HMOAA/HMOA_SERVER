@@ -68,13 +68,15 @@ jobs:
           rm private_key.pem
           
       - name: Deploy to server
+        env:
+          DOCKER_TAG: ${{ env.DATETIME }}
         uses: appleboy/ssh-action@master
         with:
           username: ${{ secrets.SERVER_USER_NAME }}
           host: ${{ secrets.SERVER_HOST }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:latest
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG
             cd /home/${{ secrets.SERVER_USER_NAME }}/deploy
             sudo chmod +x deploy.sh
             ./deploy.sh
