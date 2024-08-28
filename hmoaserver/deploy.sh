@@ -35,7 +35,7 @@ if [ -z "$EXIST_GREEN"]; then
 
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx/nginx.green.conf /etc/nginx/nginx.conf
-  sudo nginx -s rel
+  sudo nginx -s reload
 
   echo "블루를 종료합니다."
   docker-compose stop blue
@@ -60,7 +60,7 @@ else
 
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx/nginx.blue.conf /etc/nginx/nginx.conf
-  sudo nginx -s rel
+  sudo nginx -s reload
 
   echo "그린을 종료합니다."
   docker-compose stop green
