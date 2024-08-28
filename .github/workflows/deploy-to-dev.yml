@@ -84,17 +84,24 @@ jobs:
             fi
             
             echo "export DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            echo "export DOCKER_IMAGE_TAG=${{ env.DATETIME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export APPLE_CLIENT_ID=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export APPLE_KEY_ID=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export APPLE_PRIVATE_KEY=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export APPLE_TEAM_ID=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export BOOTPAY_PRIVATE_KEY=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export BOOTPAY_REST_KEY=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export DB_USER_NAME=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export DB_PASSWORD=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export DB_DATASOURCE_URL=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export FIREBASE_CONFIG=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export JWT_SECRET=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            
             echo "export S3_ACCESS_KEY=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export S3_SECRET_KEY=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export S3_BRAND_BUCKET=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
@@ -106,7 +113,6 @@ jobs:
             echo "export S3_MAIN=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export S3_MAIN_TEST=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export S3_PROFILE=${{ secrets.SERVER_NGINX_CONF }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
-            echo "export DOCKER_IMAGE_TAG=${{ env.DATETIME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             
             export SERVER_USER_NAME=${{ secrets.SERVER_USERNAME }}
             

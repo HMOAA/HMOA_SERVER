@@ -3,6 +3,7 @@
 source /home/${SERVER_USER_NAME}/deploy/env_vars.sh
 
 sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/env_vars.sh > /home/${SERVER_USER_NAME}/docker/.env
+cd ../docker
 
 EXIST_GREEN=$(docker ps | grep green)
 
