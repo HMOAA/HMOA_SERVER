@@ -66,6 +66,11 @@ jobs:
           scp -o StrictHostKeyChecking=no -i private_key.pem ./docker-compose.yml $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/docker
           scp -o StrictHostKeyChecking=no -i private_key.pem ./deploy.sh $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/deploy
           rm private_key.pem
+
+      - name: check docker pull
+        env:
+          DOCKER_TAG: ${{ env.DATETIME }}
+          run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG"
           
       - name: Deploy to server
         env:
