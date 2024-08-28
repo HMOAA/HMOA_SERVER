@@ -46,8 +46,8 @@ jobs:
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2
 
       - name: Add IP to EC2 Inbound
