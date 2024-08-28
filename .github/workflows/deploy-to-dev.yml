@@ -117,7 +117,6 @@ jobs:
             
             export SERVER_USER_NAME=${{ secrets.SERVER_USER_NAME }}
             
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
             cd /home/${{ secrets.SERVER_USER_NAME }}/deploy
             sudo chmod +x deploy.sh
             ./deploy.sh

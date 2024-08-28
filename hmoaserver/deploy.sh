@@ -26,6 +26,8 @@ if [ -z "$EXIST_GREEN"]; then
     fi
   done
 
+  sleep 20
+
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx.green.conf /etc/nginx/nginx.conf
   sudo nginx -s rel
@@ -48,6 +50,8 @@ else
       break ;
     fi
   done
+
+  sleep 20
 
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx.blue.conf /etc/nginx/nginx.conf
