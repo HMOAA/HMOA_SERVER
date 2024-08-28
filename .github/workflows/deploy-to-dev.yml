@@ -34,9 +34,9 @@ jobs:
           DOCKER_TAG: ${{ env.DATETIME }}
         working-directory: ./hmoaserver
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE_TAG }}:$DOCKER_TAG .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOKCERHUB_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$DOCKER_TAG .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
 
 #       ec2에 깃허브 ip 연결
       - name: Get Github IP
@@ -68,7 +68,7 @@ jobs:
           rm private_key.pem
 
       - name: check docker pull
-        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:${{ env.DATETIME }}"
+        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.DATETIME }}"
           
       - name: Deploy to server
         env:
@@ -79,7 +79,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
             cd /home/${{ secrets.SERVER_USER_NAME }}/deploy
             sudo chmod +x deploy.sh
             ./deploy.sh
