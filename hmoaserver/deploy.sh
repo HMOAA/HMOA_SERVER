@@ -1,5 +1,9 @@
 #!/bin/bash
 
+source /home/${SERVER_USER_NAME}/deploy/env_vars.sh
+
+sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/env_vars.sh > /home/${SERVER_USER_NAME}/docker/.env
+
 EXIST_GREEN=$(docker ps | grep green)
 
 if [ -z "$EXIST_GREEN"]; then
