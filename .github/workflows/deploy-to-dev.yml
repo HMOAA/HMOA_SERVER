@@ -70,7 +70,7 @@ jobs:
       - name: check docker pull
         env:
           DOCKER_TAG: ${{ env.DATETIME }}
-          run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG"
+        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:$DOCKER_TAG"
           
       - name: Deploy to server
         env:
