@@ -68,7 +68,7 @@ jobs:
           rm private_key.pem
 
       - name: check docker pull
-        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:${{ env.DOCKER_TAG }}"
+        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_TAG }}:${{ env.DATETIME }}"
           
       - name: Deploy to server
         env:
