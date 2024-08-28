@@ -85,7 +85,7 @@ jobs:
             
             echo "export DOCKERHUB_USER_NAME=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export DOCKER_IMAGE_TAG=${{ env.DATETIME }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
-            echo "export DOCKERHUB_REPOSITORY=${{ secrets.DOCKERHUB_REPOSITORY }} >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
+            echo "export DOCKERHUB_REPOSITORY=${{ secrets.DOCKERHUB_REPOSITORY }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             
             echo "export APPLE_CLIENT_ID=${{ secrets.APPLE_CIENT_ID }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
             echo "export APPLE_KEY_ID=${{ secrets.APPLE_KEY_ID }}" >> /home/${{ secrets.SERVER_USER_NAME }}/deploy/env_vars.sh
