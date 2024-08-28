@@ -49,4 +49,6 @@ else
   echo "그린을 종료합니다."
   docker-compose stop green
 
+fi
+
 sudo docker image prune -f
