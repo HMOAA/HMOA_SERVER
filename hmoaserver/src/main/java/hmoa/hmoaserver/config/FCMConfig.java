@@ -5,10 +5,12 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -16,12 +18,15 @@ import java.util.List;
 @Configuration
 @Slf4j
 public class FCMConfig {
+
+    @Value("${firebase.config}")
+    private String resource;
+
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
-        ClassPathResource resource = new ClassPathResource("firebase/hmoa-firebase.json");
 
-        InputStream refreshToken = resource.getInputStream();
-
+        InputStream refreshToken = new ByteArrayInputStream(resource.getBytes());
+        log.info(resource);
         FirebaseApp firebaseApp = null;
         List<FirebaseApp> firebaseApps = FirebaseApp.getApps();
 
