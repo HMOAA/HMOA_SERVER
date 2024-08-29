@@ -93,7 +93,7 @@ jobs:
             echo "export DOCKER_IMAGE_TAG=${{ env.DATETIME }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export DOCKERHUB_REPOSITORY=${{ secrets.DOCKERHUB_REPOSITORY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
-            echo "export APPLE_CLIENT_ID=${{ secrets.APPLE_CIENT_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export APPLE_CLIENT_ID=${{ secrets.APPLE_CLIENT_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export APPLE_KEY_ID=${{ secrets.APPLE_KEY_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export APPLE_PRIVATE_KEY=${{ secrets.APPLE_PRIVATE_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
@@ -101,7 +101,7 @@ jobs:
             echo "export BOOTPAY_PRIVATE_KEY=${{ secrets.BOOTPAY_PRIVATE_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export BOOTPAY_REST_KEY=${{ secrets.BOOTPAY_REST_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
-            echo "export DB_USER_NAME=${{ secrets.DB_USER_NAME }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export DB_USER_NAME=${{ secrets.DB_USERNAME }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export DB_DATASOURCE_URL=${{ secrets.DB_DATASOURCE_URL }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
@@ -111,8 +111,8 @@ jobs:
             
             echo "export S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
-            echo "export S3_BRAND_BUCKET=${{ secrets.SERVER_NGINX_CONF }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
-            echo "export S3_COMMUNITY_BUCKET=${{ secrets.S3_BRAND_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_BRAND_BUCKET=${{ secrets.S3_BRAND_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_COMMUNITY_BUCKET=${{ secrets.S3_COMMUNITY_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_MAGAZINE_BUCKET=${{ secrets.S3_MAGAZINE_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_MEMBER_BUCKET=${{ secrets.S3_MEMBER_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_NOTE_BUCKET=${{ secrets.S3_NOTE_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
