@@ -73,8 +73,7 @@
                     fullRoadAddr += extraRoadAddr;
                 }
 
-                window.Android.processData(fullRoadAddr);
-                window.Android.processData("주소 확인");
+                window.Android.processData(data.zoneCode, fullRoadAddr);
             },
             width : '100%',
             height : '100%'
