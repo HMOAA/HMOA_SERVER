@@ -63,7 +63,7 @@ jobs:
       - name: Transfer File
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER_NAME: ${{ secrets.SERVER_USER_NAME }}
+          SERVER_USER_NAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
         working-directory: ./hmoaserver
         run: |
