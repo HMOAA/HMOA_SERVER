@@ -81,7 +81,7 @@ jobs:
           DOCKER_TAG: ${{ env.DATETIME }}
         uses: appleboy/ssh-action@master
         with:
-          username: ${{ secrets.SERVER_USER_NAME }}
+          username: ${{ secrets.SERVER_USERNAME }}
           host: ${{ secrets.SERVER_HOST }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           script: |
