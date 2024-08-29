@@ -121,7 +121,7 @@ jobs:
             echo "export S3_MAIN_TEST=${{ secrets.S3_MAIN_TEST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_PROFILE=${{ secrets.S3_PROFILE }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
-            export SERVER_USER_NAME=${{ secrets.SERVER_USERNAME }}
+            export SERVER_USERNAME=${{ secrets.SERVER_USERNAME }}
             
             cd /home/${{ secrets.SERVER_USERNAME }}/deploy
             sudo chmod +x deploy.sh
