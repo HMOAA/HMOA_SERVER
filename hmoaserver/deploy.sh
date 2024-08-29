@@ -1,16 +1,16 @@
 #!/bin/bash
 
-source /home/${SERVER_USER_NAME}/deploy/env_vars.sh
+source /home/${SERVER_USERNAME}/deploy/env_vars.sh
 
-sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/env_vars.sh > /home/${SERVER_USER_NAME}/docker/.env
+sed 's/^export //' /home/${SERVER_USERNAME}/deploy/env_vars.sh > /home/${SERVER_USERNAME}/docker/.env
 
-source /home/${SERVER_USER_NAME}/deploy/firebase.sh
+source /home/${SERVER_USERNAME}/deploy/firebase.sh
 
-sed 's/^export //' /home/${SERVER_USER_NAME}/deploy/firebase.sh >> /home/${SERVER_USER_NAME}/docker/.env
+sed 's/^export //' /home/${SERVER_USERNAME}/deploy/firebase.sh >> /home/${SERVER_USERNAME}/docker/.env
 
 cd ../docker
 
-sudo docker pull ${DOCKERHUB_USER_NAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
+sudo docker pull ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
 
 EXIST_GREEN=$(docker ps | grep green)
 
@@ -34,7 +34,7 @@ if [ -z "$EXIST_GREEN"]; then
   sleep 20
 
   echo "nginx를 리로드 합니다."
-  sudo cp /etc/nginx/nginx.green.conf /etc/nginx/nginx.conf
+  sudo cp /etc/nginx/hmoa.shop.green.conf /etc/nginx/sites-enabled/hmoa.shop.conf
   sudo nginx -s reload
 
   echo "블루를 종료합니다."
@@ -59,7 +59,7 @@ else
   sleep 20
 
   echo "nginx를 리로드 합니다."
-  sudo cp /etc/nginx/nginx.blue.conf /etc/nginx/nginx.conf
+  sudo cp /etc/nginx/hmoa.shop.blue.conf /etc/nginx/sites-enabled/hmoa.shop.conf
   sudo nginx -s reload
 
   echo "그린을 종료합니다."
