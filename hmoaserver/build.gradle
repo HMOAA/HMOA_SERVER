@@ -48,7 +48,7 @@ dependencies {
     // database 설정
     if (activeProfile == 'local') {
         runtimeOnly 'com.mysql:mysql-connector-j'
-    } else if (activeProfile == 'prod') {
+    } else if (activeProfile == 'dev') {
         runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
     }
 
@@ -75,7 +75,6 @@ dependencies {
 
 	//bootpay
 	implementation 'io.github.bootpay:backend:+'
-
 }
 
 tasks.named('test') {

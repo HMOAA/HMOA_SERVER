@@ -1,0 +1,133 @@
+name: JAVA CI-CD with gradle & docker
+
+# PR이 발생했을 경우 실행
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Build with gradle
+        working-directory: ./hmoaserver
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        working-directory: ./hmoaserver
+        run: ./gradlew bootjar -PactiveProfile=dev
+
+      - name: Set Tag
+        run: echo "DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: Docker build & push
+        env:
+          DOCKER_TAG: ${{ env.DATETIME }}
+        working-directory: ./hmoaserver
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker build --platform linux/amd64 -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:$DOCKER_TAG
+
+#       ec2에 깃허브 ip 연결
+      - name: Get Github IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Add IP to EC2 Inbound
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: Transfer File
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER_NAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
+        working-directory: ./hmoaserver
+        run: |
+          echo "$SERVER_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./docker-compose.yml $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/docker
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./deploy.sh $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/deploy
+          rm private_key.pem
+
+      - name: check docker pull
+        run: echo "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.DATETIME }}"
+          
+      - name: Deploy to server
+        env:
+          DOCKER_TAG: ${{ env.DATETIME }}
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.SERVER_USERNAME }}
+          host: ${{ secrets.SERVER_HOST }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          script: |
+            if [ -f /home/${{ secrets.SERVER_USERNAME }}/deploy/env.sh ]; then
+              rm /home/${{ secrets.SERVER_USERNAME }}/deploy/env/sh
+            fi
+            
+            echo "export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export DOCKER_IMAGE_TAG=${{ env.DATETIME }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export DOCKERHUB_REPOSITORY=${{ secrets.DOCKERHUB_REPOSITORY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export APPLE_CLIENT_ID=${{ secrets.APPLE_CLIENT_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export APPLE_KEY_ID=${{ secrets.APPLE_KEY_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export APPLE_PRIVATE_KEY=${{ secrets.APPLE_PRIVATE_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export BOOTPAY_PRIVATE_KEY=${{ secrets.BOOTPAY_PRIVATE_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export BOOTPAY_REST_KEY=${{ secrets.BOOTPAY_REST_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export DB_USER_NAME=${{ secrets.DB_USERNAME }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export DB_DATASOURCE_URL=${{ secrets.DB_DATASOURCE_URL }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export FIREBASE_CONFIG=${{ secrets.FIREBASE_CONFIG }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_BRAND_BUCKET=${{ secrets.S3_BRAND_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_COMMUNITY_BUCKET=${{ secrets.S3_COMMUNITY_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_MAGAZINE_BUCKET=${{ secrets.S3_MAGAZINE_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_MEMBER_BUCKET=${{ secrets.S3_MEMBER_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_NOTE_BUCKET=${{ secrets.S3_NOTE_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_PERFUME_BUCKET=${{ secrets.S3_PERFUME_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_MAIN=${{ secrets.S3_MAIN }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_MAIN_TEST=${{ secrets.S3_MAIN_TEST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_PROFILE=${{ secrets.S3_PROFILE }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            export SERVER_USERNAME=${{ secrets.SERVER_USERNAME }}
+            
+            cd /home/${{ secrets.SERVER_USERNAME }}/deploy
+            sudo chmod +x deploy.sh
+            ./deploy.sh
+            
+      - name: Remove Github Ip
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      

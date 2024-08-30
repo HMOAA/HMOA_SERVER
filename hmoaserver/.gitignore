@@ -43,5 +43,6 @@ application-oauth2.yml
 application-payment.yml
 application-s3.yml
 application-aws.yml
+application-rds.yml
 firebase/
 
