@@ -13,25 +13,26 @@ cd ../docker
 sudo docker pull ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${DOCKER_IMAGE_TAG}
 
 EXIST_GREEN=$(docker ps | grep green)
+COUNT=0
+MAX_COUNT=12
 
-if [ -z "$EXIST_GREEN"]; then
+if [ -z "$EXIST_GREEN" ]; then
   echo "BLUE -> GREEN"
   echo "블루에서 그린으로 변경합니다."
   docker-compose pull green
   docker-compose up -d green
 
-  while [ 1 = 1 ]; do
-  echo "그린 체크"
-  sleep 3
+  while [ $COUNT -lt $MAX_COUNT ]; do
+    echo "그린 체크"
+    sleep 5
 
-  REQUEST=$(curl http://127.0.0.1:8080 | grep HMOA)
-    if [ -n "$REQUEST"]; then
+    REQUEST=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080)
+    if [ "$REQUEST" -eq 200 ]; then
       echo "정상적으로 그린이 작동합니다"
-      break ;
+      break
     fi
+    COUNT=$((COUNT + 1))
   done
-
-  sleep 20
 
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx/hmoa.shop.green.conf /etc/nginx/sites-enabled/hmoa.shop.conf
@@ -45,18 +46,17 @@ else
   docker-compose pull blue
   docker-compose up -d blue
 
-  while [ 1 = 1 ]; do
-  echo "블루 체크"
-  sleep 3
+  while [ $COUNT -lt $MAX_COUNT ]; do
+    echo "블루 체크"
+    sleep 5
 
-  REQUEST=$(curl http://127.0.0.1:8081 | grep HMOA)
-    if [ -n "$REQUEST"]; then
+    REQUEST=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8081)
+    if [ "$REQUEST" -eq 200 ]; then
       echo "정상적으로 블루가 작동합니다"
-      break ;
+      break
     fi
+    COUNT=$((COUNT + 1))
   done
-
-  sleep 20
 
   echo "nginx를 리로드 합니다."
   sudo cp /etc/nginx/hmoa.shop.blue.conf /etc/nginx/sites-enabled/hmoa.shop.conf
