@@ -24,7 +24,7 @@ if [ -z "$EXIST_GREEN"]; then
   echo "그린 체크"
   sleep 3
 
-  REQUEST=$(curl http://127.0.0.1:8080)
+  REQUEST=$(curl http://127.0.0.1:8080 | grep HMOA)
     if [ -n "$REQUEST"]; then
       echo "정상적으로 그린이 작동합니다"
       break ;
@@ -49,7 +49,7 @@ else
   echo "블루 체크"
   sleep 3
 
-  REQUEST=$(curl http://127.0.0.1:8081)
+  REQUEST=$(curl http://127.0.0.1:8081 | grep HMOA)
     if [ -n "$REQUEST"]; then
       echo "정상적으로 블루가 작동합니다"
       break ;
