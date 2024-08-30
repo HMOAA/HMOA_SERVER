@@ -67,4 +67,4 @@ else
 
 fi
 
-sudo docker image prune -f
+sudo docker image prune -a -f
