@@ -1,0 +1,37 @@
+services:
+  maria :
+    image: docker.io/bitnami/mariadb:10.6
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql
+      - ~/docker/mariadb/var/log/maria:/var/log/maria
+    # 로컬용
+    environment:
+      - TZ="Asia/Seoul"
+      - ALLOW_EMPTY_PASSWORD=no
+      - MARIADB_ROOT_PASSWORD=hmoa0827
+      - MARIADB_USER=hmoa
+      - MARIADB_DATABASE=hmoa
+      - MARIADB_PASSWORD=hmoa0827
+    networks:
+      - backend
+    restart: always
+
+  spring-boot:
+    build: .
+    container_name: local-application
+    environment:
+      PROFILES: local
+    ports:
+      - 8080:8080
+    depends_on:
+      - maria
+    restart: on-failure
+    networks:
+      - backend
+
+networks:
+  backend:
