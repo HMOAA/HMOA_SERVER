@@ -31,4 +31,8 @@
 - 커뮤니티를 통해 향수 관련 소통이 가능합니다!
 - 다른 사용자들의 향수 리뷰를 만나볼 수 있습니다.
 
-## 기술 스택
+## 인프라
+
+<div align = "center">
+  <img src = "https://github.com/user-attachments/assets/339870c5-42b3-4b63-b69f-6f37fbbac218">
+</div>
