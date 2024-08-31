@@ -6,6 +6,10 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteSimpleResponseDto;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.perfume.domain.Perfume;
+import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
+import hmoa.hmoaserver.perfume.dto.PerfumeSimilarResponseDto;
+import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.recommend.survey.domain.*;
 import hmoa.hmoaserver.recommend.survey.dto.*;
 import hmoa.hmoaserver.recommend.survey.service.*;
@@ -35,6 +39,7 @@ public class SurveyController {
     private final MemberService memberService;
     private final MemberAnswerService memberAnswerService;
     private final NoteRecommendService noteRecommendService;
+    private final PerfumeService perfumeService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -81,6 +86,18 @@ public class SurveyController {
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향수 추천 API")
+    @PostMapping("/perfume/respond")
+    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeRecommendRequestDto dto) {
+        Member member = memberService.findByMember(token);
+
+        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPerfumes(dto.getPrice(), dto.getNotes());
+        List<PerfumeSimilarResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeSimilarResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
+        return ResponseEntity.ok(ResultDto.builder()
+                .data(perfumeSimilarResponseDtos)
+                .build());
     }
 
     @ApiOperation(value = "향료 추천 응답 API")
