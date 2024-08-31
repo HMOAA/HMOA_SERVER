@@ -6,6 +6,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import static hmoa.hmoaserver.exception.Code.*;
 @RequiredArgsConstructor
 @Transactional
 public class PerfumeService {
+
     private static final List<String> EXCLUDED_KEYWORD = List.of("단종");
 
     private final PerfumeRepository perfumeRepository;
@@ -153,5 +155,35 @@ public class PerfumeService {
 
     public Perfume findPerfumeName(String name) {
         return perfumeRepository.findByKoreanName(name).orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
+    }
+
+    /**
+     * 향수 추천
+     */
+    @Transactional(readOnly = true)
+    public List<PerfumeRecommendation> recommendPerfumes(int maxPrice, List<String> notes) {
+        List<Perfume> affordablePerfumes = perfumeRepository.findAllAffordablePerfumes(maxPrice);
+
+        return affordablePerfumes.stream()
+                .map(perfume -> {
+                    int score = calculateScore(perfume, notes);
+                    return new PerfumeRecommendation(perfume, score);
+                })
+                .sorted((r1, r2) -> Integer.compare(r2.getScore(), r1.getScore()))
+                .limit(5) // 상위 5개만 반환
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 향수 추천 점수 계산
+     */
+    public int calculateScore(Perfume perfume, List<String> notes) {
+        int score = 0;
+        for (String note : notes) {
+            if (perfume.getHeartNote() != null && perfume.getHeartNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+            if (perfume.getTopNote() != null && perfume.getTopNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+            if (perfume.getBaseNote() != null && perfume.getBaseNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+        }
+        return score;
     }
 }
