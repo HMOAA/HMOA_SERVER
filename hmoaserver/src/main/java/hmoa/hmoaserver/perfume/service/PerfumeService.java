@@ -170,7 +170,21 @@ public class PerfumeService {
                     return new PerfumeRecommendation(perfume, score);
                 })
                 .sorted((r1, r2) -> Integer.compare(r2.getScore(), r1.getScore()))
-                .limit(5) // 상위 5개만 반환
+                .limit(3) // 상위 5개만 반환
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PerfumeRecommendation> recommendPefumesIncludePrice(int minPrice, int maxPrice, List<String> notes) {
+        List<Perfume> perfumes = perfumeRepository.findAll();
+
+        return perfumes.stream()
+                .map(perfume -> {
+                    int score = calculateScore(perfume, notes, minPrice, maxPrice);
+                    return new PerfumeRecommendation(perfume, score);
+                })
+                .sorted((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()))
+                .limit(3)
                 .collect(Collectors.toList());
     }
 
@@ -184,6 +198,25 @@ public class PerfumeService {
             if (perfume.getTopNote() != null && perfume.getTopNote().toLowerCase().contains(note.toLowerCase())) score += 10;
             if (perfume.getBaseNote() != null && perfume.getBaseNote().toLowerCase().contains(note.toLowerCase())) score += 10;
         }
+        return score;
+    }
+
+    /**
+     * 향수 추천 점수 계산 가격 포함
+     */
+    public int calculateScore(Perfume perfume, List<String> notes, int minPrice, int maxPrice) {
+        int score = 0;
+
+        if (perfume.getPrice() > minPrice && perfume.getPrice() <= maxPrice) {
+            score += 10;
+        }
+
+        for (String note : notes) {
+            if (perfume.getHeartNote() != null && perfume.getHeartNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+            if (perfume.getTopNote() != null && perfume.getTopNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+            if (perfume.getBaseNote() != null && perfume.getBaseNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+        }
+
         return score;
     }
 }
