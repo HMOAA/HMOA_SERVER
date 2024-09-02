@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 public class PerfumeRecommendRequestDto {
 
-    private int price;
+    private int minPrice;
+    private int maxPrice;
     private List<String> notes;
 }

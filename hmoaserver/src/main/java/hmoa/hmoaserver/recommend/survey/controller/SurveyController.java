@@ -93,8 +93,21 @@ public class SurveyController {
     public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeRecommendRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPerfumes(dto.getPrice(), dto.getNotes());
+        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMaxPrice(), dto.getNotes());
         List<PerfumeSimilarResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeSimilarResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
+        return ResponseEntity.ok(ResultDto.builder()
+                .data(perfumeSimilarResponseDtos)
+                .build());
+    }
+
+    @ApiOperation(value = "향수 추천 API (점수)")
+    @PostMapping("/perfume/respond-price")
+    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurveyForPoint(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeRecommendRequestDto dto) {
+        Member member = memberService.findByMember(token);
+
+        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+        List<PerfumeSimilarResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeSimilarResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
+
         return ResponseEntity.ok(ResultDto.builder()
                 .data(perfumeSimilarResponseDtos)
                 .build());
