@@ -161,8 +161,8 @@ public class PerfumeService {
      * 향수 추천
      */
     @Transactional(readOnly = true)
-    public List<PerfumeRecommendation> recommendPerfumes(int maxPrice, List<String> notes) {
-        List<Perfume> affordablePerfumes = perfumeRepository.findAllAffordablePerfumes(maxPrice);
+    public List<PerfumeRecommendation> recommendPerfumes(int minPrice, int maxPrice, List<String> notes) {
+        List<Perfume> affordablePerfumes = perfumeRepository.findAllAffordablePerfumes(minPrice, maxPrice);
 
         return affordablePerfumes.stream()
                 .map(perfume -> {
@@ -208,7 +208,7 @@ public class PerfumeService {
         int score = 0;
 
         if (perfume.getPrice() > minPrice && perfume.getPrice() <= maxPrice) {
-            score += 10;
+            score += 9;
         }
 
         for (String note : notes) {
