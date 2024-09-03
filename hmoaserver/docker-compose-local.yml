@@ -26,6 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: hmoa
     environment:
+      TZ: "Asia/Seoul"
       PROFILES: local
     ports:
       - 8080:8080
