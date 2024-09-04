@@ -85,3 +85,9 @@ default:
   profile: ${S3_PROFILE}
   main: ${S3_MAIN}
   maintest: ${S3_MAIN_TEST}
+
+survey:
+  image:
+    background: ${S3_SURVEY_BACKGROUND}
+    first: ${S3_SURVEY_FIRST}
+    second: ${S3_SURVEY_SECOND}

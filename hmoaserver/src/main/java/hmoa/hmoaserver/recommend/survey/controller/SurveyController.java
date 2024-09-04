@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class SurveyController {
+
+    @Value("${survey.image.background}")
+    private String backgroundImgUrl;
+    @Value("${survey.image.first}")
+    private String firstImgUrl;
+    @Value("${survey.image.second}")
+    private String secondImgUrl;
 
     private final SurveyService surveyService;
     private final QuestionService questionService;
@@ -85,6 +93,12 @@ public class SurveyController {
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향bti 홈 이미지")
+    @GetMapping("/home")
+    public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey() {
+
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")
