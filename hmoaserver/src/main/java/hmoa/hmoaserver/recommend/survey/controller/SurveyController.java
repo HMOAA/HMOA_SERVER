@@ -112,23 +112,17 @@ public class SurveyController {
 
     @ApiOperation(value = "향수 추천 API")
     @PostMapping("/perfume/respond")
-    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeRecommendRequestDto dto) {
+    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam boolean isContainAll,  @RequestBody PerfumeRecommendRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
-        List<PerfumeRecommendResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeRecommendResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
+        List<PerfumeRecommendation> perfumeRecommendations;
 
-        return ResponseEntity.ok(ResultDto.builder()
-                .data(perfumeSimilarResponseDtos)
-                .build());
-    }
+        if (isContainAll) {
+            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+        } else {
+            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+        }
 
-    @ApiOperation(value = "향수 추천 API (점수)")
-    @PostMapping("/perfume/respond-price")
-    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurveyForPoint(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeRecommendRequestDto dto) {
-        Member member = memberService.findByMember(token);
-
-        List<PerfumeRecommendation> perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
         List<PerfumeRecommendResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeRecommendResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
 
         return ResponseEntity.ok(ResultDto.builder()
