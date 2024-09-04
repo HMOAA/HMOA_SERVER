@@ -6,10 +6,9 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteSimpleResponseDto;
 import hmoa.hmoaserver.note.service.NoteService;
-import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
-import hmoa.hmoaserver.perfume.dto.PerfumeSimilarResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
+import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
 import hmoa.hmoaserver.recommend.survey.domain.*;
 import hmoa.hmoaserver.recommend.survey.dto.*;
 import hmoa.hmoaserver.recommend.survey.service.*;
@@ -86,6 +85,15 @@ public class SurveyController {
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향수 추천 설문 조회")
+    @GetMapping("/perfume")
+    public ResponseEntity<PerfumeSurveyResponseDto> getPerfumeRecommendSurvey() {
+        List<Note> notes = noteService.findByNotesWithDetail();
+        Question question = questionService.findById(SurveyConstant.QUESTION_ID);
+
+        return ResponseEntity.ok(surveyService.getPerfumeSurvey(notes, question));
     }
 
     @ApiOperation(value = "향수 추천 API")
