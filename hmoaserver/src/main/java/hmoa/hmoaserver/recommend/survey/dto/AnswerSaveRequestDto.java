@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class AnswerSaveRequestDto {
+
     private String content;
 
     public Answer toEntity(Question question) {

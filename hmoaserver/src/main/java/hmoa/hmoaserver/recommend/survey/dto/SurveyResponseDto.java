@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class SurveyResponseDto {
+
     private String title;
     private List<QuestionResponseDto> questions;
 
