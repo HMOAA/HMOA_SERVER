@@ -118,7 +118,7 @@ public class SurveyController {
         List<PerfumeRecommendation> perfumeRecommendations;
 
         if (isContainAll) {
-            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+            perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
         } else {
             perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
         }
