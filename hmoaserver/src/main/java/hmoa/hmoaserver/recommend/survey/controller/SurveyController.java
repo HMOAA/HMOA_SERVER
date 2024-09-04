@@ -98,7 +98,7 @@ public class SurveyController {
     @ApiOperation(value = "향bti 홈 이미지")
     @GetMapping("/home")
     public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey() {
-
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl));
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")
