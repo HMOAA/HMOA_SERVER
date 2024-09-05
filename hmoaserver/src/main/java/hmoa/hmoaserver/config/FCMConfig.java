@@ -26,7 +26,6 @@ public class FCMConfig {
     FirebaseMessaging firebaseMessaging() throws IOException {
 
         InputStream refreshToken = new ByteArrayInputStream(resource.getBytes());
-        log.info(resource);
         FirebaseApp firebaseApp = null;
         List<FirebaseApp> firebaseApps = FirebaseApp.getApps();
 
