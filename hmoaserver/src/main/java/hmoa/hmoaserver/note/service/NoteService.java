@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +25,9 @@ import static hmoa.hmoaserver.exception.Code.NOTE_NOT_FOUND;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+
     private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIFTY_SIZE.getSize());
+    private static final Long[] NOTE_DETAIL_IDS = new Long[]{1L, 2L, 3L, 5L, 6L, 7L, 14L, 16L};
 
     public Note save(NoteSaveRequestDto requestDto) {
         return noteRepository.save(requestDto.toEntity());
@@ -59,6 +61,11 @@ public class NoteService {
         }
 
         return note;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Note> findByNotesWithDetail() {
+        return Arrays.stream(NOTE_DETAIL_IDS).map(id -> noteRepository.findByIdWithDetails(id).get()).collect(Collectors.toList());
     }
 
     //join fetch로 N + 1 문제 방지

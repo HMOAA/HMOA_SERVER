@@ -21,9 +21,12 @@ services:
     restart: always
 
   spring-boot:
-    build: .
-    container_name: local-application
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hmoa
     environment:
+      TZ: "Asia/Seoul"
       PROFILES: local
     ports:
       - 8080:8080

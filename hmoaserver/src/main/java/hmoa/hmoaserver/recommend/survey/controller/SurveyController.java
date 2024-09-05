@@ -6,6 +6,9 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteSimpleResponseDto;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
+import hmoa.hmoaserver.perfume.service.PerfumeService;
+import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
 import hmoa.hmoaserver.recommend.survey.domain.*;
 import hmoa.hmoaserver.recommend.survey.dto.*;
 import hmoa.hmoaserver.recommend.survey.service.*;
@@ -13,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +31,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SurveyController {
 
+    @Value("${survey.image.background}")
+    private String backgroundImgUrl;
+    @Value("${survey.image.first}")
+    private String firstImgUrl;
+    @Value("${survey.image.second}")
+    private String secondImgUrl;
+
     private final SurveyService surveyService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -35,6 +46,7 @@ public class SurveyController {
     private final MemberService memberService;
     private final MemberAnswerService memberAnswerService;
     private final NoteRecommendService noteRecommendService;
+    private final PerfumeService perfumeService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -81,6 +93,39 @@ public class SurveyController {
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value = "향bti 홈 이미지")
+    @GetMapping("/home")
+    public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey() {
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl));
+    }
+
+    @ApiOperation(value = "향수 추천 설문 조회")
+    @GetMapping("/perfume")
+    public ResponseEntity<PerfumeSurveyResponseDto> getPerfumeRecommendSurvey() {
+        List<Note> notes = noteService.findByNotesWithDetail();
+        Question question = questionService.findById(SurveyConstant.QUESTION_ID);
+
+        return ResponseEntity.ok(surveyService.getPerfumeSurvey(notes, question));
+    }
+
+    @ApiOperation(value = "향수 추천 API")
+    @PostMapping("/perfume/respond")
+    public ResponseEntity<PerfumeRecommendsResponseDto> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam boolean isContainAll,  @RequestBody PerfumeRecommendRequestDto dto) {
+        Member member = memberService.findByMember(token);
+
+        List<PerfumeRecommendation> perfumeRecommendations;
+
+        if (isContainAll) {
+            perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+        } else {
+            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+        }
+
+        List<PerfumeRecommendResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeRecommendResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
+
+        return ResponseEntity.ok(new PerfumeRecommendsResponseDto(perfumeSimilarResponseDtos));
     }
 
     @ApiOperation(value = "향료 추천 응답 API")

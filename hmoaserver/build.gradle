@@ -76,7 +76,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-task buildAndDeploy(type: Exec) {
+task localDeploy(type: Exec) {
 	group = 'Docker'
 	description = 'Builds the project and starts docker-compose'
 
@@ -87,5 +87,5 @@ task buildAndDeploy(type: Exec) {
 	workingDir "$projectDir"
 
 	// Windows에서 cmd를 사용하여 docker-compose 실행
-	commandLine 'cmd', '/c', 'docker-compose -f docker-compose-local.yml up -d'
+	commandLine 'cmd', '/c', 'docker-compose -f docker-compose-local.yml up --build -d'
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class QuestionSaveRequestDto {
+
     private String content;
     private QuestionType questionType;
 

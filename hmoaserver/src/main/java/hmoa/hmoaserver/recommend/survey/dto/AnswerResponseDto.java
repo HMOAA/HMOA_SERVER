@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AnswerResponseDto {
+
     Long optionId;
     String option;
 

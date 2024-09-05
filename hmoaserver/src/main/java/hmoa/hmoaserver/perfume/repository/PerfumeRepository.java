@@ -22,6 +22,10 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
                     " ORDER BY p.koreanName ASC"
     )
     Page<Perfume> findAllSearch(@Param("koreanName") String koreanName, @Param("englishName") String englishName, Pageable pageable);
+
+    @Query("SELECT p FROM Perfume p WHERE p.price > :minPrice AND p.price <= :maxPrice")
+    List<Perfume> findAllAffordablePerfumes(@Param("minPrice") int minPrice, @Param("maxPrice") int maxPrice);
+
     List<Perfume> findByKoreanNameContaining(String keyword);
     Optional<Perfume> findByKoreanName(String koreanName);
 

@@ -120,6 +120,9 @@ jobs:
             echo "export S3_MAIN=${{ secrets.S3_MAIN }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_MAIN_TEST=${{ secrets.S3_MAIN_TEST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_PROFILE=${{ secrets.S3_PROFILE }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_SURVEY_BACKGROUND=${{ secrets.S3_SURVEY_BACKGROUND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_SURVEY_FIRST=${{ secrets.S3_SURVEY_FIRST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_SURVEY_SECOND=${{ secrets.S3_SURVEY_SECOND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             export SERVER_USERNAME=${{ secrets.SERVER_USERNAME }}
             
