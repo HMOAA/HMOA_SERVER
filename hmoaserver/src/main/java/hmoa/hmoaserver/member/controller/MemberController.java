@@ -541,6 +541,10 @@ public class MemberController {
 
         Member member = memberService.findByMember(token);
 
+        if (memberAddressService.isExistMemberAddress(member.getId())) {
+            memberAddressService.delete(memberAddressService.findByMemberId(member.getId()));
+        }
+
         memberAddressService.save(dto.toEntity(member));
 
         return ResponseEntity.ok(ResultDto.builder().build());
