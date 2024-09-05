@@ -29,6 +29,16 @@ public class MemberAddressService {
         }
     }
 
+    @Transactional
+    public void delete(MemberAddress memberAddress) {
+        try {
+            memberAddressRepository.delete(memberAddress);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(e, Code.SERVER_ERROR);
+        }
+    }
+
     public MemberAddress findByMemberId(Long memberId) {
         if (!isExistMemberAddress(memberId)) {
             throw new CustomException(null, Code.ADDRESS_NOT_FOUND);
