@@ -112,7 +112,7 @@ public class SurveyController {
 
     @ApiOperation(value = "향수 추천 API")
     @PostMapping("/perfume/respond")
-    public ResponseEntity<ResultDto<Object>> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam boolean isContainAll,  @RequestBody PerfumeRecommendRequestDto dto) {
+    public ResponseEntity<PerfumeRecommendsResponseDto> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam boolean isContainAll,  @RequestBody PerfumeRecommendRequestDto dto) {
         Member member = memberService.findByMember(token);
 
         List<PerfumeRecommendation> perfumeRecommendations;
@@ -125,9 +125,7 @@ public class SurveyController {
 
         List<PerfumeRecommendResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeRecommendResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
 
-        return ResponseEntity.ok(ResultDto.builder()
-                .data(perfumeSimilarResponseDtos)
-                .build());
+        return ResponseEntity.ok(new PerfumeRecommendsResponseDto(perfumeSimilarResponseDtos));
     }
 
     @ApiOperation(value = "향료 추천 응답 API")
