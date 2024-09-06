@@ -541,6 +541,10 @@ public class MemberController {
 
         Member member = memberService.findByMember(token);
 
+        if (memberAddressService.isExistMemberAddress(member.getId())) {
+            memberAddressService.delete(memberAddressService.findByMemberId(member.getId()));
+        }
+
         memberAddressService.save(dto.toEntity(member));
 
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -554,6 +558,10 @@ public class MemberController {
     public ResponseEntity<ResultDto<Object>> saveOrderInfo(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberInfoRequestDto dto) {
 
         Member member = memberService.findByMember(token);
+
+        if (memberInfoService.isExistMemberInfo(member.getId())) {
+            memberInfoService.delete(memberInfoService.findByMemberId(member.getId()));
+        }
 
         memberInfoService.save(dto.toEntity(member));
 

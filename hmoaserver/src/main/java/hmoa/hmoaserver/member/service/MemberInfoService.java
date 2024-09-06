@@ -26,6 +26,15 @@ public class MemberInfoService {
         }
     }
 
+    @Transactional
+    public void delete(MemberInfo memberInfo) {
+        try {
+            memberInfoRepository.delete(memberInfo);
+        } catch (Exception e) {
+            throw new CustomException(e, Code.SERVER_ERROR);
+        }
+    }
+
     public MemberInfo findByMemberId(Long memberId) {
         return memberInfoRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_INFO_NOT_FOUND));
     }
