@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionResponseDto {
+
     private Long questionId;
     private String content;
     @Getter(AccessLevel.NONE)

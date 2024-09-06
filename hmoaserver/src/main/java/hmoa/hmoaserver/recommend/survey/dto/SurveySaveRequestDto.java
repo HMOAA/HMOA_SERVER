@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class SurveySaveRequestDto {
+
     private String title;
     private SurveyType surveyType;
 

@@ -3,10 +3,6 @@ spring:
     group:
       local:
         - local
-        - jwt
-        - oauth2
-        - s3
-        - payment
       dev:
         - dev
     active: ${active.profiles}

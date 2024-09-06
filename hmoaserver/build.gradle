@@ -28,7 +28,6 @@ repositories {
 	mavenCentral()
 }
 
-def activeProfile = project.findProperty('activeProfile') ?: 'local'
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -46,11 +45,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
     // database 설정
-    if (activeProfile == 'local') {
-        runtimeOnly 'com.mysql:mysql-connector-j'
-    } else if (activeProfile == 'dev') {
-        runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
-    }
+	runtimeOnly('org.mariadb.jdbc:mariadb-java-client')
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -79,4 +74,18 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task localDeploy(type: Exec) {
+	group = 'Docker'
+	description = 'Builds the project and starts docker-compose'
+
+	// BootJar 태스크를 실행하여 Spring Boot 애플리케이션을 빌드
+	dependsOn 'bootJar'
+
+	// 작업 디렉토리를 명시적으로 설정
+	workingDir "$projectDir"
+
+	// Windows에서 cmd를 사용하여 docker-compose 실행
+	commandLine 'cmd', '/c', 'docker-compose -f docker-compose-local.yml up --build -d'
 }

@@ -6,7 +6,7 @@ import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.dto.BootpayCancelRequstDto;
 import hmoa.hmoaserver.hshop.dto.BootpayConfirmRequestDto;
-import hmoa.hmoaserver.hshop.service.consonant.BootpayConsonant;
+import hmoa.hmoaserver.hshop.service.constant.BootpayConstant;
 import hmoa.hmoaserver.member.domain.Member;
 import kr.co.bootpay.Bootpay;
 import kr.co.bootpay.model.request.Cancel;
@@ -39,8 +39,8 @@ public class BootpayService {
         try {
             bootpay = new Bootpay(restApiKey, privateKey);
             HashMap token = bootpay.getAccessToken();
-            if (token.get(BootpayConsonant.ERROR_CODE) != null) {
-                log.info("error code: " + token.get(BootpayConsonant.ERROR_CODE));
+            if (token.get(BootpayConstant.ERROR_CODE) != null) {
+                log.info("error code: " + token.get(BootpayConstant.ERROR_CODE));
                 log.info("error content: " + token.get("message"));
                 throw new CustomException(null, Code.BOOTPAY_ERROR);
             }
@@ -66,12 +66,12 @@ public class BootpayService {
             getBootpayToken();
             HashMap res = bootpay.confirm(receiptId);
 
-            if (res.get(BootpayConsonant.ERROR_CODE) != null) {
+            if (res.get(BootpayConstant.ERROR_CODE) != null) {
                 orderService.updateOrderStatus(order, OrderStatus.PAY_COMPLETE);
                 return res;
             }
 
-            log.info("결제 실패 : {}", res.get(BootpayConsonant.ERROR_CODE));
+            log.info("결제 실패 : {}", res.get(BootpayConstant.ERROR_CODE));
             return res;
         } catch (Exception e) {
             new CustomException(null, Code.BOOTPAY_ERROR);
@@ -86,9 +86,9 @@ public class BootpayService {
         HashMap res = findOneReceipt(dto.getReceiptId());
 
         // 결제 금액과 주문 정보 금액이 동일한 지 확인
-        int payPrice = Integer.parseInt(res.get(BootpayConsonant.PRICE).toString());
-        log.info("{}", res.get(BootpayConsonant.ORDER_ID));
-        OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConsonant.ORDER_ID).toString()));
+        int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString());
+        log.info("{}", res.get(BootpayConstant.ORDER_ID));
+        OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
 
         if (isSamePrice(payPrice, order.getTotalPrice())) {
             return confirm(dto.getReceiptId(), order);
@@ -109,7 +109,7 @@ public class BootpayService {
 
             HashMap res = bootpay.receiptCancel(cancel);
 
-            if (res.get(BootpayConsonant.ERROR_CODE) != null) {
+            if (res.get(BootpayConstant.ERROR_CODE) != null) {
                 throw new CustomException(null, Code.BOOTPAY_ERROR);
             }
 

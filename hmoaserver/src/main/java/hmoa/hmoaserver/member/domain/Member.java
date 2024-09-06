@@ -97,9 +97,6 @@ public class Member extends BaseEntity implements UserDetails {
     private List<PerfumeWeather> perfumeWeathers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefreshRequest> refreshRequests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberAnswer> memberAnswers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
