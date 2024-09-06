@@ -41,6 +41,7 @@ public class SurveyController {
 
     private final SurveyService surveyService;
     private final QuestionService questionService;
+    private final QuestionCachingService questionCachingService;
     private final NoteCachingService noteCachingService;
     private final AnswerService answerService;
     private final AnswerNoteService answerNoteService;
@@ -107,7 +108,7 @@ public class SurveyController {
     @GetMapping("/perfume")
     public ResponseEntity<PerfumeSurveyResponseDto> getPerfumeRecommendSurvey() {
         List<Note> notes = noteCachingService.getNotes();
-        Question question = questionService.getQuestion(SurveyConstant.QUESTION_ID);
+        Question question = questionCachingService.getQuestionById(SurveyConstant.QUESTION_ID);
 
         return ResponseEntity.ok(surveyService.getPerfumeSurvey(notes, question));
     }
