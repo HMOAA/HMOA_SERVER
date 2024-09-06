@@ -1,5 +1,5 @@
 # 자바 버전
-FROM amazoncorretto:11-alpine-jdk
+FROM amazoncorretto:17-alpine
 
 ARG JAR_FILE=build/libs/*.jar
 ARG PROFILES
