@@ -5,6 +5,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.dto.NoteSimpleResponseDto;
+import hmoa.hmoaserver.note.service.NoteCachingService;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
@@ -40,6 +41,7 @@ public class SurveyController {
 
     private final SurveyService surveyService;
     private final QuestionService questionService;
+    private final NoteCachingService noteCachingService;
     private final AnswerService answerService;
     private final AnswerNoteService answerNoteService;
     private final NoteService noteService;
@@ -65,7 +67,7 @@ public class SurveyController {
 
     @PostMapping("/save-answer/{questionId}")
     public ResponseEntity<ResultDto<Object>> saveAnswer(@PathVariable Long questionId, @RequestBody AnswerSaveRequestDto dto) {
-        Question question = questionService.findById(questionId);
+        Question question = questionService.getQuestion(questionId);
         answerService.save(dto, question);
 
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -104,8 +106,8 @@ public class SurveyController {
     @ApiOperation(value = "향수 추천 설문 조회")
     @GetMapping("/perfume")
     public ResponseEntity<PerfumeSurveyResponseDto> getPerfumeRecommendSurvey() {
-        List<Note> notes = noteService.findByNotesWithDetail();
-        Question question = questionService.findById(SurveyConstant.QUESTION_ID);
+        List<Note> notes = noteCachingService.getNotes();
+        Question question = questionService.getQuestion(SurveyConstant.QUESTION_ID);
 
         return ResponseEntity.ok(surveyService.getPerfumeSurvey(notes, question));
     }
