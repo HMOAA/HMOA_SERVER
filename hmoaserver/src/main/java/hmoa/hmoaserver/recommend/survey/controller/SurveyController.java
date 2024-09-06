@@ -40,8 +40,8 @@ public class SurveyController {
     private String secondImgUrl;
 
     private final SurveyService surveyService;
+    private final SurveyCachingService surveyCachingService;
     private final QuestionService questionService;
-    private final QuestionCachingService questionCachingService;
     private final NoteCachingService noteCachingService;
     private final AnswerService answerService;
     private final AnswerNoteService answerNoteService;
@@ -92,7 +92,7 @@ public class SurveyController {
     @ApiOperation(value = "향료 추천 설문 조회")
     @GetMapping("/note")
     public ResponseEntity<SurveyResponseDto> getNoteRecommendSurvey() {
-        Survey survey = surveyService.findBySurveyType(SurveyType.NOTE);
+        Survey survey = surveyCachingService.getSurvey(SurveyType.NOTE);
         SurveyResponseDto result = new SurveyResponseDto(survey);
 
         return ResponseEntity.ok(result);
@@ -108,9 +108,9 @@ public class SurveyController {
     @GetMapping("/perfume")
     public ResponseEntity<PerfumeSurveyResponseDto> getPerfumeRecommendSurvey() {
         List<Note> notes = noteCachingService.getNotes();
-        Question question = questionCachingService.getQuestionById(SurveyConstant.QUESTION_ID);
+        Question question = surveyCachingService.getQuestionById(SurveyConstant.QUESTION_ID);
 
-        return ResponseEntity.ok(surveyService.getPerfumeSurvey(notes, question));
+        return ResponseEntity.ok(surveyCachingService.getPerfumeSurvey(notes, question));
     }
 
     @ApiOperation(value = "향수 추천 API")
