@@ -64,7 +64,7 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public List<Note> findByNotesWithDetail() {
+    public List<Note> getNotesWithDetails() {
         return Arrays.stream(NOTE_DETAIL_IDS).map(id -> noteRepository.findByIdWithDetails(id).get()).collect(Collectors.toList());
     }
 
