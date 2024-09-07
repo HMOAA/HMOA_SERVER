@@ -9,5 +9,5 @@ import java.util.List;
 public interface PerfumeHomeMenuService {
     PerfumeHomeMenu save(HomeMenu homeMenu, Perfume perfume);
     void reset(HomeMenu homeMenu);
-    List<PerfumeHomeMenu> findPerfumeHomeMenuByHomeMenu(HomeMenu homeMenu);
+    List<PerfumeHomeMenu> getPerfumeHomeMenus(HomeMenu homeMenu);
 }
