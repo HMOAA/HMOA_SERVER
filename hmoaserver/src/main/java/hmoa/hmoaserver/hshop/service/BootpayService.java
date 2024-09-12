@@ -89,7 +89,7 @@ public class BootpayService {
         int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString());
         log.info("{}", res.get(BootpayConstant.ORDER_ID));
         OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
-
+        log.info("{}, {}", payPrice, order.getTotalPrice());
         if (isSamePrice(payPrice, order.getTotalPrice())) {
             return confirm(dto.getReceiptId(), order);
         }

@@ -28,6 +28,7 @@ public class BootpayController {
     @PostMapping("/confirm")
     public ResponseEntity<ResultDto<Object>> confirm(@RequestHeader("X-AUTH-TOKEN") String token, @Valid @RequestBody BootpayConfirmRequestDto dto) {
         HashMap res = bootpayService.checkPayment(dto);
+        log.info("{}", res);
 
         return ResponseEntity.ok(ResultDto.builder()
                 .data(res)
