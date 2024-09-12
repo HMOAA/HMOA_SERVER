@@ -1,0 +1,31 @@
+name: Update Hotfix Branch From Develop
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  update-hotfix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        runs: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Rebase hotfix on develop
+        run: |
+          git fetch origin
+          git checkout hotfix
+          git rebase origin/develop
+
+      - name: Push changes
+        run: |
+          git push origin hotfix --force-with-lease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
