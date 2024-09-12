@@ -24,6 +24,8 @@ import java.util.HashMap;
 @Slf4j
 public class BootpayService {
 
+    private static final int SHIPPING_FEE = 3000;
+
     private final OrderService orderService;
 
     private Bootpay bootpay;
@@ -66,7 +68,7 @@ public class BootpayService {
             getBootpayToken();
             HashMap res = bootpay.confirm(receiptId);
 
-            if (res.get(BootpayConstant.ERROR_CODE) != null) {
+            if (res.get(BootpayConstant.ERROR_CODE) == null) {
                 orderService.updateOrderStatus(order, OrderStatus.PAY_COMPLETE);
                 return res;
             }
@@ -86,16 +88,16 @@ public class BootpayService {
         HashMap res = findOneReceipt(dto.getReceiptId());
 
         // 결제 금액과 주문 정보 금액이 동일한 지 확인
-        int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString());
+        int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString()) - SHIPPING_FEE;
         log.info("{}", res.get(BootpayConstant.ORDER_ID));
         OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
-
+        log.info("{}, {}", payPrice, order.getTotalPrice());
         if (isSamePrice(payPrice, order.getTotalPrice())) {
             return confirm(dto.getReceiptId(), order);
         }
 
         order.updateOrderStatus(OrderStatus.PAY_FAILED);
-        return null;
+        throw new CustomException(null, Code.BOOTPAY_ERROR);
     }
 
     @Transactional
