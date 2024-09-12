@@ -18,17 +18,16 @@ public class PerfumeHomeMenu {
     @Column(name = "perfume_home_menu_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "perfume_id")
-    private Perfume perfume;
+    @Column(name = "perfume_id")
+    private Long perfumeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_menu_id")
     private HomeMenu homeMenu;
 
     @Builder
-    public PerfumeHomeMenu(Perfume perfume, HomeMenu homeMenu) {
-        this.perfume = perfume;
+    public PerfumeHomeMenu(Long perfumeId, HomeMenu homeMenu) {
+        this.perfumeId = perfumeId;
         this.homeMenu = homeMenu;
     }
 }

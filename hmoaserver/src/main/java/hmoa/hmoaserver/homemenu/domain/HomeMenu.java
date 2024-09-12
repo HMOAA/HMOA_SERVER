@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.homemenu.domain;
 
-import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +18,9 @@ public class HomeMenu {
     @Column(name = "home_menu_id")
     private Long id;
     private String title;
+
     @OneToMany(mappedBy = "homeMenu", cascade = CascadeType.ALL , orphanRemoval = true)
-    private List<PerfumeHomeMenu> perfumeHomeMenuList =new ArrayList<>();
+    private List<PerfumeHomeMenu> perfumeHomeMenus =new ArrayList<>();
 
     @Builder
     public HomeMenu(String title){
