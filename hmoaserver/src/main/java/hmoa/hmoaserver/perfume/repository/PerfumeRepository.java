@@ -26,6 +26,9 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
     @Query("SELECT p FROM Perfume p WHERE p.price > :minPrice AND p.price <= :maxPrice")
     List<Perfume> findAllAffordablePerfumes(@Param("minPrice") int minPrice, @Param("maxPrice") int maxPrice);
 
+    @Query("SELECT p FROM Perfume p LEFT JOIN FETCH p.brand LEFT JOIN FETCH p.perfumePhotos WHERE p.id = :perfumeId")
+    Optional<Perfume> findById(@Param("perfumeId") Long perfumeId);
+
     List<Perfume> findByKoreanNameContaining(String keyword);
     Optional<Perfume> findByKoreanName(String koreanName);
 

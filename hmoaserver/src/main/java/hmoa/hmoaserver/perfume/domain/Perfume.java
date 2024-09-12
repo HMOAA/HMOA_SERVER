@@ -59,9 +59,6 @@ public class Perfume extends BaseEntity {
     private Brand brand;
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PerfumeHomeMenu> perfumeHomeMenuList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerfumeAge> perfumeAges = new ArrayList<>();
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL, orphanRemoval = true)

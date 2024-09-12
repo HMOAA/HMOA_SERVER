@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.recommend.survey.service;
 
+import hmoa.hmoaserver.config.CacheName;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.note.domain.Note;
@@ -39,17 +40,5 @@ public class SurveyService {
 
     public Survey findBySurveyType(final SurveyType surveyType) {
         return surveyRepository.findBySurveyType(surveyType).orElseThrow(() -> new CustomException(null, Code.SURVEY_NOT_FOUND));
-    }
-
-    @Cacheable(value = "perfumeSurveyCache", key = "'perfumeSurveyDto'")
-    public PerfumeSurveyResponseDto getPerfumeSurvey(final List<Note> notes, final Question question) {
-        List<PerfumeAnswerResponseDto> answers = notes.stream()
-                .map(PerfumeAnswerResponseDto::new)
-                .collect(Collectors.toList());
-
-        PerfumeQuestionResponseDto perfumeQuestionResponseDto = new PerfumeQuestionResponseDto(SurveyConstant.PERFUME_QUESTION, answers);
-        QuestionResponseDto questionResponseDto = new QuestionResponseDto(question);
-
-        return new PerfumeSurveyResponseDto(questionResponseDto, perfumeQuestionResponseDto);
     }
 }

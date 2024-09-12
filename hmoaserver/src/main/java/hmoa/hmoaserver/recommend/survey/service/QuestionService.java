@@ -26,7 +26,7 @@ public class QuestionService {
         }
     }
 
-    public Question findById(Long id) {
-        return questionRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.QUESTION_NOT_FOUND));
+    public Question getQuestion(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(() -> new CustomException(null, Code.QUESTION_NOT_FOUND));
     }
 }

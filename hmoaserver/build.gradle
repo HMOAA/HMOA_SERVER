@@ -6,7 +6,7 @@ plugins {
 
 group = 'hmoa'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 configurations {
 	compileOnly {
@@ -70,6 +70,10 @@ dependencies {
 
 	//bootpay
 	implementation 'io.github.bootpay:backend:+'
+
+	//cache
+	implementation("org.springframework.boot:spring-boot-starter-cache")
+	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 }
 
 tasks.named('test') {

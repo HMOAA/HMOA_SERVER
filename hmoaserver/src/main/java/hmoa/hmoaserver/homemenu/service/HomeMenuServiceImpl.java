@@ -29,8 +29,8 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     }
 
     @Override
-    public HomeMenu findHomeMenuById(Long homeId) {
-        return homeMenuRepository.findById(homeId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
+    public HomeMenu getHomeMenu(Long homeMenuId) {
+        return homeMenuRepository.findByHomeMenuId(homeMenuId).orElseThrow(() -> new CustomException(null, Code.HOMEMENU_NOT_FOUND));
     }
 
     @Override

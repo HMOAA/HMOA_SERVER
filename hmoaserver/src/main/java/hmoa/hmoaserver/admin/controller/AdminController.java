@@ -39,7 +39,7 @@ public class AdminController {
     @ApiOperation("홈 메뉴 타이틀에 추가할 향수")
     @PostMapping("/homePerfume/add")
     public ResponseEntity<ResultDto> addHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long perfumeId, @RequestParam Long homeId){
-        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeId);
+        HomeMenu homeMenu = homeMenuService.getHomeMenu(homeId);
         Perfume perfume = perfumeService.findById(perfumeId);
         perfumeHomeMenuService.save(homeMenu, perfume);
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -48,7 +48,7 @@ public class AdminController {
     @ApiOperation("홈 메뉴 초기화")
     @DeleteMapping("/{homeMenuId}/delete")
     public ResponseEntity<ResultDto> deleteHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long homeMenuId){
-        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeMenuId);
+        HomeMenu homeMenu = homeMenuService.getHomeMenu(homeMenuId);
         perfumeHomeMenuService.reset(homeMenu);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
@@ -56,7 +56,7 @@ public class AdminController {
     @ApiOperation("홈 메뉴 타이틀 내용 수정")
     @PostMapping("/{homeMenuId}/modify")
     public ResponseEntity<ResultDto> modifyHomeMenu(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long homeMenuId, @RequestBody HomeMenuSaveRequestDto homeMenuSaveRequestDto) {
-        HomeMenu homeMenu = homeMenuService.findHomeMenuById(homeMenuId);
+        HomeMenu homeMenu = homeMenuService.getHomeMenu(homeMenuId);
         homeMenuService.modifyHomeMenu(homeMenu, homeMenuSaveRequestDto.getTitle());
         return ResponseEntity.ok(ResultDto.builder().build());
     }

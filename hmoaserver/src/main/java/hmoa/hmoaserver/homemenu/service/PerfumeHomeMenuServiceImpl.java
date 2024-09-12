@@ -23,7 +23,7 @@ public class PerfumeHomeMenuServiceImpl implements PerfumeHomeMenuService {
         try {
             return perfumeHomeMenuRepository.save(PerfumeHomeMenu.builder()
                     .homeMenu(homeMenu)
-                    .perfume(perfume)
+                    .perfumeId(perfume.getId())
                     .build());
         } catch (RuntimeException e) {
             throw new CustomException(null, Code.SERVER_ERROR);
@@ -33,11 +33,11 @@ public class PerfumeHomeMenuServiceImpl implements PerfumeHomeMenuService {
     @Override
     public void reset(HomeMenu homeMenu) {
         List<PerfumeHomeMenu> perfumeHomeMenus = perfumeHomeMenuRepository.findAllByHomeMenu(homeMenu);
-        perfumeHomeMenus.forEach(perfumeHomeMenuRepository::delete);
+        perfumeHomeMenuRepository.deleteAll(perfumeHomeMenus);
     }
 
     @Override
-    public List<PerfumeHomeMenu> findPerfumeHomeMenuByHomeMenu(HomeMenu homeMenu) {
+    public List<PerfumeHomeMenu> getPerfumeHomeMenus(HomeMenu homeMenu) {
         return perfumeHomeMenuRepository.findAllByHomeMenu(homeMenu);
     }
 }
