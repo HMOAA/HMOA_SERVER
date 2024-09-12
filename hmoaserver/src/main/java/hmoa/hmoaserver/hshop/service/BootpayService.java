@@ -68,7 +68,7 @@ public class BootpayService {
             getBootpayToken();
             HashMap res = bootpay.confirm(receiptId);
 
-            if (res.get(BootpayConstant.ERROR_CODE) != null) {
+            if (res.get(BootpayConstant.ERROR_CODE) == null) {
                 orderService.updateOrderStatus(order, OrderStatus.PAY_COMPLETE);
                 return res;
             }
