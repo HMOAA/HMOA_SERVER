@@ -1,4 +1,4 @@
-name: Update Hotfix Branch From Develop
+name: Update Hotfix Branch From Develop!
 
 on:
   push:
