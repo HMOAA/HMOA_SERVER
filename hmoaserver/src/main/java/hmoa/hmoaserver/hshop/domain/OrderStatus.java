@@ -13,7 +13,8 @@ public enum OrderStatus {
     PAY_COMPLETE("결제 완료"),
     SHIPPING_WAITING("배송 준비 중"),
     SHIPPING_PROGRESS("배송 중"),
-    SHIPPING_COMPLETE("배송 완료");
+    SHIPPING_COMPLETE("배송 완료"),
+    PURCHASE_CONFIRMATION("구매 확정");
 
 
     private final String description;
