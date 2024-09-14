@@ -28,16 +28,17 @@ public class OrderEntity extends BaseEntity {
 
     private Long addressId;
     private int totalPrice;
-
     private Long memberId;
+    private String receiptId;
 
     @Builder
-    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId) {
+    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId, String receiptId) {
         this.productIds = productIds;
         this.status = status;
         this.addressId = addressId;
         this.totalPrice = totalPrice;
         this.memberId = memberId;
+        this.receiptId = receiptId;
     }
 
     public void deleteProductId(final NoteProduct product) {
@@ -47,5 +48,9 @@ public class OrderEntity extends BaseEntity {
 
     public void updateOrderStatus(final OrderStatus status) {
         this.status = status;
+    }
+
+    public void updateReceiptId(final String receiptId) {
+        this.receiptId = receiptId;
     }
 }
