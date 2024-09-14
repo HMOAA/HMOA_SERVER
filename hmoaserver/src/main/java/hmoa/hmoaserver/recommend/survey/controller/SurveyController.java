@@ -4,9 +4,11 @@ import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
+import hmoa.hmoaserver.note.domain.NoteSynonym;
 import hmoa.hmoaserver.note.dto.NoteSimpleResponseDto;
 import hmoa.hmoaserver.note.service.NoteCachingService;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.note.service.NoteSynonymService;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
@@ -50,6 +52,7 @@ public class SurveyController {
     private final MemberAnswerService memberAnswerService;
     private final NoteRecommendService noteRecommendService;
     private final PerfumeService perfumeService;
+    private final NoteSynonymService noteSynonymService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -121,9 +124,9 @@ public class SurveyController {
         List<PerfumeRecommendation> perfumeRecommendations;
 
         if (isContainAll) {
-            perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+            perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), getSearchNotes(dto.getNotes()));
         } else {
-            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), dto.getNotes());
+            perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), getSearchNotes(dto.getNotes()));
         }
 
         List<PerfumeRecommendResponseDto> perfumeSimilarResponseDtos = perfumeRecommendations.stream().map(perfumeRecommendation -> new PerfumeRecommendResponseDto(perfumeRecommendation.getPerfume())).collect(Collectors.toList());
@@ -179,5 +182,17 @@ public class SurveyController {
         NoteRecommendResponseDto result = new NoteRecommendResponseDto(recommendNotes.stream().map(NoteSimpleResponseDto::new).collect(Collectors.toList()));
 
         return ResponseEntity.ok(result);
+    }
+
+    private List<String> getSearchNotes(List<String> notes) {
+        List<String> searchNotes = new ArrayList<>();
+
+        for (String note : notes) {
+            searchNotes.add(note);
+            NoteSynonym noteSynonym = noteSynonymService.getNoteSynonym(note);
+            searchNotes.addAll(noteSynonym.getSynonyms());
+        }
+
+        return searchNotes;
     }
 }

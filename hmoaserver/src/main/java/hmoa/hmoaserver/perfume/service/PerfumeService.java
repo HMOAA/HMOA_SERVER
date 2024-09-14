@@ -193,12 +193,8 @@ public class PerfumeService {
      */
     public int calculateScore(Perfume perfume, List<String> notes) {
         int score = 0;
-        for (String note : notes) {
-            if (perfume.getHeartNote() != null && perfume.getHeartNote().toLowerCase().contains(note.toLowerCase())) score += 10;
-            if (perfume.getTopNote() != null && perfume.getTopNote().toLowerCase().contains(note.toLowerCase())) score += 10;
-            if (perfume.getBaseNote() != null && perfume.getBaseNote().toLowerCase().contains(note.toLowerCase())) score += 10;
-        }
-        return score;
+
+        return addContainNotePoint(perfume, notes, score);
     }
 
     /**
@@ -211,12 +207,22 @@ public class PerfumeService {
             score += 9;
         }
 
+        return addContainNotePoint(perfume, notes, score);
+    }
+
+    private static int addContainNotePoint(Perfume perfume, List<String> notes, int score) {
         for (String note : notes) {
-            if (perfume.getHeartNote() != null && perfume.getHeartNote().toLowerCase().contains(note.toLowerCase())) score += 10;
-            if (perfume.getTopNote() != null && perfume.getTopNote().toLowerCase().contains(note.toLowerCase())) score += 10;
-            if (perfume.getBaseNote() != null && perfume.getBaseNote().toLowerCase().contains(note.toLowerCase())) score += 10;
+            if (perfume.getHeartNote() != null && containsExactMatch(perfume.getHeartNote(), note)) score += 10;
+            if (perfume.getTopNote() != null && containsExactMatch(perfume.getTopNote(), note)) score += 10;
+            if (perfume.getBaseNote() != null && containsExactMatch(perfume.getBaseNote(), note)) score += 10;
         }
 
         return score;
+    }
+
+    // '핑크로즈'가 '로즈'에 포함되지 않도록 정확히 일치하는 경우에만 true 값을 반환하는 메소드
+    private static boolean containsExactMatch(String notes, String searchNote) {
+        List<String> values = Arrays.asList(notes.trim().split(",\\s*"));
+        return values.contains(searchNote);
     }
 }
