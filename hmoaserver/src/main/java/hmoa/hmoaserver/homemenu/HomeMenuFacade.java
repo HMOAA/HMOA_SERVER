@@ -51,8 +51,8 @@ public class HomeMenuFacade {
         List<Perfume> thirdPerfumes = getPerfumes(homeMenuCachingService.getPerfumeHomeMenus(thirdMenu));
 
         HomeMenuDefaultResponseDto firstResult = new HomeMenuDefaultResponseDto(firstMenu.getTitle(), getPerfumeResponseDto(firstPerfumes));
-        HomeMenuDefaultResponseDto secondResult = new HomeMenuDefaultResponseDto(firstMenu.getTitle(), getPerfumeResponseDto(secondPerfumes));
-        HomeMenuDefaultResponseDto thirdResult = new HomeMenuDefaultResponseDto(firstMenu.getTitle(), getPerfumeResponseDto(thirdPerfumes));
+        HomeMenuDefaultResponseDto secondResult = new HomeMenuDefaultResponseDto(secondMenu.getTitle(), getPerfumeResponseDto(secondPerfumes));
+        HomeMenuDefaultResponseDto thirdResult = new HomeMenuDefaultResponseDto(thirdMenu.getTitle(), getPerfumeResponseDto(thirdPerfumes));
 
         return List.of(firstResult, secondResult, thirdResult);
     }
