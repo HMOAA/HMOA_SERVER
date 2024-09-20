@@ -80,7 +80,7 @@ public class HShopController {
 
         Member member = memberService.findByMember(token);
         Optional<Cart> cart = cartService.findOneCartByMemberId(member.getId());
-        NoteProductsResponseDto result = getNoteProductDetails(dto.getProductIds());
+        NoteProductsResponseDto result = noteProductService.getNoteProducts(dto.getProductIds());
 
         if (cart.isPresent()) {
             cartService.updateCart(cart.get(), dto.getProductIds(), result.getTotalPrice());
@@ -97,7 +97,7 @@ public class HShopController {
 
         Member member = memberService.findByMember(token);
 
-        NoteProductsResponseDto noteProducts = getNoteProductDetails(dto.getProductIds());
+        NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
         OrderEntity order = orderService.firstOrderSave(member, dto.getProductIds(), noteProducts.getTotalPrice());
         boolean isExistMemberInfo = memberInfoService.isExistMemberInfo(member.getId());
         boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
@@ -114,7 +114,7 @@ public class HShopController {
 
         memberService.checkAuthorization(member.getId(), order.getMemberId());
 
-        NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
+        NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(order.getProductIds());
 
         return ResponseEntity.ok(new OrderInfoResponseDto(noteProducts, order.getTotalPrice(), SHIPPING_FEE));
     }
@@ -130,7 +130,7 @@ public class HShopController {
         memberService.checkAuthorization(member.getId(), order.getMemberId());
         orderService.deleteProduct(order, product);
 
-        NoteProductsResponseDto noteProducts = getNoteProductDetails(order.getProductIds());
+        NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(order.getProductIds());
 
         return ResponseEntity.ok(new OrderInfoResponseDto(noteProducts, order.getTotalPrice(), SHIPPING_FEE));
     }
@@ -143,20 +143,6 @@ public class HShopController {
 
         Cart cart = cartService.findOneCartByMemberId(member.getId()).orElseThrow(() -> new CustomException(null, Code.CART_NOT_FOUND));
 
-        return ResponseEntity.ok(getNoteProductDetails(cart.getProductIds()));
-    }
-
-    private NoteProductsResponseDto getNoteProductDetails(List<Long> productIds) {
-
-        int totalPrice = 0;
-        List<NoteProductDetailResponseDto> noteProducts = new ArrayList<>();
-
-        for (Long productId : productIds) {
-            NoteProductDetailResponseDto noteProductDetailResponseDto = noteProductService.getNoteProductDetail(productId);
-            noteProducts.add(noteProductDetailResponseDto);
-            totalPrice += noteProductDetailResponseDto.getPrice();
-        }
-
-        return new NoteProductsResponseDto(totalPrice, noteProducts);
+        return ResponseEntity.ok(noteProductService.getNoteProducts(cart.getProductIds()));
     }
 }

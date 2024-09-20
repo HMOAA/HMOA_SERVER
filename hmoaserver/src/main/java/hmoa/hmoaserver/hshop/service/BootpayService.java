@@ -89,10 +89,11 @@ public class BootpayService {
 
         // 결제 금액과 주문 정보 금액이 동일한 지 확인
         int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString()) - SHIPPING_FEE;
-        log.info("{}", res.get(BootpayConstant.ORDER_ID));
         OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
-        log.info("{}, {}", payPrice, order.getTotalPrice());
+        order.updateReceiptId(dto.getReceiptId());
+
         if (isSamePrice(payPrice, order.getTotalPrice())) {
+            order.updateOrderStatus(OrderStatus.PAY_COMPLETE);
             return confirm(dto.getReceiptId(), order);
         }
 
@@ -101,13 +102,13 @@ public class BootpayService {
     }
 
     @Transactional
-    public HashMap cancelPayment(BootpayCancelRequstDto dto, Member member) {
+    public HashMap cancelPayment(String receiptId, String cancelReason, Member member) {
         try {
             getBootpayToken();
             Cancel cancel = new Cancel();
-            cancel.receiptId = dto.getReceiptId();
+            cancel.receiptId = receiptId;
             cancel.cancelUsername = member.getNickname();
-            cancel.cancelMessage = dto.getCancelReason();
+            cancel.cancelMessage = cancelReason;
 
             HashMap res = bootpay.receiptCancel(cancel);
 

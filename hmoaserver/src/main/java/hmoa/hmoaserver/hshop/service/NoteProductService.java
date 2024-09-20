@@ -4,6 +4,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.dto.NoteProductDetailResponseDto;
+import hmoa.hmoaserver.hshop.dto.NoteProductsResponseDto;
 import hmoa.hmoaserver.hshop.repository.NoteProductRepository;
 import hmoa.hmoaserver.note.dto.NoteWithDetailNotesDto;
 import hmoa.hmoaserver.note.service.NoteService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,5 +49,20 @@ public class NoteProductService {
         NoteProduct noteProduct = getNoteProduct(id);
         NoteWithDetailNotesDto noteDetail = noteService.getDetailNotes(noteProduct.getNote().getId());
         return new NoteProductDetailResponseDto(id, noteDetail, noteProduct.getPrice());
+    }
+
+    @Transactional(readOnly = true)
+    public NoteProductsResponseDto getNoteProducts(List<Long> productIds) {
+
+        int totalPrice = 0;
+        List<NoteProductDetailResponseDto> noteProducts = new ArrayList<>();
+
+        for (Long productId : productIds) {
+            NoteProductDetailResponseDto noteProductDetailResponseDto = getNoteProductDetail(productId);
+            noteProducts.add(noteProductDetailResponseDto);
+            totalPrice += noteProductDetailResponseDto.getPrice();
+        }
+
+        return new NoteProductsResponseDto(totalPrice, noteProducts);
     }
 }

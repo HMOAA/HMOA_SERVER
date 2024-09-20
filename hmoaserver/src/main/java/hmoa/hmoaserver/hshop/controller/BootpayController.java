@@ -1,9 +1,13 @@
 package hmoa.hmoaserver.hshop.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.BootpayCancelRequstDto;
 import hmoa.hmoaserver.hshop.dto.BootpayConfirmRequestDto;
 import hmoa.hmoaserver.hshop.service.BootpayService;
+import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -23,6 +27,7 @@ import java.util.HashMap;
 public class BootpayController {
 
     private final BootpayService bootpayService;
+    private final OrderService orderService;
     private final MemberService memberService;
 
     @PostMapping("/confirm")
@@ -37,10 +42,23 @@ public class BootpayController {
     @PostMapping("/cancel")
     public ResponseEntity<ResultDto<Object>> cancel(@RequestHeader("X-AUTH-TOKEN") String token, @Valid @RequestBody BootpayCancelRequstDto dto) {
         Member member = memberService.findByMember(token);
-        HashMap res = bootpayService.cancelPayment(dto, member);
+        HashMap res = bootpayService.cancelPayment(dto.getReceiptId(), dto.getCancelReason(), member);
 
         return ResponseEntity.ok(ResultDto.builder()
                 .data(res)
                 .build());
+    }
+
+    @DeleteMapping("/{orderId}/cancel")
+    public ResponseEntity<ResultDto<Object>> cancel(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable("orderId") Long orderId) {
+        Member member = memberService.findByMember(token);
+        OrderEntity order = orderService.findById(orderId);
+
+        if (!member.getId().equals(order.getMemberId())) {
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+        }
+        HashMap res = bootpayService.cancelPayment(order.getReceiptId(), "단순 변심", member);
+
+        return ResponseEntity.ok(ResultDto.builder().data(res).build());
     }
 }

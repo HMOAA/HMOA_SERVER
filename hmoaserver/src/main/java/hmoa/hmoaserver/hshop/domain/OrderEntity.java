@@ -1,7 +1,6 @@
 package hmoa.hmoaserver.hshop.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
-import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,16 +27,21 @@ public class OrderEntity extends BaseEntity {
 
     private Long addressId;
     private int totalPrice;
-
     private Long memberId;
+    private String receiptId;
+    private String courierCompany;
+    private String trackingNumber;
 
     @Builder
-    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId) {
+    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId, String receiptId, String courierCompany, String trackingNumber) {
         this.productIds = productIds;
         this.status = status;
         this.addressId = addressId;
         this.totalPrice = totalPrice;
         this.memberId = memberId;
+        this.receiptId = receiptId;
+        this.courierCompany = courierCompany;
+        this.trackingNumber = trackingNumber;
     }
 
     public void deleteProductId(final NoteProduct product) {
@@ -47,5 +51,9 @@ public class OrderEntity extends BaseEntity {
 
     public void updateOrderStatus(final OrderStatus status) {
         this.status = status;
+    }
+
+    public void updateReceiptId(final String receiptId) {
+        this.receiptId = receiptId;
     }
 }

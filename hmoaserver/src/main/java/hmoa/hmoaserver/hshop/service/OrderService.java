@@ -36,6 +36,11 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new CustomException(null, Code.ORDER_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public List<OrderEntity> findByMemberId(Long memberId) {
+        return orderRepository.findByMemberId(memberId);
+    }
+
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {
         order.updateOrderStatus(status);
     }
