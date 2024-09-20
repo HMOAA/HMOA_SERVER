@@ -460,9 +460,9 @@ public class MemberController {
         return ResponseEntity.ok(memberFacade.getAddress(token));
     }
 
-    @ApiOperation(value = "주문 내역 조회 (아직 미구현)")
+    @ApiOperation(value = "주문 내역 조회")
     @GetMapping("/order")
-    public ResponseEntity<?> getOrder(@RequestHeader("X-AUTH-TOKEN") String token) {
-        return ResponseEntity.ok(ResultDto.builder().build());
+    public ResponseEntity<List<MemberOrderResponseDto>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token) {
+        return ResponseEntity.ok(memberFacade.getMemberOrders(token));
     }
 }

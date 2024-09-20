@@ -10,6 +10,9 @@ import hmoa.hmoaserver.community.service.CommunityCommentService;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.hshop.domain.OrderEntity;
+import hmoa.hmoaserver.hshop.dto.OrderInfoResponseDto;
+import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.Role;
@@ -31,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,9 +53,12 @@ public class MemberFacade {
     private final CommunityCommentLikedMemberService commentLikedMemberService;
     private final MemberAddressService memberAddressService;
     private final MemberInfoService memberInfoService;
+    private final NoteProductService noteProductService;
 
     @Value("${default.profile}")
     private String DEFAULT_PROFILE;
+
+    private static final int SHIPPING_FEE = 3000;
 
     public MemberResponseDto getOneMember(String token) {
         Member member = memberService.findByMember(token);
@@ -185,5 +192,15 @@ public class MemberFacade {
         Member member = memberService.findByMember(token);
 
         return new MemberAddressResponseDto(memberAddressService.findByMemberId(member.getId()));
+    }
+
+    public List<MemberOrderResponseDto> getMemberOrders(String token) {
+        Member member = memberService.findByMember(token);
+
+        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        return orders.stream()
+                .map(order -> new MemberOrderResponseDto(
+                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
+                .toList();
     }
 }
