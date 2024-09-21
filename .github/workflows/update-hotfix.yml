@@ -12,16 +12,21 @@ jobs:
     steps:
       - name: check out repository
         uses: actions/checkout@v3
+        with:
+          ref: develop
 
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Rebase hotfix on develop
+      - name: checkout hotfix
         run: |
-          git fetch origin
+          git fetch origin hotfix
           git checkout hotfix
+
+      - name: Rebase
+        run: |
           git rebase origin/develop
 
       - name: Push changes
