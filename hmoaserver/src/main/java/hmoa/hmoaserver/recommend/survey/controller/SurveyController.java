@@ -1,6 +1,9 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.hshop.domain.OrderEntity;
+import hmoa.hmoaserver.hshop.domain.OrderStatus;
+import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Api(tags = {"설문"})
@@ -53,6 +57,7 @@ public class SurveyController {
     private final NoteRecommendService noteRecommendService;
     private final PerfumeService perfumeService;
     private final NoteSynonymService noteSynonymService;
+    private final OrderService orderService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -101,10 +106,13 @@ public class SurveyController {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "향bti 홈 이미지")
+    @ApiOperation(value = "향bti 홈 이미지, 향수 추천 서비스 가능 여부")
     @GetMapping("/home")
-    public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey() {
-        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl));
+    public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")
