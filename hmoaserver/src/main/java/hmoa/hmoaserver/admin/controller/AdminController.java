@@ -1,5 +1,9 @@
 package hmoa.hmoaserver.admin.controller;
 
+import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
+import hmoa.hmoaserver.admin.service.TestTokenProvider;
+import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.homemenu.dto.HomeMenuSaveRequestDto;
 import hmoa.hmoaserver.homemenu.service.HomeMenuService;
@@ -13,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +27,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController {
+
+    private final TestTokenProvider testTokenProvider;
+    @Value("${jwt.admin}")
+    private String admin;
+
     private final MemberService memberService;
     private final HomeMenuService homeMenuService;
     private final PerfumeHomeMenuService perfumeHomeMenuService;
@@ -34,7 +44,6 @@ public class AdminController {
         homeMenuService.save(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
-
 
     @ApiOperation("홈 메뉴 타이틀에 추가할 향수")
     @PostMapping("/homePerfume/add")
@@ -59,5 +68,15 @@ public class AdminController {
         HomeMenu homeMenu = homeMenuService.getHomeMenu(homeMenuId);
         homeMenuService.modifyHomeMenu(homeMenu, homeMenuSaveRequestDto.getTitle());
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("관리자 토큰 발급")
+    @PostMapping("/admin-token")
+    public ResponseEntity<?> getAdminToken(@RequestBody AdminTokenRequestDto dto) {
+        if (dto.getSecret().equals(admin)) {
+            return ResponseEntity.ok(testTokenProvider.getTestToken());
+        }
+
+        throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
     }
 }
