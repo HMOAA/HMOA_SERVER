@@ -48,6 +48,11 @@ public class OrderService {
         return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_FAILED, PageRequest.of(page, 5));
     }
 
+    @Transactional(readOnly = true)
+    public Page<OrderEntity> findCancelByMemberId(Long memberId, int page) {
+        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.PAY_FAILED, PageRequest.of(page, 5));
+    }
+
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {
         order.updateOrderStatus(status);
     }
