@@ -56,4 +56,16 @@ public class OrderEntity extends BaseEntity {
     public void updateReceiptId(final String receiptId) {
         this.receiptId = receiptId;
     }
+
+    public void updateCourierCompany(final String courierCompany) {
+        this.courierCompany = courierCompany;
+    }
+
+    public void updateTrackingNumber(final String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+
+    public void updateAddressId(final Long addressId) {
+        this.addressId = addressId;
+    }
 }
