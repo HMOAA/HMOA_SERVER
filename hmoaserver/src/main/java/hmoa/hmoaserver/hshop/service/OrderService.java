@@ -45,6 +45,19 @@ public class OrderService {
         order.updateOrderStatus(status);
     }
 
+    public void updateOrderAddress(OrderEntity order, Long addressId) {
+        order.updateAddressId(addressId);
+    }
+
+    public void updateOrderReceiptId(OrderEntity order, String receiptId) {
+        order.updateReceiptId(receiptId);
+    }
+
+    public void updateDeliveryInfo(OrderEntity order, String courierContry, String trackingNumber) {
+        order.updateCourierCompany(courierContry);
+        order.updateTrackingNumber(trackingNumber);
+    }
+
     public void deleteProduct(OrderEntity order, final NoteProduct product) {
 
         if (order.getProductIds().contains(product.getId())) {
