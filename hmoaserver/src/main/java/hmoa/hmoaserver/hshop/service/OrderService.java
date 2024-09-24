@@ -45,7 +45,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> findByMemberId(Long memberId, int page) {
-        return orderRepository.findByMemberId(memberId, PageRequest.of(page, 5));
+        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_FAILED, PageRequest.of(page, 5));
     }
 
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {
@@ -60,8 +60,8 @@ public class OrderService {
         order.updateReceiptId(receiptId);
     }
 
-    public void updateDeliveryInfo(OrderEntity order, String courierContry, String trackingNumber) {
-        order.updateCourierCompany(courierContry);
+    public void updateDeliveryInfo(OrderEntity order, String courierCountry, String trackingNumber) {
+        order.updateCourierCompany(courierCountry);
         order.updateTrackingNumber(trackingNumber);
     }
 
