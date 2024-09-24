@@ -111,11 +111,13 @@ public class BootpayService {
             cancel.cancelMessage = cancelReason;
 
             HashMap res = bootpay.receiptCancel(cancel);
+            OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
 
             if (res.get(BootpayConstant.ERROR_CODE) != null) {
                 throw new CustomException(null, Code.BOOTPAY_ERROR);
             }
 
+            orderService.updateOrderStatus(order, OrderStatus.PAY_CANCEL);
             return res;
         } catch (Exception e) {
             throw new CustomException(null, Code.BOOTPAY_ERROR);
