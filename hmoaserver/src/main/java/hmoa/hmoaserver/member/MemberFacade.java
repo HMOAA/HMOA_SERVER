@@ -190,10 +190,10 @@ public class MemberFacade {
         return new MemberAddressResponseDto(memberAddressService.findByMemberId(member.getId()));
     }
 
-    public List<MemberOrderResponseDto> getMemberOrders(String token) {
+    public List<MemberOrderResponseDto> getMemberOrders(String token, int page) {
         Member member = memberService.findByMember(token);
 
-        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), page);
         return orders.stream()
                 .map(order -> new MemberOrderResponseDto(
                         order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
