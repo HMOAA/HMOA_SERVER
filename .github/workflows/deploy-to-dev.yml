@@ -108,6 +108,7 @@ jobs:
             echo "export FIREBASE_CONFIG=${{ secrets.FIREBASE_CONFIG }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             echo "export JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export JWT_ADMIN=${{ secrets.JWT_ADMIN }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             echo "export S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
