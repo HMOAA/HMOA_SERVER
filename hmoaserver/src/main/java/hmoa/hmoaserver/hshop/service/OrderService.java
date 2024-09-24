@@ -10,6 +10,8 @@ import hmoa.hmoaserver.hshop.repository.OrderRepository;
 import hmoa.hmoaserver.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,11 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderEntity> findByMemberId(Long memberId) {
         return orderRepository.findByMemberId(memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderEntity> findByMemberId(Long memberId, int page) {
+        return orderRepository.findByMemberId(memberId, PageRequest.of(page, 5));
     }
 
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {
