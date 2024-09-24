@@ -165,10 +165,6 @@ public class MemberFacade {
     public void saveMemberAddress(String token, MemberAddressSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        if (memberAddressService.isExistMemberAddress(member.getId())) {
-            memberAddressService.delete(member.getMemberAddress());
-        }
-
         memberAddressService.save(dto.toEntity(member));
     }
 
