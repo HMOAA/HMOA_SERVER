@@ -1,6 +1,8 @@
 package hmoa.hmoaserver.admin.controller;
 
 import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
+import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
+import hmoa.hmoaserver.admin.service.AdminFacade;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -36,6 +38,7 @@ public class AdminController {
     private final HomeMenuService homeMenuService;
     private final PerfumeHomeMenuService perfumeHomeMenuService;
     private final PerfumeService perfumeService;
+    private final AdminFacade adminFacade;
 
     @ApiOperation("홈 메뉴 타이틀 추가")
     @PostMapping("/homePerfume")
@@ -78,5 +81,13 @@ public class AdminController {
         }
 
         throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+    }
+
+    @ApiOperation("운송장 등록")
+    @PostMapping("/delivery-info")
+    public ResponseEntity<?> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
+        adminFacade.saveDeliveryInfo(dto);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
