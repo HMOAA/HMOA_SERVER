@@ -465,4 +465,10 @@ public class MemberController {
     public ResponseEntity<List<MemberOrderResponseDto>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
         return ResponseEntity.ok(memberFacade.getMemberOrders(token, page));
     }
+
+    @ApiOperation(value = "취소 내역 조회")
+    @GetMapping("/order/cancel")
+    public ResponseEntity<List<MemberOrderResponseDto>> getCancelOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        return ResponseEntity.ok(memberFacade.getMemberCancelOrders(token, page));
+    }
 }

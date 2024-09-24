@@ -199,4 +199,14 @@ public class MemberFacade {
                         order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
                 .toList();
     }
+
+    public List<MemberOrderResponseDto> getMemberCancelOrders(String token, int page) {
+        Member member = memberService.findByMember(token);
+
+        Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), page);
+        return orders.stream()
+                .map(order -> new MemberOrderResponseDto(
+                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
+                .toList();
+    }
 }
