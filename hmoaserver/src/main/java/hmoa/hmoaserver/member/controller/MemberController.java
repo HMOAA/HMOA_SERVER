@@ -456,13 +456,13 @@ public class MemberController {
      */
     @ApiOperation(value = "배송지 정보 조회")
     @GetMapping("/address")
-    public ResponseEntity<MemberAddressResponseDto> getAdress(@RequestHeader("X-AUTH-TOKEN") String token) {
+    public ResponseEntity<MemberAddressResponseDto> getAddress(@RequestHeader("X-AUTH-TOKEN") String token) {
         return ResponseEntity.ok(memberFacade.getAddress(token));
     }
 
     @ApiOperation(value = "주문 내역 조회")
     @GetMapping("/order")
-    public ResponseEntity<List<MemberOrderResponseDto>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token) {
-        return ResponseEntity.ok(memberFacade.getMemberOrders(token));
+    public ResponseEntity<List<MemberOrderResponseDto>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
+        return ResponseEntity.ok(memberFacade.getMemberOrders(token, page));
     }
 }
