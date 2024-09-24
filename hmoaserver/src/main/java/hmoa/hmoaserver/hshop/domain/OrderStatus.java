@@ -17,6 +17,5 @@ public enum OrderStatus {
     SHIPPING_COMPLETE("배송 완료"),
     PURCHASE_CONFIRMATION("구매 확정");
 
-
     private final String description;
 }
