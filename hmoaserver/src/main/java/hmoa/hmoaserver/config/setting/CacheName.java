@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.config;
+package hmoa.hmoaserver.config.setting;
 
 public class CacheName {
     public static final String MAIN_PAGE = "MAIN_PAGE";

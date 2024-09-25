@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.recommend.survey.service;
 
-import hmoa.hmoaserver.config.CacheName;
+import hmoa.hmoaserver.config.setting.CacheName;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
 import hmoa.hmoaserver.recommend.survey.domain.Question;

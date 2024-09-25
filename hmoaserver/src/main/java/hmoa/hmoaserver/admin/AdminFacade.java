@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.admin.service;
+package hmoa.hmoaserver.admin;
 
 import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;

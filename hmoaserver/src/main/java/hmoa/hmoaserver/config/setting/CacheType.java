@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.config;
+package hmoa.hmoaserver.config.setting;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

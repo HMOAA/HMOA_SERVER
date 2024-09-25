@@ -2,7 +2,7 @@ package hmoa.hmoaserver.admin.controller;
 
 import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
 import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
-import hmoa.hmoaserver.admin.service.AdminFacade;
+import hmoa.hmoaserver.admin.AdminFacade;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;

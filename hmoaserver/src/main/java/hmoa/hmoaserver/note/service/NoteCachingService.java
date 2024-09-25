@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.note.service;
 
-import hmoa.hmoaserver.config.CacheName;
+import hmoa.hmoaserver.config.setting.CacheName;
 import hmoa.hmoaserver.note.domain.Note;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;

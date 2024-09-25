@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.homemenu.service;
 
-import hmoa.hmoaserver.config.CacheName;
+import hmoa.hmoaserver.config.setting.CacheName;
 import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.homemenu.domain.PerfumeHomeMenu;
 import lombok.RequiredArgsConstructor;
