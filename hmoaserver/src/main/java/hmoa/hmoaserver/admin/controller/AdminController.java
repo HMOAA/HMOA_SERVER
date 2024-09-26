@@ -3,6 +3,7 @@ package hmoa.hmoaserver.admin.controller;
 import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
 import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
 import hmoa.hmoaserver.admin.AdminFacade;
+import hmoa.hmoaserver.admin.dto.OrderStatusUpdateRequestDto;
 import hmoa.hmoaserver.admin.dto.TrackingCallbackRequestDto;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.exception.Code;
@@ -98,6 +99,13 @@ public class AdminController {
     @PostMapping("/delivery/check")
     public ResponseEntity<?> checkTracking(@RequestBody TrackingCallbackRequestDto dto) {
         adminFacade.checkTracking(dto);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("OrderStatus 수정")
+    @PutMapping("/order")
+    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderStatusUpdateRequestDto dto) {
+        adminFacade.updateOrderStatus(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
