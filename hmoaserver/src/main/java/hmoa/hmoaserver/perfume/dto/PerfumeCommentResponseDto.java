@@ -7,9 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PerfumeCommentResponseDto {
@@ -31,7 +28,7 @@ public class PerfumeCommentResponseDto {
         this.nickname = perfumeComment.getMember().getNickname();
         this.perfumeId = perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
-        this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
+        this.createAt = DateUtils.calculateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
         this.isWrited = perfumeComment.getMember().getId().equals(member.getId());
     }
@@ -42,7 +39,7 @@ public class PerfumeCommentResponseDto {
         this.heartCount = perfumeComment.getHeartCount();
         this.nickname = perfumeComment.getMember().getNickname();
         this.perfumeId = perfumeComment.getPerfume().getId();
-        this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
+        this.createAt = DateUtils.calculateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
     }
 }

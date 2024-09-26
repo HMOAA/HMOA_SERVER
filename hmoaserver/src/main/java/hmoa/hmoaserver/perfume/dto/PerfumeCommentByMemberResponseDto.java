@@ -1,7 +1,6 @@
 package hmoa.hmoaserver.perfume.dto;
 
 import hmoa.hmoaserver.common.DateUtils;
-import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,7 +26,7 @@ public class PerfumeCommentByMemberResponseDto {
         this.nickname = perfumeComment.getMember().getNickname();
         this.parentId = perfumeComment.getPerfume().getId();
         this.isLiked = isLiked;
-        this.createAt = DateUtils.calcurateDaysAgo(perfumeComment.getCreatedAt());
+        this.createAt = DateUtils.calculateDaysAgo(perfumeComment.getCreatedAt());
         this.profileImg = perfumeComment.getMember().getMemberPhoto().getPhotoUrl();
         this.isWrited = isWrited;
     }
