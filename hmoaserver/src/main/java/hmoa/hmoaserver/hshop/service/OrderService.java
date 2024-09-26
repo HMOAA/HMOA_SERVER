@@ -40,6 +40,11 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public OrderEntity getByTrackingNumber(String trackingNumber) {
+        return orderRepository.findByTrackingNumber(trackingNumber).orElseThrow(() -> new CustomException(null, Code.ORDER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
     public List<OrderEntity> findByMemberId(Long memberId) {
         return orderRepository.findByMemberId(memberId);
     }
