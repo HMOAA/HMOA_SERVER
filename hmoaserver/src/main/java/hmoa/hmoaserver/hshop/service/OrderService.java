@@ -51,12 +51,20 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> findByMemberId(Long memberId, Long cursor) {
-        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_CANCEL, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
+        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_CANCEL, OrderStatus.RETURN_COMPLETE, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
     }
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> findCancelByMemberId(Long memberId, Long cursor) {
-        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.PAY_CANCEL, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
+        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.PAY_CANCEL, OrderStatus.RETURN_COMPLETE, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
+    }
+
+    public void deleteOrders(List<OrderEntity> orders) {
+        orderRepository.deleteAll(orders);
+    }
+
+    public void deleteOrder(OrderEntity order) {
+        orderRepository.delete(order);
     }
 
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {
