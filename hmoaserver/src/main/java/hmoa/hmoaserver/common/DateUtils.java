@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public class DateUtils {
-    public static String calcurateDaysAgo(LocalDateTime past){
+    public static String calculateDaysAgo(LocalDateTime past){
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(past,now);
         long daysAgo = duration.toDays();
@@ -31,6 +31,12 @@ public class DateUtils {
 
     public static String extractAlarmDate(LocalDateTime createdAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd HH:mm");
+
+        return createdAt.format(formatter);
+    }
+
+    public static String extractOrderDate(LocalDateTime createdAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
         return createdAt.format(formatter);
     }
