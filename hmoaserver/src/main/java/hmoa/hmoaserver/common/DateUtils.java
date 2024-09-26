@@ -2,6 +2,7 @@ package hmoa.hmoaserver.common;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -39,5 +40,9 @@ public class DateUtils {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
         return createdAt.format(formatter);
+    }
+
+    public static String extractUTC(LocalDateTime createdAt) {
+        return createdAt.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
     }
 }
