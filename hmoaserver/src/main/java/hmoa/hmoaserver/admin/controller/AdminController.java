@@ -3,6 +3,7 @@ package hmoa.hmoaserver.admin.controller;
 import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
 import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
 import hmoa.hmoaserver.admin.AdminFacade;
+import hmoa.hmoaserver.admin.dto.TrackingCallbackRequestDto;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -88,6 +89,13 @@ public class AdminController {
     public ResponseEntity<?> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
         adminFacade.saveDeliveryInfo(dto);
 
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("배송 변화 감지")
+    @PostMapping("/delivery/check")
+    public ResponseEntity<?> checkTracking(@RequestBody TrackingCallbackRequestDto dto) {
+        adminFacade.checkTracking(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
