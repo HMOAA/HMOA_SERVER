@@ -21,7 +21,7 @@ public class CommunityCommentDefaultResponseDto {
         this.content = comment.getContent();
         this.author = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
-        this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.time = DateUtils.calculateDaysAgo(comment.getCreatedAt());
         this.heartCount = comment.getHeartCount();
     }
 
@@ -30,7 +30,7 @@ public class CommunityCommentDefaultResponseDto {
         this.content = comment.getContent();
         this.author = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
-        this.time = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.time = DateUtils.calculateDaysAgo(comment.getCreatedAt());
         this.liked = liked;
         this.writed = writed;
         this.heartCount = comment.getHeartCount();
