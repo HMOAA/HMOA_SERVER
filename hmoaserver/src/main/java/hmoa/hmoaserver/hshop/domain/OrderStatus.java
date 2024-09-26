@@ -15,7 +15,8 @@ public enum OrderStatus {
     SHIPPING_WAITING("배송 준비 중"),
     SHIPPING_PROGRESS("배송 중"),
     SHIPPING_COMPLETE("배송 완료"),
-    PURCHASE_CONFIRMATION("구매 확정");
+    PURCHASE_CONFIRMATION("구매 확정"),
+    RETURN_COMPLETE("반품 완료");
 
     private final String description;
 }
