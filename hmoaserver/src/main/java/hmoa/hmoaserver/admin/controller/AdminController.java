@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Api(tags = {"관리자 API"})
 @RestController
@@ -84,12 +85,13 @@ public class AdminController {
         throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
     }
 
+    // 운송장 등록 + Tracking delivery 서비스 등록
     @ApiOperation("운송장 등록")
     @PostMapping("/delivery-info")
     public ResponseEntity<?> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
         adminFacade.saveDeliveryInfo(dto);
-
-        return ResponseEntity.ok(ResultDto.builder().build());
+        Mono<String> data = adminFacade.registerTrackWebhook(dto);
+        return ResponseEntity.ok(ResultDto.builder().data(data).build());
     }
 
     @ApiOperation("배송 변화 감지")
