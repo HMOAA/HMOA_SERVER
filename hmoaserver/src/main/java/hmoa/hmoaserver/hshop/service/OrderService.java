@@ -1,6 +1,7 @@
 package hmoa.hmoaserver.hshop.service;
 
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
@@ -44,13 +45,13 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderEntity> findByMemberId(Long memberId, int page) {
-        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_FAILED, PageRequest.of(page, 5));
+    public Page<OrderEntity> findByMemberId(Long memberId, Long cursor) {
+        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.PAY_CANCEL, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderEntity> findCancelByMemberId(Long memberId, int page) {
-        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.PAY_FAILED, PageRequest.of(page, 5));
+    public Page<OrderEntity> findCancelByMemberId(Long memberId, Long cursor) {
+        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.PAY_CANCEL, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
     }
 
     public void updateOrderStatus(OrderEntity order, OrderStatus status) {

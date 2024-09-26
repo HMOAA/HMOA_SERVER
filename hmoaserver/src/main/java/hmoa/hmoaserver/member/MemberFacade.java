@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.member;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.domain.CommunityCommentLikedMember;
@@ -190,23 +192,33 @@ public class MemberFacade {
         return new MemberAddressResponseDto(memberAddressService.findByMemberId(member.getId()));
     }
 
-    public List<MemberOrderResponseDto> getMemberOrders(String token, int page) {
+    public PagingDto<Object> getMemberOrders(String token, Long cursor) {
         Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
-        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), page);
-        return orders.stream()
+        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor);
+
+        return PagingDto.builder()
+                .data(orders.stream()
                 .map(order -> new MemberOrderResponseDto(
                         order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
-                .toList();
+                .toList())
+                .isLastPage(PageUtil.isLastPage(orders))
+                .build();
     }
 
-    public List<MemberOrderResponseDto> getMemberCancelOrders(String token, int page) {
+    public PagingDto<Object> getMemberCancelOrders(String token, Long cursor) {
         Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
-        Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), page);
-        return orders.stream()
-                .map(order -> new MemberOrderResponseDto(
-                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
-                .toList();
+        Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), cursor);
+
+        return PagingDto.builder()
+                .data(orders.stream()
+                        .map(order -> new MemberOrderResponseDto(
+                                order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
+                        .toList())
+                .isLastPage(PageUtil.isLastPage(orders))
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.member.controller;
 
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.community.dto.CommunityByCategoryResponseDto;
 import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
@@ -462,13 +463,13 @@ public class MemberController {
 
     @ApiOperation(value = "주문 내역 조회")
     @GetMapping("/order")
-    public ResponseEntity<List<MemberOrderResponseDto>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return ResponseEntity.ok(memberFacade.getMemberOrders(token, page));
+    public ResponseEntity<PagingDto<Object>> getOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        return ResponseEntity.ok(memberFacade.getMemberOrders(token, cursor));
     }
 
     @ApiOperation(value = "취소 내역 조회")
     @GetMapping("/order/cancel")
-    public ResponseEntity<List<MemberOrderResponseDto>> getCancelOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return ResponseEntity.ok(memberFacade.getMemberCancelOrders(token, page));
+    public ResponseEntity<PagingDto<Object>> getCancelOrder(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        return ResponseEntity.ok(memberFacade.getMemberCancelOrders(token, cursor));
     }
 }
