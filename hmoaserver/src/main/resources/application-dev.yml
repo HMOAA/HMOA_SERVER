@@ -91,3 +91,8 @@ survey:
     background: ${S3_SURVEY_BACKGROUND}
     first: ${S3_SURVEY_FIRST}
     second: ${S3_SURVEY_SECOND}
+
+tracking:
+  access: ${TRACKING_ACCESS}
+  secret: ${TRACKING_SECRET}
+  callback-url: ${TRACKING_CALLBACK_URL}

@@ -125,6 +125,10 @@ jobs:
             echo "export S3_SURVEY_FIRST=${{ secrets.S3_SURVEY_FIRST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SURVEY_SECOND=${{ secrets.S3_SURVEY_SECOND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
+            echo "export TRACKING_ACCESS=${{ secrets.TRACKING_ACCESS }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export TRACKING_SECRET=${{ secrets.TRACKING_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export TRACKING_CALLBACK_URL=${{ secrets.TRACKING_CALLBACK_URL }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
             export SERVER_USERNAME=${{ secrets.SERVER_USERNAME }}
             
             cd /home/${{ secrets.SERVER_USERNAME }}/deploy
