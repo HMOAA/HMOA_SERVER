@@ -1,9 +1,6 @@
 package hmoa.hmoaserver.admin;
 
-import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
-import hmoa.hmoaserver.admin.dto.RegisterTrackingRequestDto;
-import hmoa.hmoaserver.admin.dto.TrackingCallbackRequestDto;
-import hmoa.hmoaserver.admin.dto.WebhookInput;
+import hmoa.hmoaserver.admin.dto.*;
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
@@ -49,6 +46,11 @@ public class AdminFacade {
     public void checkTracking(TrackingCallbackRequestDto dto) {
         OrderEntity order = orderService.getByTrackingNumber(dto.getTrackingNumber());
         log.info("check Tracking");
+    }
+
+    public void updateOrderStatus(OrderStatusUpdateRequestDto dto) {
+        OrderEntity order = orderService.findById(dto.getOrderId());
+        orderService.updateOrderStatus(order, dto.getStatus());
     }
 
     public Mono<String> registerTrackWebhook(OrderDeliverySaveRequestDto dto) {
