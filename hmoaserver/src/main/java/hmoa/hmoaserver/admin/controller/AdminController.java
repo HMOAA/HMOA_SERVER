@@ -104,7 +104,7 @@ public class AdminController {
 
     @ApiOperation("OrderStatus 수정")
     @PutMapping("/order")
-    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderStatusUpdateRequestDto dto) {
+    public ResponseEntity<?> updateOrderStatus(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderStatusUpdateRequestDto dto) {
         adminFacade.updateOrderStatus(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
