@@ -18,13 +18,13 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
     @Query("SELECT o " +
             "FROM OrderEntity o " +
-            "WHERE o.memberId = :memberId AND o.status NOT IN (:status, :status2) AND o.id < :cursor " +
+            "WHERE o.memberId = :memberId AND o.status NOT IN (:statuses) AND o.id < :cursor " +
             "ORDER BY o.createdAt DESC, o.id DESC")
-    Page<OrderEntity> findByMemberIdAndStatusNot(Long memberId, OrderStatus status, OrderStatus status2, Long cursor, Pageable pageable);
+    Page<OrderEntity> findByMemberIdAndStatusNot(Long memberId, List<OrderStatus> statuses, Long cursor, Pageable pageable);
 
     @Query("SELECT o " +
             "FROM OrderEntity o " +
-            "WHERE o.memberId = :memberId AND o.status IN (:status, :status2) AND o.id < :cursor " +
+            "WHERE o.memberId = :memberId AND o.status IN (:statues) AND o.id < :cursor " +
             "ORDER BY o.createdAt DESC, o.id DESC")
-    Page<OrderEntity> findByMemberIdAndStatus(Long memberId, OrderStatus status, OrderStatus status2, Long cursor, Pageable pageable);
+    Page<OrderEntity> findByMemberIdAndStatus(Long memberId, List<OrderStatus> statuses, Long cursor, Pageable pageable);
 }
