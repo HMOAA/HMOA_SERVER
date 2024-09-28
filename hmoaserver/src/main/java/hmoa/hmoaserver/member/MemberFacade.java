@@ -32,13 +32,10 @@ import hmoa.hmoaserver.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -199,10 +196,7 @@ public class MemberFacade {
         Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor);
 
         return PagingDto.builder()
-                .data(orders.stream()
-                .map(order -> new MemberOrderResponseDto(
-                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
-                .toList())
+                .data(getMemberOrderResponseDto(orders))
                 .isLastPage(PageUtil.isLastPage(orders))
                 .build();
     }
@@ -214,11 +208,15 @@ public class MemberFacade {
         Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), cursor);
 
         return PagingDto.builder()
-                .data(orders.stream()
-                        .map(order -> new MemberOrderResponseDto(
-                                order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
-                        .toList())
+                .data(getMemberOrderResponseDto(orders))
                 .isLastPage(PageUtil.isLastPage(orders))
                 .build();
+    }
+
+    private List<MemberOrderResponseDto> getMemberOrderResponseDto(Page<OrderEntity> orders) {
+        return orders.stream()
+                .map(order -> new MemberOrderResponseDto(
+                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
+                .toList();
     }
 }
