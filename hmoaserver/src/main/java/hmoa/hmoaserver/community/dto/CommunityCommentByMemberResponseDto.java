@@ -2,9 +2,7 @@ package hmoa.hmoaserver.community.dto;
 
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.member.domain.Member;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,7 +31,7 @@ public class CommunityCommentByMemberResponseDto {
         this.heartCount = comment.getHeartCount();
         this.nickname = comment.getMember().getNickname();
         this.profileImg = comment.getMember().getMemberPhoto().getPhotoUrl();
-        this.createAt = DateUtils.calcurateDaysAgo(comment.getCreatedAt());
+        this.createAt = DateUtils.calculateDaysAgo(comment.getCreatedAt());
         this.isLiked = isLiked;
         this.isWrited = isWrited;
     }

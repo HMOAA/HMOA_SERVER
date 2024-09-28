@@ -145,4 +145,23 @@ public class HShopController {
 
         return ResponseEntity.ok(noteProductService.getNoteProducts(cart.getProductIds()));
     }
+
+    @ApiOperation(value = "Order 내역 지우기 (전부)")
+    @DeleteMapping("/order")
+    public ResponseEntity<?> deleteOrders(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        orderService.deleteOrders(orders);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "Order 지우기 (id 로)")
+    @DeleteMapping("/order/{orderId}")
+    public ResponseEntity<?> deleteOrder(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId) {
+        OrderEntity order = orderService.findById(orderId);
+        orderService.deleteOrder(order);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
 }

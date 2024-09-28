@@ -33,7 +33,7 @@ public class CommunityDefaultResponseDto {
         this.content=community.getContent();
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
-        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.time= DateUtils.calculateDaysAgo(community.getCreatedAt());
         this.heartCount = community.getHeartCount();
         if (community.getCommunityPhotos() != null) {
             List<CommunityPhoto> communityPhotos = community.getCommunityPhotos();
@@ -52,7 +52,7 @@ public class CommunityDefaultResponseDto {
         this.content=community.getContent();
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
-        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.time= DateUtils.calculateDaysAgo(community.getCreatedAt());
         this.heartCount = community.getHeartCount();
         this.writed = isWrited;
         this.liked = isLiked;
@@ -73,7 +73,7 @@ public class CommunityDefaultResponseDto {
         this.content=community.getContent();
         this.author=community.getMember().getNickname();
         this.profileImgUrl=community.getMember().getMemberPhoto().getPhotoUrl();
-        this.time= DateUtils.calcurateDaysAgo(community.getCreatedAt());
+        this.time= DateUtils.calculateDaysAgo(community.getCreatedAt());
         this.writed = writed;
 
         if (communityPhotoList != null) {

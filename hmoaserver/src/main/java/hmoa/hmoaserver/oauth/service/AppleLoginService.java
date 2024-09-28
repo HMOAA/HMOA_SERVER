@@ -1,7 +1,6 @@
 package hmoa.hmoaserver.oauth.service;
 
-import hmoa.hmoaserver.common.TokenDecoder;
-import hmoa.hmoaserver.exception.Code;
+import hmoa.hmoaserver.oauth.apple.TokenDecoder;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.oauth.apple.AppleAuthClient;
 import hmoa.hmoaserver.oauth.apple.AppleProperties;

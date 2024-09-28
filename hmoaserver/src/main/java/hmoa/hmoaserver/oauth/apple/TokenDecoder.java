@@ -1,4 +1,4 @@
-package hmoa.hmoaserver.common;
+package hmoa.hmoaserver.oauth.apple;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

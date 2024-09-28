@@ -4,10 +4,11 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
-import hmoa.hmoaserver.hshop.dto.BootpayCancelRequstDto;
 import hmoa.hmoaserver.hshop.dto.BootpayConfirmRequestDto;
 import hmoa.hmoaserver.hshop.service.constant.BootpayConstant;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.MemberAddress;
+import hmoa.hmoaserver.member.service.MemberAddressService;
 import kr.co.bootpay.Bootpay;
 import kr.co.bootpay.model.request.Cancel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class BootpayService {
     private static final int SHIPPING_FEE = 3000;
 
     private final OrderService orderService;
+    private final MemberAddressService memberAddressService;
 
     private Bootpay bootpay;
 
@@ -90,7 +92,10 @@ public class BootpayService {
         // 결제 금액과 주문 정보 금액이 동일한 지 확인
         int payPrice = Integer.parseInt(res.get(BootpayConstant.PRICE).toString()) - SHIPPING_FEE;
         OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
-        order.updateReceiptId(dto.getReceiptId());
+        MemberAddress memberAddress = memberAddressService.findByMemberId(order.getMemberId());
+
+        orderService.updateOrderReceiptId(order, dto.getReceiptId());
+        orderService.updateOrderAddress(order, memberAddress.getId());
 
         if (isSamePrice(payPrice, order.getTotalPrice())) {
             order.updateOrderStatus(OrderStatus.PAY_COMPLETE);
@@ -111,11 +116,13 @@ public class BootpayService {
             cancel.cancelMessage = cancelReason;
 
             HashMap res = bootpay.receiptCancel(cancel);
+            OrderEntity order = orderService.findById(Long.valueOf(res.get(BootpayConstant.ORDER_ID).toString()));
 
             if (res.get(BootpayConstant.ERROR_CODE) != null) {
                 throw new CustomException(null, Code.BOOTPAY_ERROR);
             }
 
+            orderService.updateOrderStatus(order, OrderStatus.PAY_CANCEL);
             return res;
         } catch (Exception e) {
             throw new CustomException(null, Code.BOOTPAY_ERROR);

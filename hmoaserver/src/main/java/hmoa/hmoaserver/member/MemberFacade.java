@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.member;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.domain.CommunityComment;
 import hmoa.hmoaserver.community.domain.CommunityCommentLikedMember;
@@ -30,13 +32,10 @@ import hmoa.hmoaserver.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -165,10 +164,6 @@ public class MemberFacade {
     public void saveMemberAddress(String token, MemberAddressSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        if (memberAddressService.isExistMemberAddress(member.getId())) {
-            memberAddressService.delete(member.getMemberAddress());
-        }
-
         memberAddressService.save(dto.toEntity(member));
     }
 
@@ -194,10 +189,31 @@ public class MemberFacade {
         return new MemberAddressResponseDto(memberAddressService.findByMemberId(member.getId()));
     }
 
-    public List<MemberOrderResponseDto> getMemberOrders(String token) {
+    public PagingDto<Object> getMemberOrders(String token, Long cursor) {
         Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
-        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor);
+
+        return PagingDto.builder()
+                .data(getMemberOrderResponseDto(orders))
+                .isLastPage(PageUtil.isLastPage(orders))
+                .build();
+    }
+
+    public PagingDto<Object> getMemberCancelOrders(String token, Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+
+        Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), cursor);
+
+        return PagingDto.builder()
+                .data(getMemberOrderResponseDto(orders))
+                .isLastPage(PageUtil.isLastPage(orders))
+                .build();
+    }
+
+    private List<MemberOrderResponseDto> getMemberOrderResponseDto(Page<OrderEntity> orders) {
         return orders.stream()
                 .map(order -> new MemberOrderResponseDto(
                         order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))

@@ -1,22 +1,14 @@
 package hmoa.hmoaserver.recommend.survey.service;
 
-import hmoa.hmoaserver.config.CacheName;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.note.domain.Note;
-import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
-import hmoa.hmoaserver.recommend.survey.domain.Question;
 import hmoa.hmoaserver.recommend.survey.domain.Survey;
 import hmoa.hmoaserver.recommend.survey.domain.SurveyType;
 import hmoa.hmoaserver.recommend.survey.dto.*;
 import hmoa.hmoaserver.recommend.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

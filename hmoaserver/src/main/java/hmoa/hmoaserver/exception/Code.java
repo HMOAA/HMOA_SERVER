@@ -10,6 +10,11 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum Code {
     /**
+     * 20x Tracking
+     */
+    TRAKING_FAILED(HttpStatus.OK, "조회 실패"),
+
+    /**
      *  400 BAD_REQUEST
      */
     BOARD_NOT_FOUND(BAD_REQUEST, "게시글을 찾을 수 없습니다."),
@@ -92,6 +97,5 @@ public enum Code {
 
     private final HttpStatus httpStatus;
     private final String message;
-
 
 }

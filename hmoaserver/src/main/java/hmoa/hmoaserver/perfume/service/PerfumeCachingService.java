@@ -1,6 +1,6 @@
 package hmoa.hmoaserver.perfume.service;
 
-import hmoa.hmoaserver.config.CacheName;
+import hmoa.hmoaserver.config.setting.CacheName;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;

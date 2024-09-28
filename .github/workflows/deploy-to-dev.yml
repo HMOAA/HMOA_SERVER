@@ -108,6 +108,7 @@ jobs:
             echo "export FIREBASE_CONFIG=${{ secrets.FIREBASE_CONFIG }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             echo "export JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export JWT_ADMIN=${{ secrets.JWT_ADMIN }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             echo "export S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
@@ -123,6 +124,10 @@ jobs:
             echo "export S3_SURVEY_BACKGROUND=${{ secrets.S3_SURVEY_BACKGROUND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SURVEY_FIRST=${{ secrets.S3_SURVEY_FIRST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SURVEY_SECOND=${{ secrets.S3_SURVEY_SECOND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            
+            echo "export TRACKING_ACCESS=${{ secrets.TRACKING_ACCESS }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export TRACKING_SECRET=${{ secrets.TRACKING_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export TRACKING_CALLBACK_URL=${{ secrets.TRACKING_CALLBACK_URL }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             export SERVER_USERNAME=${{ secrets.SERVER_USERNAME }}
             

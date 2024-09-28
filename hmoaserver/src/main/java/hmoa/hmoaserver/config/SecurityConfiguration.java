@@ -66,7 +66,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/survey/**",
                 "/shop/**",
                 "/addressSearch.html",
-                "/.well-known/acme-challenge/**"
+                "/.well-known/acme-challenge/**",
+                "/admin/admin-token",
+                "/admin/delivery/check"
         };
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
