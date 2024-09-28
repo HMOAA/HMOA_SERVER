@@ -8,11 +8,12 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class RegisterTrackingRequestDto {
-    private String query = "mutation RegisterTrackWebhook($input: RegisterTrackWebhookInput!) { registerTrackWebhook(input: $input) }";
+public class TrackingDeliveryRequestDto {
+    private String query;
     private Object variables;
 
-    public RegisterTrackingRequestDto(Object variables) {
+    public TrackingDeliveryRequestDto(String query, Object variables) {
+        this.query = query;
         this.variables = variables;
     }
 }
