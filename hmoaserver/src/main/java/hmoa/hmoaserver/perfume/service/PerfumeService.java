@@ -3,7 +3,6 @@ package hmoa.hmoaserver.perfume.service;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
@@ -175,7 +174,7 @@ public class PerfumeService {
     }
 
     @Transactional(readOnly = true)
-    public List<PerfumeRecommendation> recommendPefumesIncludePrice(int minPrice, int maxPrice, List<String> notes) {
+    public List<PerfumeRecommendation> recommendPerfumesIncludePrice(int minPrice, int maxPrice, List<String> notes) {
         List<Perfume> perfumes = perfumeRepository.findAll();
 
         return perfumes.stream()

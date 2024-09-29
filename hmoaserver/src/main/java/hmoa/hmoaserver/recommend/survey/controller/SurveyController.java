@@ -2,7 +2,6 @@ package hmoa.hmoaserver.recommend.survey.controller;
 
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
-import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -14,6 +13,7 @@ import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.note.service.NoteSynonymService;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
+import hmoa.hmoaserver.recommend.survey.controller.constant.RecommendType;
 import hmoa.hmoaserver.recommend.survey.controller.constant.SurveyConstant;
 import hmoa.hmoaserver.recommend.survey.domain.*;
 import hmoa.hmoaserver.recommend.survey.dto.*;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Api(tags = {"설문"})
@@ -126,13 +125,13 @@ public class SurveyController {
 
     @ApiOperation(value = "향수 추천 API")
     @PostMapping("/perfume/respond")
-    public ResponseEntity<PerfumeRecommendsResponseDto> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam boolean isContainAll,  @RequestBody PerfumeRecommendRequestDto dto) {
+    public ResponseEntity<PerfumeRecommendsResponseDto> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam RecommendType recommendType, @RequestBody PerfumeRecommendRequestDto dto) {
         Member member = memberService.findByMember(token);
 
         List<PerfumeRecommendation> perfumeRecommendations;
 
-        if (isContainAll) {
-            perfumeRecommendations = perfumeService.recommendPefumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), getSearchNotes(dto.getNotes()));
+        if (recommendType == RecommendType.NOTE) {
+            perfumeRecommendations = perfumeService.recommendPerfumesIncludePrice(dto.getMinPrice(), dto.getMaxPrice(), getSearchNotes(dto.getNotes()));
         } else {
             perfumeRecommendations = perfumeService.recommendPerfumes(dto.getMinPrice(), dto.getMaxPrice(), getSearchNotes(dto.getNotes()));
         }
