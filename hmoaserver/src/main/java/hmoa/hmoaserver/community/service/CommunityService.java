@@ -16,7 +16,7 @@ public interface CommunityService {
     Community saveCommunity(Member member, CommunityDefaultRequestDto communityDefaultRequestDto);
     Page<Community> getAllCommunitysByCategory(int page, Category category);
     Page<Community> getAllCommunitysByCategory(Long cursor, Category category);
-    Page<Community> getTopCommunitysByCategory(int page, Category category);
+    Page<Community> getTopCommunitysByCategory(int page, int size, Category category);
     Page<Community> getCommunityByHome();
     Page<Community> getCommunityByMember(Member member, int page);
     Page<Community> getCommunityByMemberAndCursor(Member member, Long cursor);

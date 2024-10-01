@@ -54,8 +54,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Page<Community> getTopCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    public Page<Community> getTopCommunitysByCategory(int page, int size, Category category) {
+        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, size));
     }
 
     @Override
