@@ -1,6 +1,11 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.ResultDto;
+import hmoa.hmoaserver.community.domain.Category;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.dto.CommunityByHBTIResponseDto;
+import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -23,6 +28,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +63,7 @@ public class SurveyController {
     private final PerfumeService perfumeService;
     private final NoteSynonymService noteSynonymService;
     private final OrderService orderService;
+    private final CommunityService communityService;
 
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveSurvey(@RequestBody SurveySaveRequestDto dto) {
@@ -110,8 +117,10 @@ public class SurveyController {
     public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        Page<Community> communities = communityService.getTopCommunitysByCategory(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize(), Category.향BTI_시향기);
+        List<CommunityByHBTIResponseDto> reviews = communities.stream().map(CommunityByHBTIResponseDto::new).toList();
 
-        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty(), reviews));
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")
