@@ -83,6 +83,10 @@ public class Community extends BaseEntity {
         return count;
     }
 
+    public void updateCategory(Category category) {
+        this.category = category;
+    }
+
     public void increaseHeartCount() {
         this.heartCount += 1;
     }

@@ -25,4 +25,5 @@ public interface CommunityService {
     List<CommunityPhoto> saveCommunityPhotos(Community community, List<MultipartFile> files);
     String deleteCommunity(Member member, Long communityId);
     List<CommunityPhoto> findAllCommunityPhotosFromCommunity(Community community);
+    void changeCategory();
 }
