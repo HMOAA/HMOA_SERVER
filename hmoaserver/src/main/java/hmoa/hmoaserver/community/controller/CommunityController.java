@@ -240,4 +240,13 @@ public class CommunityController {
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
+
+    @ApiOperation("(사용 X) 시향기 -> 향BTI_시향기로 바꾸기")
+    @PutMapping("/change")
+    public ResponseEntity<?> changeCategory(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        communityService.changeCategory();
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
 }
