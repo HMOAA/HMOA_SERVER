@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.magazine.controller;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
@@ -63,7 +64,7 @@ public class MagazineController {
     @ApiOperation(value = "매거진 탑 시향기 조회", notes = "시향기 조회 300글자 이후는 ... 으로 잘라서 응답하도록 하였습니다.!")
     @GetMapping("/tastingComment")
     public ResponseEntity<List<TopTastingResponseDto>> getMagazineTastingComment() {
-        Page<Community> communities = communityService.getTopCommunitysByCategory(0, Category.시향기);
+        Page<Community> communities = communityService.getTopCommunitysByCategory(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize(), Category.시향기);
 
         return ResponseEntity.ok(communities.stream().map(TopTastingResponseDto::new).collect(Collectors.toList()));
     }

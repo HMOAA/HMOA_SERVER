@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
@@ -22,6 +23,8 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     Page<Community> findByTitleContainingOrContentContainingOrderByCreatedAtDescIdAsc(
             String title, String content, Pageable pageable
     );
+
+    List<Community> findAllByCategory(Category category);
 
     // 커뮤니티의 카테고리별 최신순 lastCommentId보다 낮은 게시글을 조회
     @Query("SELECT c " +

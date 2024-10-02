@@ -54,8 +54,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Page<Community> getTopCommunitysByCategory(int page, Category category) {
-        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
+    public Page<Community> getTopCommunitysByCategory(int page, int size, Category category) {
+        return communityRepository.findAllByCategoryOrderByHeartCountDescIdDesc(category, PageRequest.of(page, size));
     }
 
     @Override
@@ -121,6 +121,15 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public List<CommunityPhoto> findAllCommunityPhotosFromCommunity(Community community) {
         return community.getCommunityPhotos();
+    }
+
+    @Override
+    @Transactional
+    public void changeCategory() {
+        List<Community> communities = communityRepository.findAllByCategory(Category.시향기);
+        for (Community community : communities) {
+            community.updateCategory(Category.향BTI_시향기);
+        }
     }
 
     private static boolean isFirstCursor(Long cursor) {
