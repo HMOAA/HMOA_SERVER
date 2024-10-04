@@ -4,6 +4,7 @@ import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.Cart;
+import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.*;
@@ -174,6 +175,26 @@ public class HShopController {
         OrderEntity order = orderService.findById(orderId);
         hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
 
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "향bti 후기 좋아요")
+    @PutMapping("review/{reviewId}/like")
+    public ResponseEntity<?> saveHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        hbtiReviewService.saveHeart(review.getId(), member.getId());
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "향bti 후기 좋아요 취소")
+    @DeleteMapping("review/{reviewId}/like")
+    public ResponseEntity<?> deleteHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        hbtiReviewService.deleteHeart(review.getId(), member.getId());
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }
