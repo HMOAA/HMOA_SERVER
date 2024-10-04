@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class HbtiReviewService {
@@ -27,11 +29,34 @@ public class HbtiReviewService {
     }
 
     @Transactional
-    public void saveHeart(HbtiReviewHeart hbtiReviewHeart) {
+    public void saveHeart(Long reviewId, Long memberId) {
+        if (isPresentReviewHeart(reviewId, memberId)) {
+            throw new CustomException(null, Code.DUPLICATE_LIKED);
+        }
+
         try {
-            hbtiReviewHeartRepository.save(hbtiReviewHeart);
+            hbtiReviewHeartRepository.save(HbtiReviewHeart.builder()
+                    .hbtiReviewId(reviewId)
+                    .memberId(memberId)
+                    .build());
         } catch (Exception e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+
+    @Transactional
+    public void deleteHeart(Long reviewId, Long memberId) {
+        Optional<HbtiReviewHeart> heart = hbtiReviewHeartRepository.findByHbtiReviewIdAndMemberId(reviewId, memberId);
+        heart.ifPresent(hbtiReviewHeartRepository::delete);
+    }
+
+    @Transactional(readOnly = true)
+    public HbtiReview getReview(Long reviewId) {
+        return hbtiReviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(null, Code.HBTI_REVIEW_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isPresentReviewHeart(Long reviewId, Long memberId) {
+        return hbtiReviewHeartRepository.findByHbtiReviewIdAndMemberId(reviewId, memberId).isPresent();
     }
 }
