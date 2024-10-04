@@ -8,6 +8,7 @@ import hmoa.hmoaserver.hshop.domain.NoteProduct;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.*;
 import hmoa.hmoaserver.hshop.service.CartService;
+import hmoa.hmoaserver.hshop.service.HbtiReviewService;
 import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -43,6 +44,7 @@ public class HShopController {
     private final MemberAddressService memberAddressService;
     private final OrderService orderService;
     private final CartService cartService;
+    private final HbtiReviewService hbtiReviewService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -161,6 +163,16 @@ public class HShopController {
     public ResponseEntity<?> deleteOrder(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId) {
         OrderEntity order = orderService.findById(orderId);
         orderService.deleteOrder(order);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "향bti 후기 저장")
+    @PostMapping("/order/{orderId}/review")
+    public ResponseEntity<?> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId, @RequestBody HbtiReviewSaveRequestDto dto) {
+        Member member = memberService.findByMember(token);
+        OrderEntity order = orderService.findById(orderId);
+        hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
