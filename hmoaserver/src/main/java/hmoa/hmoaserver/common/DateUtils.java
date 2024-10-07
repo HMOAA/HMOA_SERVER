@@ -42,6 +42,12 @@ public class DateUtils {
         return createdAt.format(formatter);
     }
 
+    public static String extractOrderSelectDate(LocalDateTime createdAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        return createdAt.format(formatter);
+    }
+
     public static String extractUTC(LocalDateTime createdAt) {
         return createdAt.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
     }
