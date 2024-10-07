@@ -37,4 +37,12 @@ public class HbtiReview extends BaseEntity {
         this.content = content;
         this.heartCount = 0;
     }
+
+    public void increaseHeartCount() {
+        this.heartCount++;
+    }
+
+    public void decreaseHeartCount() {
+        this.heartCount--;
+    }
 }

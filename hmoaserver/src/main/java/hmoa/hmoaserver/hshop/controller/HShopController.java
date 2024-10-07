@@ -204,6 +204,8 @@ public class HShopController {
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         hbtiReviewService.saveHeart(review.getId(), member.getId());
+        hbtiReviewService.increaseHbtiHeartCount(review);
+
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
@@ -214,6 +216,8 @@ public class HShopController {
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         hbtiReviewService.deleteHeart(review.getId(), member.getId());
+        hbtiReviewService.decreaseHbtiHeartCount(review);
+
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

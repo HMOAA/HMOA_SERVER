@@ -69,4 +69,14 @@ public class HbtiReviewService {
     public boolean isPresentReviewHeart(Long reviewId, Long memberId) {
         return hbtiReviewHeartRepository.findByHbtiReviewIdAndMemberId(reviewId, memberId).isPresent();
     }
+
+    @Transactional
+    public void increaseHbtiHeartCount(HbtiReview hbtiReview) {
+        hbtiReview.increaseHeartCount();
+    }
+
+    @Transactional
+    public void decreaseHbtiHeartCount(HbtiReview hbtiReview) {
+        hbtiReview.decreaseHeartCount();
+    }
 }
