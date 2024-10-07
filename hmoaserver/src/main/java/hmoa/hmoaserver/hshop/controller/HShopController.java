@@ -18,16 +18,22 @@ import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.photo.domain.HbtiPhoto;
+import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
+import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Api(tags = {"H-shop"})
 @Slf4j
@@ -46,6 +52,7 @@ public class HShopController {
     private final OrderService orderService;
     private final CartService cartService;
     private final HbtiReviewService hbtiReviewService;
+    private final PhotoService photoService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -169,13 +176,25 @@ public class HShopController {
     }
 
     @ApiOperation(value = "향bti 후기 저장")
-    @PostMapping("/order/{orderId}/review")
-    public ResponseEntity<?> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId, @RequestBody HbtiReviewSaveRequestDto dto) {
+    @PostMapping(value = "/order/{orderId}/review", consumes = "multipart/form-data")
+    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId, @RequestPart(value="image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
-        hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
 
-        return ResponseEntity.ok(ResultDto.builder().build());
+        Note orderNote = noteService.findById(noteProductService.getNoteProduct(order.getProductIds().get(0)).getId());
+        HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
+        List<HbtiPhoto> photos = new ArrayList<>();
+
+        if (files != null) {
+            photoService.validateCommunityPhotoCountExceeded(files.size());
+            photos = hbtiReviewService.saveHbtiPhotos(hbtiReview, files);
+        }
+
+        HbtiReviewResponseDto res = new HbtiReviewResponseDto(hbtiReview, orderNote.getTitle(), member, true, false);
+        res.setHbtiPhotos(photos.stream().map(PhotoResponseDto::new).toList());
+        res.setImagesCount(photos.size());
+
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "향bti 후기 좋아요")
