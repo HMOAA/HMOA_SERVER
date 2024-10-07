@@ -58,7 +58,6 @@ public class HbtiReviewResponseDto {
 
             hbtiPhotoList.forEach(hbtiPhoto -> {
                 this.hbtiPhotos.add(new PhotoResponseDto<>(hbtiPhoto));
-                log.info("{}", hbtiPhoto.getPhotoUrl());
             });
         }
     }
