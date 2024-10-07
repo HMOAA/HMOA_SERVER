@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.hshop.service;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.HbtiReview;
@@ -9,6 +10,8 @@ import hmoa.hmoaserver.hshop.repository.HbtiReviewRepository;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +50,11 @@ public class HbtiReviewService {
         } catch (Exception e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<HbtiReview> getHbtiReviewsByPage(int page) {
+        return hbtiReviewRepository.findAllByOrderByHeartCountDescCreatedAtDesc(PageRequest.of(page, PageSize.FIVE_SIZE.getSize()));
     }
 
     @Transactional
