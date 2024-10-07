@@ -1,5 +1,7 @@
 package hmoa.hmoaserver.hshop.controller;
 
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -25,12 +27,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,7 +110,8 @@ public class HShopController {
         Member member = memberService.findByMember(token);
 
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
-        OrderEntity order = orderService.firstOrderSave(member, dto.getProductIds(), noteProducts.getTotalPrice());
+        String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
+        OrderEntity order = orderService.firstOrderSave(member, orderTitle, dto.getProductIds(), noteProducts.getTotalPrice());
         boolean isExistMemberInfo = memberInfoService.isExistMemberInfo(member.getId());
         boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
 
@@ -195,6 +198,26 @@ public class HShopController {
         res.setImagesCount(photos.size());
 
         return ResponseEntity.ok(res);
+    }
+
+    @ApiOperation(value = "향bti 후기 목록 조회")
+    @GetMapping("review")
+    public ResponseEntity<PagingDto<Object>> findHbtiReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam int page) {
+        Member member = memberService.findByMember(token);
+        Page<HbtiReview> hbtiReviews = hbtiReviewService.getHbtiReviewsByPage(page);
+        List<HbtiReviewResponseDto> res = hbtiReviews.stream().map(hbtiReview -> {
+            boolean isWrited = hbtiReview.getMemberId().equals(member.getId());
+            boolean isLiked = hbtiReviewService.isPresentReviewHeart(hbtiReview.getId(), member.getId());
+            Member author = memberService.findById(hbtiReview.getMemberId()).get();
+            OrderEntity order = orderService.findById(hbtiReview.getOrderId());
+            return new HbtiReviewResponseDto(hbtiReview, order.getTitle(), author, isWrited, isLiked);
+        }).toList();
+        boolean isLastPage = PageUtil.isLastPage(hbtiReviews);
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(res)
+                .build());
     }
 
     @ApiOperation(value = "향bti 후기 좋아요")
