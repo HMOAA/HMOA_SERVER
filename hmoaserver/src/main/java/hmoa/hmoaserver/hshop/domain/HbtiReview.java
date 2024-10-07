@@ -1,12 +1,15 @@
 package hmoa.hmoaserver.hshop.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
+import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +25,9 @@ public class HbtiReview extends BaseEntity {
     private Long orderId;
     private String content;
     private int heartCount;
+
+    @OneToMany(mappedBy = "hbtiReview", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HbtiPhoto> hbtiPhotos = new ArrayList<>();
 
     @Builder
     public HbtiReview(Long id, Long memberId, Long orderId, String content) {
