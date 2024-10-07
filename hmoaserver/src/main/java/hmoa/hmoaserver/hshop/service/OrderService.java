@@ -91,9 +91,10 @@ public class OrderService {
         }
     }
 
-    public OrderEntity firstOrderSave(Member member, List<Long> productIds, int totalPrice) {
+    public OrderEntity firstOrderSave(Member member, String orderTitle, List<Long> productIds, int totalPrice) {
         return save(OrderEntity.builder()
                 .memberId(member.getId())
+                .title(orderTitle)
                 .status(OrderStatus.CREATED)
                 .totalPrice(totalPrice)
                 .productIds(productIds)
