@@ -2,12 +2,9 @@ package hmoa.hmoaserver.hshop.dto;
 
 import hmoa.hmoaserver.hshop.domain.HbtiReview;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
 public class HbtiReviewSaveRequestDto {
 
     private String content;
