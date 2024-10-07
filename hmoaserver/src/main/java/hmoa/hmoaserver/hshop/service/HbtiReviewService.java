@@ -6,10 +6,14 @@ import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import hmoa.hmoaserver.hshop.domain.HbtiReviewHeart;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewHeartRepository;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewRepository;
+import hmoa.hmoaserver.photo.domain.HbtiPhoto;
+import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,11 +22,12 @@ public class HbtiReviewService {
 
     private final HbtiReviewRepository hbtiReviewRepository;
     private final HbtiReviewHeartRepository hbtiReviewHeartRepository;
+    private final HbtiPhotoService hbtiPhotoService;
 
     @Transactional
-    public void save(HbtiReview hbtiReview) {
+    public HbtiReview save(HbtiReview hbtiReview) {
         try {
-            hbtiReviewRepository.save(hbtiReview);
+            return hbtiReviewRepository.save(hbtiReview);
         } catch (Exception e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
@@ -42,6 +47,11 @@ public class HbtiReviewService {
         } catch (Exception e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+
+    @Transactional
+    public List<HbtiPhoto> saveHbtiPhotos(HbtiReview hbtiReview, List<MultipartFile> files) {
+        return hbtiPhotoService.savePhotos(hbtiReview, files);
     }
 
     @Transactional
