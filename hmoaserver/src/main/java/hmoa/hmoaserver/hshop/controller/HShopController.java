@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.hshop.controller;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
@@ -218,6 +219,16 @@ public class HShopController {
                 .isLastPage(isLastPage)
                 .data(res)
                 .build());
+    }
+
+    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록")
+    @GetMapping("order/me")
+    public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
+        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
+
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "향bti 후기 좋아요")
