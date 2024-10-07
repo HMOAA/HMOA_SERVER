@@ -25,10 +25,20 @@ public class HbtiReviewResponseDto {
     @Setter
     private List<PhotoResponseDto<HbtiPhoto>> hbtiPhotos = new ArrayList<>();
     private String createdAt;
+    @Getter(AccessLevel.NONE)
     private boolean isWrited = false;
     private int heartCount;
+    @Getter(AccessLevel.NONE)
     private boolean isLiked = false;
     private String orderTitle;
+
+    public boolean getIsLiked() {
+        return this.isLiked;
+    }
+
+    public boolean getIsWrited() {
+        return this.isWrited;
+    }
 
     @Builder
     public HbtiReviewResponseDto(HbtiReview hbtiReview, String orderTitle, Member author, boolean isWrited, boolean isLiked) {
