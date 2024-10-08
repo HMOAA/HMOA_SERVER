@@ -26,6 +26,7 @@ import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -179,9 +180,20 @@ public class HShopController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록")
+    @GetMapping("order/me")
+    public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
+        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
+
+        return ResponseEntity.ok(res);
+    }
+
+    @Tag(name = "H-shop-review", description = "향bti 리뷰 API")
     @ApiOperation(value = "향bti 후기 저장")
-    @PostMapping(value = "/order/{orderId}/review", consumes = "multipart/form-data")
-    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long orderId, @RequestPart(value="image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
+    @PostMapping(value = "/review", consumes = "multipart/form-data")
+    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long orderId, @RequestPart(value="image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
 
@@ -201,6 +213,7 @@ public class HShopController {
         return ResponseEntity.ok(res);
     }
 
+    @Tag(name = "H-shop-review", description = "Hshop review API")
     @ApiOperation(value = "향bti 후기 목록 조회")
     @GetMapping("review")
     public ResponseEntity<PagingDto<Object>> findHbtiReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam int page) {
@@ -221,16 +234,7 @@ public class HShopController {
                 .build());
     }
 
-    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록")
-    @GetMapping("order/me")
-    public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
-        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
-        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
-
-        return ResponseEntity.ok(res);
-    }
-
+    @Tag(name = "H-shop-review", description = "Hshop review API")
     @ApiOperation(value = "향bti 후기 좋아요")
     @PutMapping("review/{reviewId}/like")
     public ResponseEntity<?> saveHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
@@ -243,6 +247,7 @@ public class HShopController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @Tag(name = "H-shop-review", description = "Hshop review API")
     @ApiOperation(value = "향bti 후기 좋아요 취소")
     @DeleteMapping("review/{reviewId}/like")
     public ResponseEntity<?> deleteHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
