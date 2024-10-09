@@ -2,10 +2,7 @@ package hmoa.hmoaserver.hshop.domain;
 
 import hmoa.hmoaserver.common.BaseEntity;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,6 +20,7 @@ public class HbtiReview extends BaseEntity {
 
     private Long memberId;
     private Long orderId;
+    @Setter
     private String content;
     private int heartCount;
 
