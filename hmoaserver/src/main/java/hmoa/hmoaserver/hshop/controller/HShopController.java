@@ -23,6 +23,7 @@ import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
+import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Api(tags = {"H-shop"})
 @Slf4j
@@ -57,6 +57,7 @@ public class HShopController {
     private final CartService cartService;
     private final HbtiReviewService hbtiReviewService;
     private final PhotoService photoService;
+    private final HbtiPhotoService hbtiPhotoService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -193,7 +194,7 @@ public class HShopController {
     @Tag(name = "H-shop-review", description = "향bti 리뷰 API")
     @ApiOperation(value = "향bti 후기 저장")
     @PostMapping(value = "/review", consumes = "multipart/form-data")
-    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long orderId, @RequestPart(value="image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
+    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long orderId, @RequestPart(value = "image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
 
@@ -202,15 +203,35 @@ public class HShopController {
         List<HbtiPhoto> photos = new ArrayList<>();
 
         if (files != null) {
-            photoService.validateCommunityPhotoCountExceeded(files.size());
+            photoService.validateReviewPhotoCountExceeded(files.size());
             photos = hbtiReviewService.saveHbtiPhotos(hbtiReview, files);
         }
 
-        HbtiReviewResponseDto res = new HbtiReviewResponseDto(hbtiReview, orderNote.getTitle(), member, true, false);
-        res.setHbtiPhotos(photos.stream().map(PhotoResponseDto::new).toList());
-        res.setImagesCount(photos.size());
+        return ResponseEntity.ok(createReviewResponseDto(hbtiReview, order, member, photos));
+    }
 
-        return ResponseEntity.ok(res);
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 수정")
+    @PostMapping(value = "review/{reviewId}", consumes = "multipart/form-data")
+    public  ResponseEntity<HbtiReviewResponseDto> modifyHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId, @RequestPart(value = "image", required = false) List<MultipartFile> photos, HbtiReviewModifyRequestDto dto) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+        OrderEntity order = orderService.findById(review.getOrderId());
+
+        validateOwner(member, review);
+
+        List<HbtiPhoto> curPhoto = new ArrayList<>(review.getHbtiPhotos().stream()
+                .filter(photo -> !dto.getDeleteReviewPhotoIds().contains(photo.getId()))
+                .toList());
+
+        hbtiPhotoService.deleteAll(dto.getDeleteReviewPhotoIds());
+        hbtiReviewService.modifyHbtiReview(review, dto);
+
+        if (photos != null) {
+            curPhoto.addAll(hbtiReviewService.saveHbtiPhotos(review, photos));
+        }
+
+        return ResponseEntity.ok(createReviewResponseDto(review, order, member, curPhoto));
     }
 
     @Tag(name = "H-shop-review", description = "Hshop review API")
@@ -258,5 +279,18 @@ public class HShopController {
         hbtiReviewService.decreaseHbtiHeartCount(review);
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    private void validateOwner(Member member, HbtiReview review) {
+        if (!member.getId().equals(review.getMemberId())) {
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+        }
+    }
+
+    private HbtiReviewResponseDto createReviewResponseDto(HbtiReview review, OrderEntity order, Member member, List<HbtiPhoto> curPhoto) {
+        HbtiReviewResponseDto res = new HbtiReviewResponseDto(review, order.getTitle(), member, true, false);
+        res.setImagesCount(curPhoto.size());
+        res.setHbtiPhotos(curPhoto.stream().map(PhotoResponseDto::new).toList());
+        return res;
     }
 }
