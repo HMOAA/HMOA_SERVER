@@ -198,7 +198,6 @@ public class HShopController {
         Member member = memberService.findByMember(token);
         OrderEntity order = orderService.findById(orderId);
 
-        Note orderNote = noteService.findById(noteProductService.getNoteProduct(order.getProductIds().get(0)).getId());
         HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
         List<HbtiPhoto> photos = new ArrayList<>();
 
