@@ -239,13 +239,7 @@ public class HShopController {
     public ResponseEntity<PagingDto<Object>> findHbtiReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam int page) {
         Member member = memberService.findByMember(token);
         Page<HbtiReview> hbtiReviews = hbtiReviewService.getHbtiReviewsByPage(page);
-        List<HbtiReviewResponseDto> res = hbtiReviews.stream().map(hbtiReview -> {
-            boolean isWrited = hbtiReview.getMemberId().equals(member.getId());
-            boolean isLiked = hbtiReviewService.isPresentReviewHeart(hbtiReview.getId(), member.getId());
-            Member author = memberService.findById(hbtiReview.getMemberId()).get();
-            OrderEntity order = orderService.findById(hbtiReview.getOrderId());
-            return new HbtiReviewResponseDto(hbtiReview, order.getTitle(), author, isWrited, isLiked);
-        }).toList();
+        List<HbtiReviewResponseDto> res = createReviewResponseDtos(hbtiReviews, member);
         boolean isLastPage = PageUtil.isLastPage(hbtiReviews);
 
         return ResponseEntity.ok(PagingDto.builder()
@@ -280,6 +274,22 @@ public class HShopController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "내가 작성한 후기 목록")
+    @GetMapping("/review/me")
+    public ResponseEntity<?> getMyReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<HbtiReview> reviews = hbtiReviewService.getHbtiReviewsByMemberAndCursor(member.getId(), cursor);
+        List<HbtiReviewResponseDto> res = createReviewResponseDtos(reviews, member);
+        boolean isLastPage = PageUtil.isLastPage(reviews);
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(res)
+                .build());
+    }
+
     private void validateOwner(Member member, HbtiReview review) {
         if (!member.getId().equals(review.getMemberId())) {
             throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
@@ -291,5 +301,15 @@ public class HShopController {
         res.setImagesCount(curPhoto.size());
         res.setHbtiPhotos(curPhoto.stream().map(PhotoResponseDto::new).toList());
         return res;
+    }
+
+    private List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
+        return reviews.stream().map(review -> {
+            boolean isWrited = review.getMemberId().equals(member.getId());
+            boolean isLiked = hbtiReviewService.isPresentReviewHeart(review.getId(), member.getId());
+            Member author = memberService.findById(review.getMemberId()).get();
+            OrderEntity order = orderService.findById(review.getOrderId());
+            return new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked);
+        }).toList();
     }
 }
