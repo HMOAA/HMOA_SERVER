@@ -5,8 +5,10 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import hmoa.hmoaserver.hshop.domain.HbtiReviewHeart;
+import hmoa.hmoaserver.hshop.dto.HbtiReviewModifyRequestDto;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewHeartRepository;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewRepository;
+import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,11 @@ public class HbtiReviewService {
         }
     }
 
+    @Transactional
+    public void modifyHbtiReview(HbtiReview hbtiReview, final HbtiReviewModifyRequestDto dto) {
+        hbtiReview.setContent(dto.getContent());
+    }
+
     @Transactional(readOnly = true)
     public Page<HbtiReview> getHbtiReviewsByPage(int page) {
         return hbtiReviewRepository.findAllByOrderByHeartCountDescCreatedAtDesc(PageRequest.of(page, PageSize.FIVE_SIZE.getSize()));
@@ -86,5 +93,11 @@ public class HbtiReviewService {
     @Transactional
     public void decreaseHbtiHeartCount(HbtiReview hbtiReview) {
         hbtiReview.decreaseHeartCount();
+    }
+
+    private void validateReviewOwner(HbtiReview review, Member member) {
+        if (!member.getId().equals(review.getMemberId())) {
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+        }
     }
 }
