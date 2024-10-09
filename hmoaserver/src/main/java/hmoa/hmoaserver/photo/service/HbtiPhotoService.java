@@ -6,6 +6,7 @@ import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.repository.HbtiPhotoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -33,6 +35,11 @@ public class HbtiPhotoService {
         } catch (Exception e) {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+
+    @Transactional
+    public void deleteAll(List<Long> deleteIds) {
+        hbtiPhotoRepository.deleteByIds(deleteIds);
     }
 
     @Transactional
