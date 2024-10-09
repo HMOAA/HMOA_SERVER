@@ -118,6 +118,7 @@ jobs:
             echo "export S3_MEMBER_BUCKET=${{ secrets.S3_MEMBER_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_NOTE_BUCKET=${{ secrets.S3_NOTE_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_PERFUME_BUCKET=${{ secrets.S3_PERFUME_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_HBTI_BUCKET=${{ secrets.S3_HBTI_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_MAIN=${{ secrets.S3_MAIN }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_MAIN_TEST=${{ secrets.S3_MAIN_TEST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_PROFILE=${{ secrets.S3_PROFILE }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh

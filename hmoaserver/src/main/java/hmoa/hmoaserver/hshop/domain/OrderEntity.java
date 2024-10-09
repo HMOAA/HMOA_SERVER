@@ -25,6 +25,7 @@ public class OrderEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    private String title;
     private Long addressId;
     private int totalPrice;
     private Long memberId;
@@ -33,7 +34,8 @@ public class OrderEntity extends BaseEntity {
     private String trackingNumber;
 
     @Builder
-    public OrderEntity(List<Long> productIds, OrderStatus status, Long addressId, int totalPrice, Long memberId, String receiptId, String courierCompany, String trackingNumber) {
+    public OrderEntity(List<Long> productIds, String title, OrderStatus status, Long addressId, int totalPrice, Long memberId, String receiptId, String courierCompany, String trackingNumber) {
+        this.title = title;
         this.productIds = productIds;
         this.status = status;
         this.addressId = addressId;

@@ -126,9 +126,9 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void changeCategory() {
-        List<Community> communities = communityRepository.findAllByCategory(Category.시향기);
+        List<Community> communities = communityRepository.findAllByCategory(Category.향BTI_시향기);
         for (Community community : communities) {
-            community.updateCategory(Category.향BTI_시향기);
+            community.updateCategory(Category.시향기);
         }
     }
 

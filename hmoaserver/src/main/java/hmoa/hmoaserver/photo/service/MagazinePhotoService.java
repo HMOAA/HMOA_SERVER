@@ -22,8 +22,10 @@ import static hmoa.hmoaserver.exception.Code.SERVER_ERROR;
 @Transactional(readOnly = true)
 @Slf4j
 public class MagazinePhotoService {
+
     @Value("${cloud.aws.s3.bucket-name.magazine}")
     private String magazineBucketName;
+
     private final PhotoService photoService;
     private final MagazinePhotoRepository magazinePhotoRepository;
 

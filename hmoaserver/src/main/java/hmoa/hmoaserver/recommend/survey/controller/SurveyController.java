@@ -117,10 +117,8 @@ public class SurveyController {
     public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
         List<OrderEntity> orders = orderService.findByMemberId(member.getId());
-        Page<Community> communities = communityService.getTopCommunitysByCategory(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize(), Category.향BTI_시향기);
-        List<CommunityByHBTIResponseDto> reviews = communities.stream().map(CommunityByHBTIResponseDto::new).toList();
 
-        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty(), reviews));
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")

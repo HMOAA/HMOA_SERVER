@@ -16,17 +16,15 @@ public class SurveyHomeResponseDto {
     private String secondImageUrl;
     @Getter(AccessLevel.NONE)
     private boolean isOrdered;
-    private List<CommunityByHBTIResponseDto> reviews;
 
     public boolean getIsOrdered() {
         return isOrdered;
     }
 
-    public SurveyHomeResponseDto(String backgroundImgUrl, String firstImageUrl, String secondImageUrl, boolean isOrdered, List<CommunityByHBTIResponseDto> reviews) {
+    public SurveyHomeResponseDto(String backgroundImgUrl, String firstImageUrl, String secondImageUrl, boolean isOrdered) {
         this.backgroundImgUrl = backgroundImgUrl;
         this.firstImageUrl = firstImageUrl;
         this.secondImageUrl = secondImageUrl;
         this.isOrdered = isOrdered;
-        this.reviews = reviews;
     }
 }

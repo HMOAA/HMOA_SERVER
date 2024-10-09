@@ -24,6 +24,7 @@ public class CommunityPhotoService {
 
     @Value("${cloud.aws.s3.bucket-name.community}")
     private String communityBucketName;
+
     private final PhotoService photoService;
     private final CommunityPhotoRepository communityPhotoRepository;
 
