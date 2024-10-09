@@ -64,6 +64,11 @@ public class HbtiReviewService {
         return hbtiReviewRepository.findAllByOrderByHeartCountDescCreatedAtDesc(PageRequest.of(page, PageSize.FIVE_SIZE.getSize()));
     }
 
+    @Transactional(readOnly = true)
+    public Page<HbtiReview> getHbtiReviewsByMemberAndCursor(Long memberId, Long cursor) {
+        return hbtiReviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId, cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
+    }
+
     @Transactional
     public List<HbtiPhoto> saveHbtiPhotos(HbtiReview hbtiReview, List<MultipartFile> files) {
         return hbtiPhotoService.savePhotos(hbtiReview, files);
