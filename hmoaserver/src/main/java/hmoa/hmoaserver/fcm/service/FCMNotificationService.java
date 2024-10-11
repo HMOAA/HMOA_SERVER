@@ -33,6 +33,7 @@ import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 @RequiredArgsConstructor
 @Service
 public class FCMNotificationService {
+
     private final FirebaseMessaging firebaseMessaging;
     private final MemberService memberService;
     private final PushAlarmRepository pushAlarmRepository;
