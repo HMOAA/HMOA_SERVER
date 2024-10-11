@@ -6,6 +6,9 @@ import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
+import hmoa.hmoaserver.fcm.service.constant.NotificationType;
 import hmoa.hmoaserver.hshop.domain.Cart;
 import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import hmoa.hmoaserver.hshop.domain.NoteProduct;
@@ -58,6 +61,7 @@ public class HShopController {
     private final HbtiReviewService hbtiReviewService;
     private final PhotoService photoService;
     private final HbtiPhotoService hbtiPhotoService;
+    private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -257,6 +261,7 @@ public class HShopController {
 
         hbtiReviewService.saveHeart(review.getId(), member.getId());
         hbtiReviewService.increaseHbtiHeartCount(review);
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(review.getMemberId(), member.getNickname(), member.getId(), NotificationType.HBTI_REVIEW_LIKE, reviewId));
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
