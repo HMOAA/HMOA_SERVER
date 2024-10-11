@@ -9,5 +9,6 @@ public enum NotificationType {
     COMMUNITY_COMMENT_LIKE,
     COMMUNITY_COMMENT,
     EVENT,
-    SHOP
+    SHOP,
+    HBTI_REVIEW_LIKE
 }
