@@ -100,9 +100,26 @@ public class HbtiReviewService {
         hbtiReview.decreaseHeartCount();
     }
 
-    private void validateReviewOwner(HbtiReview review, Member member) {
-        if (!member.getId().equals(review.getMemberId())) {
-            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+    @Transactional
+    public void deleteHbtiReviewHeart(List<HbtiReviewHeart> hearts) {
+        try {
+            hbtiReviewHeartRepository.deleteAll(hearts);
+        } catch (Exception e) {
+            throw new CustomException(null, Code.SERVER_ERROR);
         }
+    }
+
+    @Transactional
+    public void deleteHbtiReview(HbtiReview hbtiReview) {
+        try {
+            hbtiReviewRepository.delete(hbtiReview);
+        } catch (Exception e) {
+            throw new CustomException(null, Code.SERVER_ERROR);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<HbtiReviewHeart> getReviewHeartsByReviewId(Long reviewId) {
+        return hbtiReviewHeartRepository.findAllByHbtiReviewId(reviewId);
     }
 }
