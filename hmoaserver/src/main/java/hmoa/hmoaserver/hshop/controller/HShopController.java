@@ -308,6 +308,21 @@ public class HShopController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 단 건 조회")
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<HbtiReviewResponseDto> getReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        boolean isWrited = review.getMemberId().equals(member.getId());
+        boolean isLiked = hbtiReviewService.isPresentReviewHeart(reviewId, member.getId());
+        Member author = memberService.findById(review.getMemberId()).get();
+        OrderEntity order = orderService.findById(review.getOrderId());
+
+        return ResponseEntity.ok(new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked));
+    }
+
     private void validateOwner(Member member, HbtiReview review) {
         if (!member.getId().equals(review.getMemberId())) {
             throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
