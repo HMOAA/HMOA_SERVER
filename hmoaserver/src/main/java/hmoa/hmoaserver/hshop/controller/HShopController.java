@@ -9,10 +9,7 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.fcm.service.constant.NotificationType;
-import hmoa.hmoaserver.hshop.domain.Cart;
-import hmoa.hmoaserver.hshop.domain.HbtiReview;
-import hmoa.hmoaserver.hshop.domain.NoteProduct;
-import hmoa.hmoaserver.hshop.domain.OrderEntity;
+import hmoa.hmoaserver.hshop.domain.*;
 import hmoa.hmoaserver.hshop.dto.*;
 import hmoa.hmoaserver.hshop.service.CartService;
 import hmoa.hmoaserver.hshop.service.HbtiReviewService;
@@ -293,6 +290,22 @@ public class HShopController {
                 .isLastPage(isLastPage)
                 .data(res)
                 .build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 삭제")
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<?> deleteMyReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        validateOwner(member, review);
+
+        List<HbtiReviewHeart> hearts = hbtiReviewService.getReviewHeartsByReviewId(reviewId);
+        hbtiReviewService.deleteHbtiReviewHeart(hearts);
+        hbtiReviewService.deleteHbtiReview(review);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     private void validateOwner(Member member, HbtiReview review) {
