@@ -15,7 +15,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     Optional<OrderEntity> findById(Long id);
     Optional<OrderEntity> findByTrackingNumber(String trackingNumber);
     List<OrderEntity> findByMemberId(Long memberId);
-    Page<OrderEntity> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+
+    @Query("SELECT o " +
+            "FROM OrderEntity o " +
+            "WHERE o.memberId = :memberId AND o.status != (:status) " +
+            "ORDER BY o.createdAt DESC, o.id DESC")
+    Page<OrderEntity> findByMemberIdOrderByCreatedAtDesc(Long memberId, OrderStatus status, Pageable pageable);
 
     @Query("SELECT o " +
             "FROM OrderEntity o " +

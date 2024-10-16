@@ -61,7 +61,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> getOrderPage(Long memberId, int page) {
-        return orderRepository.findByMemberIdOrderByCreatedAtDesc(memberId, PageRequest.of(page, PageSize.FIVE_SIZE.getSize()));
+        return orderRepository.findByMemberIdOrderByCreatedAtDesc(memberId, OrderStatus.REVIEW_COMPLETE, PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     public void deleteOrders(List<OrderEntity> orders) {
