@@ -19,7 +19,8 @@ public enum OrderStatus {
     SHIPPING_COMPLETE("배송 완료"),
     PURCHASE_CONFIRMATION("구매 확정"),
     RETURN_COMPLETE("반품 완료"),
-    RETURN_PROGRESS("반품 진행 중");
+    RETURN_PROGRESS("반품 진행 중"),
+    REVIEW_COMPLETE("리뷰 완료");
 
     private final String description;
 

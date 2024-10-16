@@ -200,6 +200,8 @@ public class HShopController {
         OrderEntity order = orderService.findById(orderId);
 
         HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
+        orderService.updateOrderStatus(order, OrderStatus.REVIEW_COMPLETE);
+
         List<HbtiPhoto> photos = new ArrayList<>();
 
         if (files != null) {
