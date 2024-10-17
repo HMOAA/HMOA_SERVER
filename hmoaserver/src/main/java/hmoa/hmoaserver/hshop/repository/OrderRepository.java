@@ -18,9 +18,9 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
     @Query("SELECT o " +
             "FROM OrderEntity o " +
-            "WHERE o.memberId = :memberId AND o.status != (:status) " +
+            "WHERE o.memberId = :memberId AND o.status NOT IN (:statuses) " +
             "ORDER BY o.createdAt DESC, o.id DESC")
-    Page<OrderEntity> findByMemberIdOrderByCreatedAtDesc(Long memberId, OrderStatus status, Pageable pageable);
+    Page<OrderEntity> findByMemberIdOrderByCreatedAtDesc(Long memberId, List<OrderStatus> statuses, Pageable pageable);
 
     @Query("SELECT o " +
             "FROM OrderEntity o " +
