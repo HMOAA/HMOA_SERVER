@@ -182,7 +182,7 @@ public class HShopController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
-    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록")
+    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록", notes = "후기 작성이 가능한 상태의 주문들만 반환")
     @GetMapping("order/me")
     public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
