@@ -69,6 +69,7 @@ public enum Code {
     MEMBER_INFO_NOT_FOUND(NOT_FOUND, "저장된 주문자 정보가 없습니다"),
     ADDRESS_NOT_FOUND(NOT_FOUND, "저장된 주소가 없습니다"),
     ORDER_NOT_FOUND(NOT_FOUND, "저장된 주문이 없습니다"),
+    HBTI_REVIEW_NOT_FOUND(NOT_FOUND, "저장된 리뷰가 없습니다"),
 
     /**
      * 409 CONFLICT

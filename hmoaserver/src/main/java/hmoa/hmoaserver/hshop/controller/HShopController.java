@@ -1,13 +1,18 @@
 package hmoa.hmoaserver.hshop.controller;
 
+import hmoa.hmoaserver.common.PageSize;
+import hmoa.hmoaserver.common.PageUtil;
+import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.hshop.domain.Cart;
-import hmoa.hmoaserver.hshop.domain.NoteProduct;
-import hmoa.hmoaserver.hshop.domain.OrderEntity;
+import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
+import hmoa.hmoaserver.fcm.service.FCMNotificationService;
+import hmoa.hmoaserver.fcm.service.constant.NotificationType;
+import hmoa.hmoaserver.hshop.domain.*;
 import hmoa.hmoaserver.hshop.dto.*;
 import hmoa.hmoaserver.hshop.service.CartService;
+import hmoa.hmoaserver.hshop.service.HbtiReviewService;
 import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -16,12 +21,19 @@ import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.note.domain.Note;
 import hmoa.hmoaserver.note.service.NoteService;
+import hmoa.hmoaserver.photo.domain.HbtiPhoto;
+import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
+import hmoa.hmoaserver.photo.service.HbtiPhotoService;
+import hmoa.hmoaserver.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +55,10 @@ public class HShopController {
     private final MemberAddressService memberAddressService;
     private final OrderService orderService;
     private final CartService cartService;
+    private final HbtiReviewService hbtiReviewService;
+    private final PhotoService photoService;
+    private final HbtiPhotoService hbtiPhotoService;
+    private final FCMNotificationService fcmNotificationService;
 
     @ApiOperation("상품 등록")
     @PostMapping("/save")
@@ -98,7 +114,8 @@ public class HShopController {
         Member member = memberService.findByMember(token);
 
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
-        OrderEntity order = orderService.firstOrderSave(member, dto.getProductIds(), noteProducts.getTotalPrice());
+        String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
+        OrderEntity order = orderService.firstOrderSave(member, orderTitle, dto.getProductIds(), noteProducts.getTotalPrice());
         boolean isExistMemberInfo = memberInfoService.isExistMemberInfo(member.getId());
         boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
 
@@ -163,5 +180,173 @@ public class HShopController {
         orderService.deleteOrder(order);
 
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation(value = "후기 작성 버튼 클릭 시 주문 목록", notes = "후기 작성이 가능한 상태의 주문들만 반환")
+    @GetMapping("order/me")
+    public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
+        Member member = memberService.findByMember(token);
+        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
+        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
+
+        return ResponseEntity.ok(res);
+    }
+
+    @Tag(name = "H-shop-review", description = "향bti 리뷰 API")
+    @ApiOperation(value = "향bti 후기 저장")
+    @PostMapping(value = "/review", consumes = "multipart/form-data")
+    public ResponseEntity<HbtiReviewResponseDto> saveHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long orderId, @RequestPart(value = "image", required = false) List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
+        Member member = memberService.findByMember(token);
+        OrderEntity order = orderService.findById(orderId);
+
+        HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
+        orderService.updateOrderStatus(order, OrderStatus.REVIEW_COMPLETE);
+
+        List<HbtiPhoto> photos = new ArrayList<>();
+
+        if (files != null) {
+            photoService.validateReviewPhotoCountExceeded(files.size());
+            photos = hbtiReviewService.saveHbtiPhotos(hbtiReview, files);
+        }
+
+        return ResponseEntity.ok(createReviewResponseDto(hbtiReview, order, member, photos));
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 수정")
+    @PostMapping(value = "review/{reviewId}", consumes = "multipart/form-data")
+    public  ResponseEntity<HbtiReviewResponseDto> modifyHbtiReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId, @RequestPart(value = "image", required = false) List<MultipartFile> photos, HbtiReviewModifyRequestDto dto) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+        OrderEntity order = orderService.findById(review.getOrderId());
+
+        validateOwner(member, review);
+
+        List<HbtiPhoto> curPhoto = new ArrayList<>(review.getHbtiPhotos().stream()
+                .filter(photo -> !dto.getDeleteReviewPhotoIds().contains(photo.getId()))
+                .toList());
+
+        hbtiPhotoService.deleteAll(dto.getDeleteReviewPhotoIds());
+        hbtiReviewService.modifyHbtiReview(review, dto);
+
+        if (photos != null) {
+            curPhoto.addAll(hbtiReviewService.saveHbtiPhotos(review, photos));
+        }
+
+        return ResponseEntity.ok(createReviewResponseDto(review, order, member, curPhoto));
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "향bti 후기 목록 조회")
+    @GetMapping("review")
+    public ResponseEntity<PagingDto<Object>> findHbtiReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam int page) {
+        Member member = memberService.findByMember(token);
+        Page<HbtiReview> hbtiReviews = hbtiReviewService.getHbtiReviewsByPage(page);
+        List<HbtiReviewResponseDto> res = createReviewResponseDtos(hbtiReviews, member);
+        boolean isLastPage = PageUtil.isLastPage(hbtiReviews);
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(res)
+                .build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "향bti 후기 좋아요")
+    @PutMapping("review/{reviewId}/like")
+    public ResponseEntity<?> saveHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        hbtiReviewService.saveHeart(review.getId(), member.getId());
+        hbtiReviewService.increaseHbtiHeartCount(review);
+        fcmNotificationService.sendNotification(new FCMNotificationRequestDto(review.getMemberId(), member.getNickname(), member.getId(), NotificationType.HBTI_REVIEW_LIKE, reviewId));
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "향bti 후기 좋아요 취소")
+    @DeleteMapping("review/{reviewId}/like")
+    public ResponseEntity<?> deleteHbtiReviewHeart(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        hbtiReviewService.deleteHeart(review.getId(), member.getId());
+        hbtiReviewService.decreaseHbtiHeartCount(review);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "내가 작성한 후기 목록")
+    @GetMapping("/review/me")
+    public ResponseEntity<?> getMyReviews(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
+        Member member = memberService.findByMember(token);
+        if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
+        Page<HbtiReview> reviews = hbtiReviewService.getHbtiReviewsByMemberAndCursor(member.getId(), cursor);
+        List<HbtiReviewResponseDto> res = createReviewResponseDtos(reviews, member);
+        boolean isLastPage = PageUtil.isLastPage(reviews);
+
+        return ResponseEntity.ok(PagingDto.builder()
+                .isLastPage(isLastPage)
+                .data(res)
+                .build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 삭제")
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<?> deleteMyReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        validateOwner(member, review);
+
+        OrderEntity order = orderService.findById(review.getOrderId());
+        List<HbtiReviewHeart> hearts = hbtiReviewService.getReviewHeartsByReviewId(reviewId);
+        hbtiReviewService.deleteHbtiReviewHeart(hearts);
+        hbtiReviewService.deleteHbtiReview(review);
+        orderService.updateOrderStatus(order, OrderStatus.SHIPPING_COMPLETE);
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @Tag(name = "H-shop-review", description = "Hshop review API")
+    @ApiOperation(value = "후기 단 건 조회")
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<HbtiReviewResponseDto> getReview(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long reviewId) {
+        Member member = memberService.findByMember(token);
+        HbtiReview review = hbtiReviewService.getReview(reviewId);
+
+        boolean isWrited = review.getMemberId().equals(member.getId());
+        boolean isLiked = hbtiReviewService.isPresentReviewHeart(reviewId, member.getId());
+        Member author = memberService.findById(review.getMemberId()).get();
+        OrderEntity order = orderService.findById(review.getOrderId());
+
+        return ResponseEntity.ok(new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked));
+    }
+
+    private void validateOwner(Member member, HbtiReview review) {
+        if (!member.getId().equals(review.getMemberId())) {
+            throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
+        }
+    }
+
+    private HbtiReviewResponseDto createReviewResponseDto(HbtiReview review, OrderEntity order, Member member, List<HbtiPhoto> curPhoto) {
+        HbtiReviewResponseDto res = new HbtiReviewResponseDto(review, order.getTitle(), member, true, false);
+        res.setImagesCount(curPhoto.size());
+        res.setHbtiPhotos(curPhoto.stream().map(PhotoResponseDto::new).toList());
+        return res;
+    }
+
+    private List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
+        return reviews.stream().map(review -> {
+            boolean isWrited = review.getMemberId().equals(member.getId());
+            boolean isLiked = hbtiReviewService.isPresentReviewHeart(review.getId(), member.getId());
+            Member author = memberService.findById(review.getMemberId()).get();
+            OrderEntity order = orderService.findById(review.getOrderId());
+            return new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked);
+        }).toList();
     }
 }

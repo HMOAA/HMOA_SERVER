@@ -9,5 +9,6 @@ public enum NotificationLink {
     perfume_comment,
     community_comment,
     event,
-    shop
+    shop,
+    hbti_review
 }

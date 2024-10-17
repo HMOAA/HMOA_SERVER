@@ -14,6 +14,8 @@ public class NotificationMessageFactory {
                 return new CommunityCommentLikeNotificationMessage();
             case PERFUME_COMMENT_LIKE:
                 return new PerfumeCommentLikeNotificationMessage();
+            case HBTI_REVIEW_LIKE:
+                return new HbtiReviewLikeNotificationMessage();
             default:
                 throw new CustomException(null, Code.SERVER_ERROR);
         }

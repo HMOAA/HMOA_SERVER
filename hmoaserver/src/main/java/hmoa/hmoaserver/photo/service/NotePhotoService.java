@@ -21,6 +21,7 @@ public class NotePhotoService {
 
     @Value("${cloud.aws.s3.bucket-name.note}")
     private String brandPhotoBucketName;
+
     private final PhotoService photoService;
     private final NotePhotoRepository notePhotoRepository;
 

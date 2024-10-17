@@ -2,7 +2,8 @@ package hmoa.hmoaserver.fcm.service.constant;
 
 import static hmoa.hmoaserver.fcm.service.constant.NotificationConstants.*;
 
-public class PerfumeCommentLikeNotificationMessage implements NotificationMessage{
+public class HbtiReviewLikeNotificationMessage implements NotificationMessage{
+
     @Override
     public String getTitle() {
         return LIKE_ALARM_TITLE;
@@ -10,7 +11,7 @@ public class PerfumeCommentLikeNotificationMessage implements NotificationMessag
 
     @Override
     public String getContent(String sender) {
-        return sender + LIKE_COMMENT_ALARM_MESSAGE;
+        return sender + LIKE_REVIEW_ALARM_MESSAGE;
     }
 
     @Override

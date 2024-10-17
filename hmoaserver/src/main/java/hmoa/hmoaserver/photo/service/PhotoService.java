@@ -59,6 +59,16 @@ public class PhotoService {
     }
 
     /**
+     * 리뷰 첨부 파일 개수 검즈증
+     * 413
+     */
+    public void validateReviewPhotoCountExceeded(int count) {
+        if (count > 5) {
+            throw new CustomException(null, FILE_COUNT_EXCEED);
+        }
+    }
+
+    /**
      * MultipartFile을 File로 전환 |
      * MultipartFile을 받아서 File의 형태로 전환하여 반환한다.
      */

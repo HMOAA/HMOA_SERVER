@@ -73,6 +73,7 @@ cloud:
         community: ${S3_COMMUNITY_BUCKET}
         magazine: ${S3_MAGAZINE_BUCKET}
         note: ${S3_NOTE_BUCKET}
+        hbti: ${S3_HBTI_BUCKET}
     region:
       static: ap-northeast-2
     stack:
