@@ -303,9 +303,11 @@ public class HShopController {
 
         validateOwner(member, review);
 
+        OrderEntity order = orderService.findById(review.getOrderId());
         List<HbtiReviewHeart> hearts = hbtiReviewService.getReviewHeartsByReviewId(reviewId);
         hbtiReviewService.deleteHbtiReviewHeart(hearts);
         hbtiReviewService.deleteHbtiReview(review);
+        orderService.updateOrderStatus(order, OrderStatus.SHIPPING_COMPLETE);
 
         return ResponseEntity.ok(ResultDto.builder().build());
     }
