@@ -25,6 +25,10 @@ public enum OrderStatus {
     private final String description;
 
     public static List<OrderStatus> getCancelStatus() {
-        return List.of(OrderStatus.PAY_CANCEL, OrderStatus.RETURN_COMPLETE, OrderStatus.RETURN_PROGRESS);
+        return List.of(PAY_CANCEL, RETURN_COMPLETE, RETURN_PROGRESS);
+    }
+
+    public static List<OrderStatus> getReviewStatus() {
+        return List.of(PAY_CANCEL, RETURN_COMPLETE, RETURN_PROGRESS, REVIEW_COMPLETE);
     }
 }
