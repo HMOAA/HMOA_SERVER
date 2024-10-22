@@ -79,6 +79,7 @@ public enum Code {
     DUPLICATE_WEATHERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_GENDERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_AGEIDX(CONFLICT, "올바른 숫자로 보내주세요"),
+    DUPLICATE_REVIEW(CONFLICT, "한 주문 당 한 번만 리뷰가 가능합니다."),
 
     /**
      * 413 PAYLOAD_TOO_LARGE
