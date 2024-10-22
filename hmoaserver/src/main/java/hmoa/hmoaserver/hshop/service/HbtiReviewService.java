@@ -8,7 +8,6 @@ import hmoa.hmoaserver.hshop.domain.HbtiReviewHeart;
 import hmoa.hmoaserver.hshop.dto.HbtiReviewModifyRequestDto;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewHeartRepository;
 import hmoa.hmoaserver.hshop.repository.HbtiReviewRepository;
-import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,9 @@ public class HbtiReviewService {
 
     @Transactional
     public HbtiReview save(HbtiReview hbtiReview) {
+        if (isPresentHbtiReviewByMember(hbtiReview.getOrderId(), hbtiReview.getMemberId())) {
+            throw new CustomException(null, Code.DUPLICATE_REVIEW);
+        }
         try {
             return hbtiReviewRepository.save(hbtiReview);
         } catch (Exception e) {
@@ -62,6 +64,11 @@ public class HbtiReviewService {
     @Transactional(readOnly = true)
     public Page<HbtiReview> getHbtiReviewsByPage(int page) {
         return hbtiReviewRepository.findAllByOrderByHeartCountDescCreatedAtDesc(PageRequest.of(page, PageSize.FIVE_SIZE.getSize()));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isPresentHbtiReviewByMember(Long orderId, Long memberId) {
+        return hbtiReviewRepository.findByOrderIdAndMemberId(orderId, memberId).isPresent();
     }
 
     @Transactional(readOnly = true)
