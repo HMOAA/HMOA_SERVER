@@ -18,13 +18,20 @@ public class MemberOrderResponseDto {
     private String createdAt;
     private String courierCompany;
     private String trackingNumber;
+    @Getter(AccessLevel.NONE)
+    private boolean isReviewed;
 
-    public MemberOrderResponseDto(OrderEntity order, OrderInfoResponseDto orderProducts) {
+    public boolean getIsReviewed() {
+        return this.isReviewed;
+    }
+
+    public MemberOrderResponseDto(OrderEntity order, OrderInfoResponseDto orderProducts, boolean isReviewed) {
         this.orderId = order.getId();
         this.orderStatus = order.getStatus();
         this.orderProducts = orderProducts;
         this.createdAt = DateUtils.extractOrderDate(order.getCreatedAt());
         this.courierCompany = order.getCourierCompany();
         this.trackingNumber = order.getTrackingNumber();
+        this.isReviewed = isReviewed;
     }
 }
