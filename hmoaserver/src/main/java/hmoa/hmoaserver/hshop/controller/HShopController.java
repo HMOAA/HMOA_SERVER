@@ -186,8 +186,12 @@ public class HShopController {
     @GetMapping("order/me")
     public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
-        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
-        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
+        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        List<OrderEntity> filteredOrders = orders.stream()
+                .filter(order -> hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), member.getId()))
+                .limit(PageSize.FIFTY_SIZE.getSize())
+                .toList();
+        List<OrderSelectResponseDto> res = filteredOrders.stream().map(OrderSelectResponseDto::new).toList();
 
         return ResponseEntity.ok(res);
     }
@@ -200,7 +204,6 @@ public class HShopController {
         OrderEntity order = orderService.findById(orderId);
 
         HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
-        orderService.updateOrderStatus(order, OrderStatus.REVIEW_COMPLETE);
 
         List<HbtiPhoto> photos = new ArrayList<>();
 
