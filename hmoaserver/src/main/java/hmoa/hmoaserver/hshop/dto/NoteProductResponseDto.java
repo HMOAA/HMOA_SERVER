@@ -14,6 +14,7 @@ public class NoteProductResponseDto {
     private String productDetails;
     private String productPhotoUrl;
     private Boolean isRecommended;
+    private int price;
 
     public NoteProductResponseDto(NoteProduct noteProduct, boolean isRecommended) {
         this.productId = noteProduct.getId();
@@ -21,6 +22,7 @@ public class NoteProductResponseDto {
         this.productDetails = getDetails(noteProduct.getNote().getNoteDetailNotes());
         this.productPhotoUrl = noteProduct.getNote().getNotePhoto().getPhotoUrl();
         this.isRecommended = isRecommended;
+        this.price = noteProduct.getPrice();
     }
 
     private static String getDetails(List<NoteDetailNote> noteDetailNotes) {

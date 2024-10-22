@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.member;
 
+import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.community.domain.Community;
@@ -14,6 +15,7 @@ import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.OrderInfoResponseDto;
+import hmoa.hmoaserver.hshop.service.HbtiReviewService;
 import hmoa.hmoaserver.hshop.service.NoteProductService;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
@@ -53,6 +55,7 @@ public class MemberFacade {
     private final MemberAddressService memberAddressService;
     private final MemberInfoService memberInfoService;
     private final NoteProductService noteProductService;
+    private final HbtiReviewService hbtiReviewService;
 
     @Value("${default.profile}")
     private String DEFAULT_PROFILE;
@@ -193,10 +196,10 @@ public class MemberFacade {
         Member member = memberService.findByMember(token);
         if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
-        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor);
+        Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor, PageSize.FIVE_SIZE.getSize());
 
         return PagingDto.builder()
-                .data(getMemberOrderResponseDto(orders))
+                .data(getMemberOrderResponseDto(orders, member.getId()))
                 .isLastPage(PageUtil.isLastPage(orders))
                 .build();
     }
@@ -208,15 +211,15 @@ public class MemberFacade {
         Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), cursor);
 
         return PagingDto.builder()
-                .data(getMemberOrderResponseDto(orders))
+                .data(getMemberOrderResponseDto(orders, member.getId()))
                 .isLastPage(PageUtil.isLastPage(orders))
                 .build();
     }
 
-    private List<MemberOrderResponseDto> getMemberOrderResponseDto(Page<OrderEntity> orders) {
+    private List<MemberOrderResponseDto> getMemberOrderResponseDto(Page<OrderEntity> orders, Long memberId) {
         return orders.stream()
                 .map(order -> new MemberOrderResponseDto(
-                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE)))
+                        order, new OrderInfoResponseDto(noteProductService.getNoteProducts(order.getProductIds()), order.getTotalPrice(), SHIPPING_FEE), hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), memberId)))
                 .toList();
     }
 }

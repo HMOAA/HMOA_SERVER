@@ -36,6 +36,7 @@ public enum Code {
      * 403 FORBIDDEN
      */
     FORBIDDEN_AUTHORIZATION(FORBIDDEN,"접근 권한이 없습니다"),
+    HBTI_NOT_SUBJECTED(FORBIDDEN, "추천 설문이 끝난 후 가능한 서비스 입니다."),
 
     /**
      * 404 NOT_FOUND
@@ -79,6 +80,7 @@ public enum Code {
     DUPLICATE_WEATHERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_GENDERIDX(CONFLICT, "올바른 숫자로 보내주세요"),
     DUPLICATE_AGEIDX(CONFLICT, "올바른 숫자로 보내주세요"),
+    DUPLICATE_REVIEW(CONFLICT, "한 주문 당 한 번만 리뷰가 가능합니다."),
 
     /**
      * 413 PAYLOAD_TOO_LARGE

@@ -50,18 +50,13 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderEntity> findByMemberId(Long memberId, Long cursor) {
-        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.getCancelStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
+    public Page<OrderEntity> findByMemberId(Long memberId, Long cursor, int size) {
+        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.getCancelStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), size));
     }
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> findCancelByMemberId(Long memberId, Long cursor) {
         return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.getCancelStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<OrderEntity> getOrderPage(Long memberId, int page) {
-        return orderRepository.findByMemberIdOrderByCreatedAtDesc(memberId, OrderStatus.getReviewStatus(), PageRequest.of(page, PageSize.TEN_SIZE.getSize()));
     }
 
     public void deleteOrders(List<OrderEntity> orders) {

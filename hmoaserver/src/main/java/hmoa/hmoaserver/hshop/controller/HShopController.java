@@ -25,6 +25,7 @@ import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
+import hmoa.hmoaserver.recommend.survey.domain.NoteRecommend;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,11 +80,15 @@ public class HShopController {
         Member member = memberService.findByMember(token);
 
         List<NoteProduct> noteProducts = noteProductService.getAllNoteProducts();
-        List<String> recommendNotes = member.getNoteRecommend().getRecommendNotes();
+        NoteRecommend recommendNotes = member.getNoteRecommend();
+        if (recommendNotes == null) {
+            throw new CustomException(null, Code.HBTI_NOT_SUBJECTED);
+        }
+
         List<NoteProductResponseDto> result = new ArrayList<>();
 
         for (NoteProduct noteProduct : noteProducts) {
-            boolean recommend = recommendNotes.contains(noteProduct.getNote().getTitle());
+            boolean recommend = recommendNotes.getRecommendNotes().contains(noteProduct.getNote().getTitle());
             result.add(new NoteProductResponseDto(noteProduct, recommend));
         }
 
@@ -186,8 +191,12 @@ public class HShopController {
     @GetMapping("order/me")
     public ResponseEntity<List<OrderSelectResponseDto>> getSelectReviewList(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
-        Page<OrderEntity> orders = orderService.getOrderPage(member.getId(), PageSize.ZERO_PAGE.getSize());
-        List<OrderSelectResponseDto> res =orders.stream().map(OrderSelectResponseDto::new).toList();
+        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        List<OrderEntity> filteredOrders = orders.stream()
+                .filter(order -> hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), member.getId()))
+                .limit(PageSize.FIFTY_SIZE.getSize())
+                .toList();
+        List<OrderSelectResponseDto> res = filteredOrders.stream().map(OrderSelectResponseDto::new).toList();
 
         return ResponseEntity.ok(res);
     }
@@ -200,7 +209,6 @@ public class HShopController {
         OrderEntity order = orderService.findById(orderId);
 
         HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
-        orderService.updateOrderStatus(order, OrderStatus.REVIEW_COMPLETE);
 
         List<HbtiPhoto> photos = new ArrayList<>();
 
