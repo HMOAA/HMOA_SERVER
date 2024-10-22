@@ -25,6 +25,7 @@ import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
+import hmoa.hmoaserver.recommend.survey.domain.NoteRecommend;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,11 +80,15 @@ public class HShopController {
         Member member = memberService.findByMember(token);
 
         List<NoteProduct> noteProducts = noteProductService.getAllNoteProducts();
-        List<String> recommendNotes = member.getNoteRecommend().getRecommendNotes();
+        NoteRecommend recommendNotes = member.getNoteRecommend();
+        if (recommendNotes == null) {
+            throw new CustomException(null, Code.HBTI_NOT_SUBJECTED);
+        }
+
         List<NoteProductResponseDto> result = new ArrayList<>();
 
         for (NoteProduct noteProduct : noteProducts) {
-            boolean recommend = recommendNotes.contains(noteProduct.getNote().getTitle());
+            boolean recommend = recommendNotes.getRecommendNotes().contains(noteProduct.getNote().getTitle());
             result.add(new NoteProductResponseDto(noteProduct, recommend));
         }
 

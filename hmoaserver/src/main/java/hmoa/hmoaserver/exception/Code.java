@@ -36,6 +36,7 @@ public enum Code {
      * 403 FORBIDDEN
      */
     FORBIDDEN_AUTHORIZATION(FORBIDDEN,"접근 권한이 없습니다"),
+    HBTI_NOT_SUBJECTED(FORBIDDEN, "추천 설문이 끝난 후 가능한 서비스 입니다."),
 
     /**
      * 404 NOT_FOUND
