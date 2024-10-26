@@ -120,6 +120,10 @@ public class HShopController {
 
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
         String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
+        if (dto.getProductIds().size() > 1) {
+            String orderFormat = String.format(" 외 %d건", dto.getProductIds().size());
+            orderTitle += orderFormat;
+        }
         OrderEntity order = orderService.firstOrderSave(member, orderTitle, dto.getProductIds(), noteProducts.getTotalPrice());
         boolean isExistMemberInfo = memberInfoService.isExistMemberInfo(member.getId());
         boolean isExistMemberAddress = memberAddressService.isExistMemberAddress(member.getId());
@@ -193,7 +197,8 @@ public class HShopController {
         Member member = memberService.findByMember(token);
         List<OrderEntity> orders = orderService.findByMemberId(member.getId());
         List<OrderEntity> filteredOrders = orders.stream()
-                .filter(order -> hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), member.getId()))
+                .filter(order -> !hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), member.getId()))
+                .filter(order -> OrderStatus.getAllStatus().contains(order.getStatus()))
                 .limit(PageSize.FIFTY_SIZE.getSize())
                 .toList();
         List<OrderSelectResponseDto> res = filteredOrders.stream().map(OrderSelectResponseDto::new).toList();
