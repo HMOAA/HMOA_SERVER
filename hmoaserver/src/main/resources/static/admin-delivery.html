@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>운송장 등록</title>
+</head>
+<body>
+<h1>운송장 정보 등록</h1>
+
+<!-- 관리자 토큰 입력란 -->
+<label for="authToken">X-AUTH-TOKEN 입력:</label>
+<input type="text" id="authToken" placeholder="토큰 입력" required />
+
+<!-- 운송장 정보 입력란 -->
+<div>
+    <label for="orderId">주문 ID:</label>
+    <input type="number" id="orderId" placeholder="주문 ID 입력" required />
+</div>
+<div>
+    <label for="courierCountry">운송사 국가:</label>
+    <input type="text" id="courierCountry" placeholder="운송사 국가 입력" required />
+</div>
+<div>
+    <label for="trackingNumber">운송장 번호:</label>
+    <input type="text" id="trackingNumber" placeholder="운송장 번호 입력" required />
+</div>
+
+<!-- 등록 버튼 -->
+<button id="registerDeliveryBtn">운송장 정보 등록</button>
+
+<!-- 결과 표시 영역 -->
+<div id="result"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const registerDeliveryBtn = document.getElementById("registerDeliveryBtn");
+
+        registerDeliveryBtn.addEventListener("click", async () => {
+            // 토큰 및 입력값 가져오기
+            const authToken = document.getElementById("authToken").value;
+            const orderId = document.getElementById("orderId").value;
+            const courierCountry = document.getElementById("courierCountry").value;
+            const trackingNumber = document.getElementById("trackingNumber").value;
+
+            // 입력값 검증
+            if (!authToken || !orderId || !courierCountry || !trackingNumber) {
+                alert("모든 필드를 입력하세요.");
+                return;
+            }
+
+            // 요청 바디 구성
+            const requestBody = {
+                orderId: Number(orderId),
+                courierCountry: courierCountry,
+                trackingNumber: trackingNumber,
+            };
+
+            try {
+                const response = await fetch("/admin/delivery-info", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-AUTH-TOKEN": authToken, // 토큰 헤더 추가
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                // 결과 처리
+                if (response.ok) {
+                    const resultData = await response.json();
+                    document.getElementById("result").innerText = "등록 성공: " + JSON.stringify(resultData);
+                } else {
+                    document.getElementById("result").innerText = "등록 실패: " + response.status;
+                }
+            } catch (error) {
+                console.error("운송장 등록 에러:", error);
+                document.getElementById("result").innerText = "등록 중 오류가 발생했습니다.";
+            }
+        });
+    });
+</script>
+</body>
+</html>
