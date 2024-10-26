@@ -59,6 +59,11 @@ public class OrderService {
         return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.getCancelStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.FIVE_SIZE.getSize()));
     }
 
+    @Transactional(readOnly = true)
+    public List<OrderEntity> getDeliveryOrders() {
+        return orderRepository.findByStatus(OrderStatus.PAY_COMPLETE);
+    }
+
     public void deleteOrders(List<OrderEntity> orders) {
         orderRepository.deleteAll(orders);
     }
