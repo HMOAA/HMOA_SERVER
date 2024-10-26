@@ -27,4 +27,8 @@ public enum OrderStatus {
     public static List<OrderStatus> getCancelStatus() {
         return List.of(PAY_CANCEL, RETURN_COMPLETE, RETURN_PROGRESS);
     }
+
+    public static List<OrderStatus> getAllStatus() {
+        return List.of(PAY_FAILED, PAY_COMPLETE, SHIPPING_COMPLETE, SHIPPING_PROGRESS, PURCHASE_CONFIRMATION);
+    }
 }
