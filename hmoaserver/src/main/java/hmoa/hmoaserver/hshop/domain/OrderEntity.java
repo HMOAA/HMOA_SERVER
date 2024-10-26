@@ -70,4 +70,8 @@ public class OrderEntity extends BaseEntity {
     public void updateAddressId(final Long addressId) {
         this.addressId = addressId;
     }
+
+    public void updateOrderTitle(final String orderTitle) {
+        this.title = orderTitle;
+    }
 }

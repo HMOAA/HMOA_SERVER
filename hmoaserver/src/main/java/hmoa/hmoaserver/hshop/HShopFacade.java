@@ -135,8 +135,14 @@ public class HShopFacade {
 
         memberService.checkAuthorization(member.getId(), order.getMemberId());
         orderService.deleteProduct(order, product);
-
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(order.getProductIds());
+
+        String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
+        if (order.getProductIds().size() > 1) {
+            String orderFormat = String.format(" 외 %d건", order.getProductIds().size());
+            orderTitle += orderFormat;
+        }
+        orderService.updateOrderTitle(order, orderTitle);
 
         return new OrderInfoResponseDto(noteProducts, order.getTotalPrice(), SHIPPING_FEE);
     }

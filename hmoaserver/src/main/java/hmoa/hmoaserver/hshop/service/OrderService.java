@@ -84,6 +84,9 @@ public class OrderService {
         order.updateTrackingNumber(trackingNumber);
     }
 
+    public void updateOrderTitle(OrderEntity order, String title) {
+        order.updateOrderTitle(title);
+    }
     public void deleteProduct(OrderEntity order, final NoteProduct product) {
 
         if (order.getProductIds().contains(product.getId())) {
