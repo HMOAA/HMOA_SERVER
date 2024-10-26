@@ -51,7 +51,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderEntity> findByMemberId(Long memberId, Long cursor, int size) {
-        return orderRepository.findByMemberIdAndStatusNot(memberId, OrderStatus.getCancelStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), size));
+        return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.getAllStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), size));
     }
 
     @Transactional(readOnly = true)
