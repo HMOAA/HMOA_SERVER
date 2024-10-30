@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.admin.dto.*;
 import hmoa.hmoaserver.admin.dto.constant.TrackingQuery;
 import hmoa.hmoaserver.admin.dto.constant.TrackingStatus;
+import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.service.OrderService;
+import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +28,8 @@ import java.util.Map;
 @Slf4j
 public class AdminFacade {
 
+    private final MemberService memberService;
+    private final TestTokenProvider testTokenProvider;
     @Value("${tracking.access}")
     private String trackingAccess;
     @Value("${tracking.secret}")
@@ -36,10 +41,12 @@ public class AdminFacade {
     private final OrderService orderService;
     private final ObjectMapper objectMapper;
 
-    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper) {
+    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberService memberService, TestTokenProvider testTokenProvider) {
         this.webClient = webClientBuilder.baseUrl("https://apis.tracker.delivery").build();
         this.orderService = orderService;
         this.objectMapper = objectMapper;
+        this.memberService = memberService;
+        this.testTokenProvider = testTokenProvider;
     }
 
     // 운송장 등록
@@ -63,6 +70,11 @@ public class AdminFacade {
         if (status != null && (status.equals(TrackingStatus.AVAILABLE_FOR_PICKUP.getValue()) || status.equals(TrackingStatus.DELIVERED.getValue()))) {
             orderService.updateOrderStatus(order, OrderStatus.SHIPPING_COMPLETE);
         }
+    }
+
+    public String getMemberToken(Long memberId) {
+        Member member = memberService.findById(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
+        return testTokenProvider.getMemberToken(member);
     }
 
     public void updateOrderStatus(OrderStatusUpdateRequestDto dto) {

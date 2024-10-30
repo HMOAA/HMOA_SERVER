@@ -86,6 +86,12 @@ public class AdminController {
         throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
     }
 
+    @ApiOperation("멤버 토큰 발급 (MemberId, Header = 관리자 토큰 )")
+    @GetMapping("/member-token/{memberId}")
+    public ResponseEntity<?> getMemberToken(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long memberId) {
+        return ResponseEntity.ok(adminFacade.getMemberToken(memberId));
+    }
+
     // 운송장 등록 + Tracking delivery 서비스 등록
     @ApiOperation("운송장 등록")
     @PostMapping("/delivery-info")
