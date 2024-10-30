@@ -92,6 +92,12 @@ public class AdminController {
         return ResponseEntity.ok(adminFacade.getMemberToken(memberId));
     }
 
+    @ApiOperation("멤버 토큰 발급 (email, Header = 관리자 토큰 )")
+    @GetMapping("/member-token")
+    public ResponseEntity<?> getMemberTokenByEmail(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam String email) {
+        return ResponseEntity.ok(testTokenProvider.getMemberTokenByEmail(email));
+    }
+
     // 운송장 등록 + Tracking delivery 서비스 등록
     @ApiOperation("운송장 등록")
     @PostMapping("/delivery-info")

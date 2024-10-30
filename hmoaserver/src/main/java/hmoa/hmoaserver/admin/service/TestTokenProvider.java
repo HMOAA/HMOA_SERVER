@@ -40,4 +40,16 @@ public class TestTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
+
+    public String getMemberTokenByEmail(String email) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("roles", Role.ADMIN);
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + 86_400_000))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
 }
