@@ -101,9 +101,6 @@ public class MemberService {
         }catch (RuntimeException e){
             throw new CustomException(e,SERVER_ERROR);
         }
-        if(exisitingNickname){
-            throw new CustomException(null, DUPLICATE_NICKNAME);
-        }
         return exisitingNickname;
     }
     /**
