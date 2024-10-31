@@ -50,6 +50,11 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<OrderEntity> findByMemberIdAndStatuses(Long memberId, List<OrderStatus> statuses) {
+        return orderRepository.findByMemberIdAndStatusIn(memberId, statuses);
+    }
+
+    @Transactional(readOnly = true)
     public Page<OrderEntity> findByMemberId(Long memberId, Long cursor, int size) {
         return orderRepository.findByMemberIdAndStatus(memberId, OrderStatus.getAllStatus(), cursor, PageRequest.of(PageSize.ZERO_PAGE.getSize(), size));
     }

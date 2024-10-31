@@ -24,11 +24,19 @@ public enum OrderStatus {
 
     private final String description;
 
+    private static final List<OrderStatus> CANCEL_STATUS = List.of(PAY_CANCEL, RETURN_COMPLETE, RETURN_PROGRESS);
+    private static final List<OrderStatus> ALL_STATUS = List.of(PAY_FAILED, PAY_COMPLETE, SHIPPING_COMPLETE, SHIPPING_PROGRESS, PURCHASE_CONFIRMATION);
+    private static final List<OrderStatus> POSSIBLE_PERFUME_SURVEY_STATUS = List.of(PAY_COMPLETE, SHIPPING_COMPLETE, SHIPPING_PROGRESS, PURCHASE_CONFIRMATION, RETURN_COMPLETE, RETURN_PROGRESS);
+
     public static List<OrderStatus> getCancelStatus() {
-        return List.of(PAY_CANCEL, RETURN_COMPLETE, RETURN_PROGRESS);
+        return CANCEL_STATUS;
     }
 
     public static List<OrderStatus> getAllStatus() {
-        return List.of(PAY_FAILED, PAY_COMPLETE, SHIPPING_COMPLETE, SHIPPING_PROGRESS, PURCHASE_CONFIRMATION);
+        return ALL_STATUS;
+    }
+
+    public static List<OrderStatus> getPossiblePerfumeSurveyStatus() {
+        return POSSIBLE_PERFUME_SURVEY_STATUS;
     }
 }

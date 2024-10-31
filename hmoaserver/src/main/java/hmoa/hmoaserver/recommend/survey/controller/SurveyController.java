@@ -7,6 +7,7 @@ import hmoa.hmoaserver.community.domain.Community;
 import hmoa.hmoaserver.community.dto.CommunityByHBTIResponseDto;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
+import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
@@ -116,7 +117,7 @@ public class SurveyController {
     @GetMapping("/home")
     public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey(@RequestHeader("X-AUTH-TOKEN") String token) {
         Member member = memberService.findByMember(token);
-        List<OrderEntity> orders = orderService.findByMemberId(member.getId());
+        List<OrderEntity> orders = orderService.findByMemberIdAndStatuses(member.getId(), OrderStatus.getPossiblePerfumeSurveyStatus());
 
         return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
     }
