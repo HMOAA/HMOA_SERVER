@@ -105,7 +105,7 @@ public class HShopFacade {
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
         String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
         if (dto.getProductIds().size() > 1) {
-            String orderFormat = String.format(" 외 %d건", dto.getProductIds().size());
+            String orderFormat = String.format(" 외 %d건", dto.getProductIds().size() - 1);
             orderTitle += orderFormat;
         }
         OrderEntity order = orderService.firstOrderSave(member, orderTitle, dto.getProductIds(), noteProducts.getTotalPrice());
