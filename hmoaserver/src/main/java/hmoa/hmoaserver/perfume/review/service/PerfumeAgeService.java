@@ -49,7 +49,7 @@ public class PerfumeAgeService {
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeAge(member,perfume)){
-            perfumeReviewService.intialSaveReview(perfume);
+            perfumeReviewService.initialSaveReview(perfume);
             PerfumeAge perfumeAge = PerfumeAge.builder()
                     .perfume(perfume)
                     .member(member)

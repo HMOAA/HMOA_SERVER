@@ -108,7 +108,6 @@ public class PerfumeController {
     public ResponseEntity<ResultDto<Object>> savePerfumeImages(@RequestPart(value = "image") List<MultipartFile> files) {
         for (MultipartFile file : files) {
             String name = file.getOriginalFilename();
-            log.info("{}", name);
             Perfume perfume = perfumeService.findPerfumeName(removeBrand(name));
             photoService.validateFileExistence(file);
             photoService.validateFileType(file);
