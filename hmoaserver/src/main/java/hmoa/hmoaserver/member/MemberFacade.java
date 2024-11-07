@@ -162,6 +162,7 @@ public class MemberFacade {
 
     public void deleteMember(String token) {
         Member member = memberService.findByMember(token);
+        memberService.delete(member);
     }
 
     public void saveMemberAddress(String token, MemberAddressSaveRequestDto dto) {
