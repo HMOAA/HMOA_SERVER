@@ -129,7 +129,7 @@ public class MemberFacade {
                 .toList();
     }
 
-    public List<CommunityCommentByMemberResponseDto> getMyCommunityComentsByHearts(String token, int page) {
+    public List<CommunityCommentByMemberResponseDto> getMyCommunityCommentsByHearts(String token, int page) {
         Member member = memberService.findByMember(token);
         Page<CommunityCommentLikedMember> commentLikeds = commentLikedMemberService.findAllByMember(member, page);
 

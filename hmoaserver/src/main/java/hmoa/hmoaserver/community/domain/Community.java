@@ -35,7 +35,7 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPhoto> communityPhotos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CommunityComment> communityComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
