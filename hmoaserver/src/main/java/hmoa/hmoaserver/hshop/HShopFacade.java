@@ -25,12 +25,14 @@ import hmoa.hmoaserver.photo.dto.PhotoResponseDto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import hmoa.hmoaserver.photo.service.PhotoService;
 import hmoa.hmoaserver.recommend.survey.domain.NoteRecommend;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,17 @@ import java.util.Optional;
 public class HShopFacade {
 
     private static final int SHIPPING_FEE = 3000;
+
+    @Value("${default.order-description}")
+    private String orderDescriptionImgUrl;
+
+    @Getter
+    private NoteOrderDescriptionResponseDto noteOrderDescriptionResponseDto;
+
+    @PostConstruct
+    public void init() {
+        this.noteOrderDescriptionResponseDto = new NoteOrderDescriptionResponseDto(orderDescriptionImgUrl);
+    }
 
     private final NoteProductService noteProductService;
     private final NoteService noteService;
