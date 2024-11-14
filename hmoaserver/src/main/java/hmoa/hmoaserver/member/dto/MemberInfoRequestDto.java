@@ -13,11 +13,11 @@ public class MemberInfoRequestDto {
     private String name;
     private String phoneNumber;
 
-    public MemberInfo toEntity(Member member) {
+    public MemberInfo toEntity(Long memberId) {
         return MemberInfo.builder()
                 .name(name)
                 .phoneNumber(phoneNumber)
-                .member(member)
+                .memberId(memberId)
                 .build();
     }
 }

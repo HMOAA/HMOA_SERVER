@@ -161,16 +161,6 @@ public class MemberService {
         save(member);
     }
 
-    @Transactional(readOnly = true)
-    public MemberAddress getMemberAddress(Member member) {
-        return member.getMemberAddress();
-    }
-
-    @Transactional(readOnly = true)
-    public MemberInfo getMemberInfo(Member member) {
-        return member.getMemberInfo();
-    }
-
     /**
      * 소셜 로그인
      */

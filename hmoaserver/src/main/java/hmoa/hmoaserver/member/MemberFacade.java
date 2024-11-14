@@ -168,7 +168,7 @@ public class MemberFacade {
     public void saveMemberAddress(String token, MemberAddressSaveRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        memberAddressService.save(dto.toEntity(member));
+        memberAddressService.save(dto.toEntity(member.getId()));
     }
 
     public void saveOrderInfo(String token, MemberInfoRequestDto dto) {
@@ -178,7 +178,7 @@ public class MemberFacade {
             memberInfoService.delete(memberInfoService.findByMemberId(member.getId()));
         }
 
-        memberInfoService.save(dto.toEntity(member));
+        memberInfoService.save(dto.toEntity(member.getId()));
     }
 
     public MemberInfoResponseDto getOrderInfo(String token) {

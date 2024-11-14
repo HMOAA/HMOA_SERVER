@@ -21,7 +21,7 @@ public class MemberAddressSaveRequestDto {
     @Nullable
     private String request;
 
-    public MemberAddress toEntity(Member member) {
+    public MemberAddress toEntity(Long memberId) {
 
         return MemberAddress.builder()
                 .name(name)
@@ -32,7 +32,7 @@ public class MemberAddressSaveRequestDto {
                 .streetAddress(streetAddress)
                 .detailAddress(detailAddress)
                 .request(request != null ? request : "")
-                .member(member)
+                .memberId(memberId)
                 .build();
     }
 }
