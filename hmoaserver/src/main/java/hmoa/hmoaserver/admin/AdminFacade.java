@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.admin.dto.*;
 import hmoa.hmoaserver.admin.dto.constant.TrackingQuery;
 import hmoa.hmoaserver.admin.dto.constant.TrackingStatus;
+import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -14,6 +15,9 @@ import hmoa.hmoaserver.member.dto.MemberAddressResponseDto;
 import hmoa.hmoaserver.member.dto.MemberInfoResponseDto;
 import hmoa.hmoaserver.member.service.MemberAddressService;
 import hmoa.hmoaserver.member.service.MemberInfoService;
+import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +36,9 @@ public class AdminFacade {
 
     private final MemberAddressService memberAddressService;
     private final MemberInfoService memberInfoService;
+    private final MemberService memberService;
+    private final TestTokenProvider testTokenProvider;
+
     @Value("${tracking.access}")
     private String trackingAccess;
     @Value("${tracking.secret}")
@@ -43,12 +50,14 @@ public class AdminFacade {
     private final OrderService orderService;
     private final ObjectMapper objectMapper;
 
-    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService) {
+    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService, MemberService memberService, TestTokenProvider testTokenProvider) {
         this.webClient = webClientBuilder.baseUrl("https://apis.tracker.delivery").build();
         this.orderService = orderService;
         this.objectMapper = objectMapper;
         this.memberAddressService = memberAddressService;
         this.memberInfoService = memberInfoService;
+        this.memberService = memberService;
+        this.testTokenProvider = testTokenProvider;
     }
 
     // 운송장 등록
@@ -83,6 +92,11 @@ public class AdminFacade {
             MemberInfoResponseDto info = new MemberInfoResponseDto(memberInfoService.findByMemberId(order.getMemberId()));
             return new OrderDeliveryListResponseDto(order, address, info);
         }).toList();
+    }
+  
+    public String getMemberToken(Long memberId) {
+        Member member = memberService.findById(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
+        return testTokenProvider.getMemberToken(member);
     }
 
     public void updateOrderStatus(OrderStatusUpdateRequestDto dto) {

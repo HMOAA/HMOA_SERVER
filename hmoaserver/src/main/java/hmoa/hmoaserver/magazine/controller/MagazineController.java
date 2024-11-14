@@ -23,7 +23,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping("/magazine")
 public class MagazineController {
+
     private final MagazineService magazineService;
     private final MagazinePhotoService magazinePhotoService;
     private final MemberService memberService;
@@ -104,6 +104,7 @@ public class MagazineController {
     @ApiOperation("매거진 단건 조회")
     @GetMapping("/{magazineId}")
     public ResponseEntity<MagazineResponseDto> findOneMagazine(@RequestHeader(value = "X-AUTH-TOKEN", required = false) String token, @PathVariable Long magazineId) {
+        log.info("{}", memberService);
         Magazine magazine = magazineService.findById(magazineId);
         magazineService.increaseViewCount(magazine);
 
@@ -119,7 +120,8 @@ public class MagazineController {
 
     @ApiOperation("매거진 좋아요")
     @PutMapping("/{magazineId}/like")
-    private ResponseEntity<ResultDto> saveMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+    public ResponseEntity<ResultDto> saveMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+        log.info("{}", memberService);
         Member member = memberService.findByMember(token);
         Magazine magazine = magazineService.findById(magazineId);
 
@@ -130,7 +132,7 @@ public class MagazineController {
 
     @ApiOperation("매거진 좋아요 취소")
     @DeleteMapping("/{magazineId}/like")
-    private ResponseEntity<ResultDto> deleteMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
+    public ResponseEntity<ResultDto> deleteMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
         Member member = memberService.findByMember(token);
         Magazine magazine = magazineService.findById(magazineId);
 

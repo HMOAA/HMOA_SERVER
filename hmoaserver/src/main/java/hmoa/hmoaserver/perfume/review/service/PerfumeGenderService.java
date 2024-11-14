@@ -39,7 +39,7 @@ public class PerfumeGenderService {
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeGender(member,perfume)){
-            perfumeReviewService.intialSaveReview(perfume);
+            perfumeReviewService.initialSaveReview(perfume);
             PerfumeGender perfumeGender = PerfumeGender.builder()
                     .perfume(perfume)
                     .member(member)
