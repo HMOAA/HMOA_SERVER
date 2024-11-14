@@ -1,10 +1,7 @@
 package hmoa.hmoaserver.admin.controller;
 
-import hmoa.hmoaserver.admin.dto.AdminTokenRequestDto;
-import hmoa.hmoaserver.admin.dto.OrderDeliverySaveRequestDto;
+import hmoa.hmoaserver.admin.dto.*;
 import hmoa.hmoaserver.admin.AdminFacade;
-import hmoa.hmoaserver.admin.dto.OrderStatusUpdateRequestDto;
-import hmoa.hmoaserver.admin.dto.TrackingCallbackRequestDto;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -22,9 +19,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Api(tags = {"관리자 API"})
 @RestController
@@ -101,10 +101,14 @@ public class AdminController {
     // 운송장 등록 + Tracking delivery 서비스 등록
     @ApiOperation("운송장 등록")
     @PostMapping("/delivery-info")
-    public ResponseEntity<?> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
+    public void saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
         adminFacade.saveDeliveryInfo(dto);
-        Mono<String> data = adminFacade.registerTrackWebhook(dto);
-        return ResponseEntity.ok(ResultDto.builder().data(data).build());
+        adminFacade.registerTrackWebhook(dto)
+                .subscribe(data -> {
+                    log.info("성공");
+                }, error -> {
+                    log.info("실패");
+                });
     }
 
     @ApiOperation("배송 변화 감지")
@@ -119,5 +123,11 @@ public class AdminController {
     public ResponseEntity<?> updateOrderStatus(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderStatusUpdateRequestDto dto) {
         adminFacade.updateOrderStatus(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("배송 해야할 주문 조회")
+    @GetMapping("/delivery-orders")
+    public ResponseEntity<List<OrderDeliveryListResponseDto>> getDeliveryOrders(@RequestHeader("X-AUTH-TOKEN") String token) {
+        return ResponseEntity.ok(adminFacade.deliveryOrderList());
     }
 }

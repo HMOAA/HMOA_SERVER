@@ -15,7 +15,10 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     Optional<OrderEntity> findById(Long id);
     Optional<OrderEntity> findByTrackingNumber(String trackingNumber);
     List<OrderEntity> findByMemberId(Long memberId);
+    List<OrderEntity> findByStatus(OrderStatus orderStatus);
+
     List<OrderEntity> findByMemberIdAndStatusIn(Long memberId, List<OrderStatus> statuses);
+
     @Query("SELECT o " +
             "FROM OrderEntity o " +
             "WHERE o.memberId = :memberId AND o.status NOT IN (:statuses) AND o.id < :cursor " +

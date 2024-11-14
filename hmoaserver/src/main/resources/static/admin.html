@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 토큰 및 주문 목록</title>
+</head>
+<body>
+<h1>관리자 토큰 발급</h1>
+<form id="adminTokenForm">
+    <input type="password" id="secret" placeholder="관리자 비밀키 입력" required />
+    <button type="submit">토큰 발급</button>
+</form>
+<p id="tokenResult"></p>
+
+<!-- 주문 등록 페이지로 이동 버튼 -->
+<button onclick="window.location.href='admin-delivery.html'">운송장 등록 페이지로 이동</button>
+
+<h1>주문 목록</h1>
+<label for="authToken">X-AUTH-TOKEN 입력:</label>
+<input type="text" id="authToken" placeholder="토큰 입력" required />
+<button id="loadDeliveryOrdersBtn">주문 목록 불러오기</button>
+<div id="deliveryOrderList"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const adminTokenForm = document.getElementById("adminTokenForm");
+        const loadDeliveryOrdersBtn = document.getElementById("loadDeliveryOrdersBtn");
+
+        // 관리자 토큰 발급
+        adminTokenForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const secret = document.getElementById("secret").value;
+
+            try {
+                const response = await fetch("/admin/admin-token", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ secret }),
+                });
+
+                if (response.ok) {
+                    const token = await response.text(); // JSON 대신 텍스트로 응답 처리
+                    document.getElementById("tokenResult").innerText = "발급된 관리자 토큰: " + token;
+                } else {
+                    document.getElementById("tokenResult").innerText = "인증 실패";
+                }
+            } catch (error) {
+                console.error("토큰 발급 에러:", error);
+            }
+        });
+
+        loadDeliveryOrdersBtn.addEventListener("click", async () => {
+            try {
+                const authToken = document.getElementById("authToken").value;
+
+                if (!authToken) {
+                    alert("X-AUTH-TOKEN을 입력하세요.");
+                    return;
+                }
+
+                const response = await fetch("/admin/delivery-orders", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-AUTH-TOKEN": authToken,
+                    },
+                });
+
+                if (response.ok) {
+                    const orders = await response.json();
+                    const orderList = document.getElementById("deliveryOrderList");
+
+                    orderList.innerHTML = orders.map(order => `
+              <div style="border: 1px solid #ddd; padding: 10px; margin: 10px;">
+                <h3>주문 ID: ${order.orderId}</h3>
+                <p>주문 상태: ${order.orderStatus}</p>
+
+                <h4>주문자 정보</h4>
+                <p>이름: ${order.orderMemberInfo.name}</p>
+                <p>전화번호: ${order.orderMemberInfo.phoneNumber}</p>
+
+                <h4>배송지 정보</h4>
+                <p>수령인: ${order.address.name}</p>
+                <p>주소 별칭: ${order.address.addressName}</p>
+                <p>휴대전화: ${order.address.phoneNumber}</p>
+                <p>전화번호: ${order.address.landlineNumber}</p>
+                <p>우편번호: ${order.address.zipCode}</p>
+                <p>도로명 주소: ${order.address.streetAddress}</p>
+                <p>상세 주소: ${order.address.detailAddress}</p>
+                <p>요청 사항: ${order.address.request}</p>
+              </div>
+            `).join("");
+                } else {
+                    alert("주문 목록 불러오기 실패");
+                }
+            } catch (error) {
+                console.error("주문 목록 불러오기 에러:", error);
+            }
+        });
+    });
+</script>
+</body>
+</html>
