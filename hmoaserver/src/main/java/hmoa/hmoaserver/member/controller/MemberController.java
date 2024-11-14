@@ -384,7 +384,7 @@ public class MemberController {
     })
     @GetMapping("/communityHearts")
     public ResponseEntity<List<CommunityCommentByMemberResponseDto>> findMyCommunityHearts(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return ResponseEntity.ok(memberFacade.getMyCommunityComentsByHearts(token, page));
+        return ResponseEntity.ok(memberFacade.getMyCommunityCommentsByHearts(token, page));
     }
 
     @ApiOperation(value = "내가 쓴 게시글 조회")

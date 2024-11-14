@@ -86,6 +86,7 @@ default:
   profile: ${S3_PROFILE}
   main: ${S3_MAIN}
   maintest: ${S3_MAIN_TEST}
+  order-description: ${S3_ORDER_DESCRIPTION}
 
 survey:
   image:

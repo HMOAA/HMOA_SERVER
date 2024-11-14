@@ -5,7 +5,6 @@ import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
-import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeAgeResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeGenderResponseDto;
 import hmoa.hmoaserver.perfume.review.dto.PerfumeReviewResponseDto;
@@ -15,7 +14,6 @@ import hmoa.hmoaserver.perfume.review.repository.PerfumeGenderRepository;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeReviewRepository;
 import hmoa.hmoaserver.perfume.review.repository.PerfumeWeatherRepository;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,7 @@ public class PerfumeReviewService {
     private final PerfumeGenderRepository perfumeGenderRepository;
 
     public PerfumeReview findPerfumeReview(Perfume perfume){
-        intialSaveReview(perfume);
+        initialSaveReview(perfume);
         return perfumeReviewRepository.findByPerfume(perfume).orElseThrow(()->new CustomException(null,Code.SERVER_ERROR));
     }
     public boolean isPresentPerfumeReview(Perfume perfume){
@@ -48,7 +46,7 @@ public class PerfumeReviewService {
             throw new CustomException(null, Code.SERVER_ERROR);
         }
     }
-    public void intialSaveReview(Perfume perfume){
+    public void initialSaveReview(Perfume perfume){
         if(!isPresentPerfumeReview(perfume)){
             PerfumeReview perfumeReview = PerfumeReview.builder()
                     .perfume(perfume)
@@ -81,15 +79,10 @@ public class PerfumeReviewService {
         List<Double> weather = calculateWeather(perfume);
         Double age = calculateAge(perfume);
         Map<String, Integer> selectedList = selectedReview(perfume, member);
-        log.info("1");
         List<Double> gender = calculateGender(perfume);
-        log.info("2");
         PerfumeWeatherResponseDto weatherDto = getWeatherDto(selectedList, weather);
-        log.info("3");
         PerfumeAgeResponseDto ageDto = new PerfumeAgeResponseDto(age, isWritedAge(perfume, member));
-        log.info("4");
         PerfumeGenderResponseDto genderDto = getGenderResponseDto(selectedList, gender);
-        log.info("5");
         return new PerfumeReviewResponseDto(ageDto,weatherDto,genderDto);
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.admin.dto.*;
 import hmoa.hmoaserver.admin.dto.constant.TrackingQuery;
 import hmoa.hmoaserver.admin.dto.constant.TrackingStatus;
+import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.common.DateUtils;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
@@ -14,6 +15,8 @@ import hmoa.hmoaserver.member.dto.MemberAddressResponseDto;
 import hmoa.hmoaserver.member.dto.MemberInfoResponseDto;
 import hmoa.hmoaserver.member.service.MemberAddressService;
 import hmoa.hmoaserver.member.service.MemberInfoService;
+import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +35,9 @@ public class AdminFacade {
 
     private final MemberAddressService memberAddressService;
     private final MemberInfoService memberInfoService;
+    private final MemberService memberService;
+    private final TestTokenProvider testTokenProvider;
+  
     @Value("${tracking.access}")
     private String trackingAccess;
     @Value("${tracking.secret}")

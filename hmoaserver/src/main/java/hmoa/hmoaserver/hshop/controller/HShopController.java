@@ -87,6 +87,12 @@ public class HShopController {
         return ResponseEntity.ok(hShopFacade.getReviewableOrders(token));
     }
 
+    @ApiOperation(value = "주문 설명 (향료 주문하러 가기 화면에 나타낼 정보)")
+    @GetMapping("/order/description")
+    public ResponseEntity<NoteOrderDescriptionResponseDto> getOrderDescription(@RequestHeader("X-AUTH-TOKEN") String token) {
+        return ResponseEntity.ok(hShopFacade.getNoteOrderDescriptionResponseDto());
+    }
+
     @Tag(name = "H-shop-review", description = "향bti 리뷰 API")
     @ApiOperation(value = "향bti 후기 저장")
     @PostMapping(value = "/review", consumes = "multipart/form-data")

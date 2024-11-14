@@ -40,7 +40,7 @@ public class PerfumeWeatherService {
         Member member = memberService.findByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeWeather(member,perfume)){
-            perfumeReviewService.intialSaveReview(perfume);
+            perfumeReviewService.initialSaveReview(perfume);
             PerfumeWeather perfumeWeather = PerfumeWeather.builder()
                     .perfume(perfume)
                     .member(member)
