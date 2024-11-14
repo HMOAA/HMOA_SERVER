@@ -27,12 +27,11 @@ public class MemberAddress {
     private String detailAddress;
     private String request;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @Builder
-    public MemberAddress(String name, String addressName, String phoneNumber, String landlineNumber, String zipCode, String streetAddress, String detailAddress, String request, Member member) {
+    public MemberAddress(String name, String addressName, String phoneNumber, String landlineNumber, String zipCode, String streetAddress, String detailAddress, String request, Long memberId) {
         this.name = name;
         this.addressName = addressName;
         this.phoneNumber = phoneNumber;
@@ -41,6 +40,6 @@ public class MemberAddress {
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
         this.request = request;
-        this.member = member;
+        this.memberId = memberId;
     }
 }

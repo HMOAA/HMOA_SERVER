@@ -21,14 +21,13 @@ public class MemberInfo extends BaseEntity {
     private String name;
     private String phoneNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @Builder
-    public MemberInfo(String name, String phoneNumber, Member member) {
+    public MemberInfo(String name, String phoneNumber, Long memberId) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.member = member;
+        this.memberId = memberId;
     }
 }
