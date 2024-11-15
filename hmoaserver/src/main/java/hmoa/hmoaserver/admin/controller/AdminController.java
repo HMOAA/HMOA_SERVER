@@ -33,10 +33,10 @@ import java.util.List;
 @Slf4j
 public class AdminController {
 
-    private final TestTokenProvider testTokenProvider;
     @Value("${jwt.admin}")
     private String admin;
 
+    private final TestTokenProvider testTokenProvider;
     private final MemberService memberService;
     private final HomeMenuService homeMenuService;
     private final PerfumeHomeMenuService perfumeHomeMenuService;

@@ -47,6 +47,7 @@ public class MemberAddressService {
         List<MemberAddress> memberAddressList = memberAddressRepository.findByMemberId(memberId);
         return memberAddressList.get(memberAddressList.size() - 1);
     }
+
     public boolean isExistMemberAddress(Long memberId) {
         return !memberAddressRepository.findByMemberId(memberId).isEmpty();
     }
