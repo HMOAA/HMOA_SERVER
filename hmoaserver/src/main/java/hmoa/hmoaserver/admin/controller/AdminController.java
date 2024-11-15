@@ -101,7 +101,7 @@ public class AdminController {
     // 운송장 등록 + Tracking delivery 서비스 등록
     @ApiOperation("운송장 등록")
     @PostMapping("/delivery-info")
-    public void saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
+    public ResponseEntity<?> saveMemberAddress(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody OrderDeliverySaveRequestDto dto) {
         adminFacade.saveDeliveryInfo(dto);
         adminFacade.registerTrackWebhook(dto)
                 .subscribe(data -> {
@@ -109,6 +109,7 @@ public class AdminController {
                 }, error -> {
                     log.info("실패");
                 });
+        return ResponseEntity.ok(ResultDto.builder().build());
     }
 
     @ApiOperation("배송 변화 감지")
