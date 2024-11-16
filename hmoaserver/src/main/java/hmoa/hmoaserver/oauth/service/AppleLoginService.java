@@ -37,7 +37,7 @@ public class AppleLoginService {
                 generateClientSecret(),
                 appleProperties.getGrantType(),
                 token
-        ).getBody();
+        );
         log.info("{}", idToken);
         return TokenDecoder.decodePayload(idToken, AppleOAuth2UserInfo.class);
     }
