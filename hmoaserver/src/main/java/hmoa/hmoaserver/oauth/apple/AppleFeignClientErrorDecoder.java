@@ -7,7 +7,11 @@ import hmoa.hmoaserver.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.APPLE_DECODE_ERROR;
 
@@ -19,6 +23,13 @@ public class AppleFeignClientErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         Object body = null;
+        try (InputStream inputStream = response.body().asInputStream()) {
+            String bod = new BufferedReader(new InputStreamReader(inputStream))
+                    .lines().collect(Collectors.joining("\n"));
+            log.info("Response body: {}", bod);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (response != null && response.body() != null) {
             try {
                 log.info("{}", response.body());
