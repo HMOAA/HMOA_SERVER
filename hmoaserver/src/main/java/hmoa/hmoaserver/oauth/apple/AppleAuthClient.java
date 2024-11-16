@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface AppleAuthClient {
 
     @PostMapping("/auth/token")
-    String getIdToken(
+    AppleSocialTokenInfoResponse getIdToken(
             @RequestParam("client_id") String clientId,
             @RequestParam("client_secret") String clientSecret,
             @RequestParam("grant_type") String grantType,

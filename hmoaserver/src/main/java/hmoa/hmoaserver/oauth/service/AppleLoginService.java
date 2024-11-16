@@ -1,6 +1,5 @@
 package hmoa.hmoaserver.oauth.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.oauth.apple.TokenDecoder;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.oauth.apple.AppleAuthClient;
@@ -37,8 +36,8 @@ public class AppleLoginService {
                 generateClientSecret(),
                 appleProperties.getGrantType(),
                 token
-        );
-        log.info("{}", idToken);
+        ).getIdToken();
+
         return TokenDecoder.decodePayload(idToken, AppleOAuth2UserInfo.class);
     }
 
