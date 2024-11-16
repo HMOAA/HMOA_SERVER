@@ -1,6 +1,7 @@
 package hmoa.hmoaserver.oauth.apple;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface AppleAuthClient {
 
     @PostMapping("/auth/token")
-    AppleSocialTokenInfoResponse getIdToken(
+    ResponseEntity<String> getIdToken(
             @RequestParam("client_id") String clientId,
             @RequestParam("client_secret") String clientSecret,
             @RequestParam("grant_type") String grantType,
