@@ -321,11 +321,17 @@ public class HShopFacade {
         return res;
     }
 
-    public List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
+    private List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
         return reviews.stream().map(review -> {
             boolean isWrited = review.getMemberId().equals(member.getId());
             boolean isLiked = hbtiReviewService.isPresentReviewHeart(review.getId(), member.getId());
-            Member author = memberService.findById(review.getMemberId()).get();
+            Optional<Member> optionalAuthor = memberService.findById(review.getMemberId());
+
+            if (optionalAuthor.isEmpty()) {
+                return null;
+            }
+
+            Member author = optionalAuthor.get();
             OrderEntity order = orderService.findById(review.getOrderId());
             return new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked);
         }).toList();
