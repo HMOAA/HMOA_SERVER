@@ -321,7 +321,7 @@ public class HShopFacade {
         return res;
     }
 
-    private List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
+    public List<HbtiReviewResponseDto> createReviewResponseDtos(Page<HbtiReview> reviews, Member member) {
         return reviews.stream().map(review -> {
             boolean isWrited = review.getMemberId().equals(member.getId());
             boolean isLiked = hbtiReviewService.isPresentReviewHeart(review.getId(), member.getId());
