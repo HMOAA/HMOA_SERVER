@@ -4,8 +4,10 @@ import hmoa.hmoaserver.hshop.domain.HbtiReview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface HbtiReviewRepository extends JpaRepository<HbtiReview, Long> {
@@ -20,4 +22,11 @@ public interface HbtiReviewRepository extends JpaRepository<HbtiReview, Long> {
     Page<HbtiReview> findAllByMemberIdOrderByCreatedAtDesc(Long memberId, Long cursor, Pageable pageable);
 
     Optional<HbtiReview> findByOrderIdAndMemberId(Long orderId, Long memberId);
+    List<HbtiReview> findAllByMemberId(Long memberId);
+
+    @Modifying
+    @Query("DELETE " +
+            "FROM HbtiReview hr " +
+            "WHERE hr.memberId = ?1")
+    void deleteByMemberId(Long memberId);
 }

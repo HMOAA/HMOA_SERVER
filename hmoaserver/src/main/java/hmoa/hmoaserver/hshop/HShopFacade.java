@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -334,6 +335,7 @@ public class HShopFacade {
             Member author = optionalAuthor.get();
             OrderEntity order = orderService.findById(review.getOrderId());
             return new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked);
-        }).toList();
+        }).filter(Objects::nonNull)
+          .toList();
     }
 }

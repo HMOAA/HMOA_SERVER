@@ -11,8 +11,10 @@ import hmoa.hmoaserver.hshop.repository.HbtiReviewRepository;
 import hmoa.hmoaserver.photo.domain.HbtiPhoto;
 import hmoa.hmoaserver.photo.service.HbtiPhotoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HbtiReviewService {
@@ -121,6 +124,17 @@ public class HbtiReviewService {
         try {
             hbtiReviewRepository.delete(hbtiReview);
         } catch (Exception e) {
+            throw new CustomException(null, Code.SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    @Modifying
+    public void deleteHbtiReviewsByMember(Long memberId) {
+        try {
+            hbtiReviewRepository.deleteByMemberId(memberId);
+        } catch (Exception e) {
+            log.error("멤버 리뷰 전체 삭제 실패 memberId: {}", memberId, e);
             throw new CustomException(null, Code.SERVER_ERROR);
         }
     }

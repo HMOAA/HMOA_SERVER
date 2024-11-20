@@ -162,6 +162,7 @@ public class MemberFacade {
 
     public void deleteMember(String token) {
         Member member = memberService.findByMember(token);
+        hbtiReviewService.deleteHbtiReviewsByMember(member.getId());
         memberService.delete(member);
     }
 
