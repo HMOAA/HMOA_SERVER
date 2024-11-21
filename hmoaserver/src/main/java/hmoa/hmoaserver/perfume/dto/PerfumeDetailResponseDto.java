@@ -18,7 +18,6 @@ public class PerfumeDetailResponseDto {
     private Long brandId;
     private String brandName;
     private String brandEnglishName;
-    private String brandImgUrl;
     private String koreanName;
     private String englishName;
     private String perfumeImageUrl;
@@ -39,7 +38,6 @@ public class PerfumeDetailResponseDto {
         this.perfumeImageUrl = perfume.getPerfumePhoto().getPhotoUrl();
         this.brandId = perfume.getBrand().getId();
         this.brandEnglishName = perfume.getBrand().getEnglishName();
-        this.brandImgUrl = perfume.getBrand().getBrandPhoto().getPhotoUrl();
         this.brandName = perfume.getBrand().getBrandName();
         this.koreanName = perfume.getKoreanName();
         this.volume = perfume.getVolume();
