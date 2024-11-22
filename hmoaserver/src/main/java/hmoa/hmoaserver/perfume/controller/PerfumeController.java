@@ -324,6 +324,13 @@ public class PerfumeController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation(value = "향수 하나 제거")
+    @DeleteMapping("/delete/{perfumeId}")
+    public ResponseEntity<ResultDto<Object>> deleteOnePerfume(@PathVariable Long perfumeId) {
+        perfumeService.deletePerfume(perfumeId);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     private static String removeBrand(String name) {
         String[] names = name.split("_");
         String productName = names[1].substring(0, names[1].lastIndexOf("."));

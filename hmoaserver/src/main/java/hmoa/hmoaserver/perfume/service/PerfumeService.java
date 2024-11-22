@@ -156,6 +156,10 @@ public class PerfumeService {
         return perfumeRepository.findByKoreanName(name).orElseThrow(() -> new CustomException(null, PERFUME_NOT_FOUND));
     }
 
+    public void deletePerfume(Long perfumeId) {
+        perfumeRepository.deleteById(perfumeId);
+    }
+
     /**
      * 향수 추천
      */
