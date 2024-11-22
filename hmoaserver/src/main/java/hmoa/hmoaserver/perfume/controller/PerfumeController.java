@@ -84,7 +84,7 @@ public class PerfumeController {
 
         try {
             for (Perfume perfume : perfumes) {
-                perfumePhotoService.savePerfumePhotoFromS3(perfume);
+                perfumePhotoService.savePerfumePhotoFromS3(brand.getBrandName(), perfume);
                 log.info("{}", perfume.getKoreanName());
             }
         } catch (RuntimeException e) {
