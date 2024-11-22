@@ -94,6 +94,25 @@ public class PerfumeController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation("향수 이미지 브랜드 별로 매핑하기 2")
+    @PostMapping("/save/perfume-images")
+    public ResponseEntity<ResultDto<Object>> MappingPerfumeImages2(@RequestParam int start, @RequestParam int end) {
+        for (long i = start; i <= end; i++) {
+            Brand brand = brandService.findById(i);
+            List<Perfume> perfumes = brand.getPerfumeList();
+
+            try {
+                for (Perfume perfume : perfumes) {
+                    perfumePhotoService.savePerfumePhotoFromS3(brand.getBrandName(), perfume);
+                    log.info("{}", perfume.getKoreanName());
+                }
+            } catch (RuntimeException e) {
+                throw new CustomException(e, SERVER_ERROR);
+            }
+        }
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("향수 저장 새로운 버전")
     @PostMapping("/newList")
     public ResponseEntity<ResultDto<Object>> savePerfumes(@RequestBody List<PerfumeNewRequestDto> dtos) {
