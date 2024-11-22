@@ -259,7 +259,7 @@ public class BrandController {
 
     @ApiOperation(value = "브랜드 전체 저장")
     @PostMapping("/save/brand-all")
-    public ResponseEntity<ResultDto<Object>> saveAll(List<BrandSaveRequestDto> dto) {
+    public ResponseEntity<ResultDto<Object>> saveAll(@RequestBody List<BrandSaveRequestDto> dto) {
         for (BrandSaveRequestDto brandSaveRequestDto : dto) {
             brandService.save(brandSaveRequestDto);
         }
