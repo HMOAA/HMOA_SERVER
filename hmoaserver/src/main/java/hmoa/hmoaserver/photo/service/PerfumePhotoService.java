@@ -65,7 +65,7 @@ public class PerfumePhotoService {
     @Transactional
     public PerfumePhoto savePerfumePhotoFromS3(String brandName, Perfume perfume) {
         String perfumeName = perfume.getKoreanName();
-        String url = photoService.getPhotoUrl(perfumePhotoBucketName, brandName + "_" + perfumeName) + ".png";
+        String url = photoService.getPhotoUrl(perfumePhotoBucketName, String.valueOf(perfume.getImgIndex())) + ".png";
 
         PerfumePhoto photo = PerfumePhoto.builder()
                 .perfume(perfume)
