@@ -122,6 +122,18 @@ public class PerfumeController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation("향수 저장 새로 새로 버전")
+    @PostMapping("/newList2")
+    public ResponseEntity<ResultDto<Object>> savePerfumeNews(@RequestBody List<PerfumeNewSaveRequestDto> dtos) {
+
+        for (PerfumeNewSaveRequestDto dto : dtos) {
+            brandService.newSave(dto.getBrandName(), dto.getBrandEnglishName());
+            perfumeService.newSave(dto);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("향수 사진 저장 (New)")
     @PostMapping(value = "/newImage", consumes = "multipart/form-data")
     public ResponseEntity<ResultDto<Object>> savePerfumeImages(@RequestPart(value = "image") List<MultipartFile> files) {
