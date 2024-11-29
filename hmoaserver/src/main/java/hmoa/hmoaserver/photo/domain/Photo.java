@@ -22,17 +22,12 @@ public class Photo extends BaseEntity {
     private String fileName;
     private String photoUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "perfume")
-    private Perfume perfume;
-
     @Builder
-    public Photo(Long id, String folderName, String fileName, String photoUrl, Perfume perfume) {
+    public Photo(Long id, String folderName, String fileName, String photoUrl) {
         this.id = id;
         this.folderName = folderName;
         this.fileName = fileName;
         this.photoUrl = photoUrl;
-        this.perfume = perfume;
     }
 
 }
