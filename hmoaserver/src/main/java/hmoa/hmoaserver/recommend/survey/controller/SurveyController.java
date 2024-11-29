@@ -1,10 +1,6 @@
 package hmoa.hmoaserver.recommend.survey.controller;
 
-import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.ResultDto;
-import hmoa.hmoaserver.community.domain.Category;
-import hmoa.hmoaserver.community.domain.Community;
-import hmoa.hmoaserver.community.dto.CommunityByHBTIResponseDto;
 import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
@@ -29,7 +25,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
