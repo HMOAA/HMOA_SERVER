@@ -29,6 +29,17 @@ public class BrandService {
         return brandRepository.save(requestDto.toEntity(num));
     }
 
+    public Brand newSave(String brandName, String brandEnglishName) {
+        int num = unicodeService.extractIntialChar(brandName);
+        brandName = removeSpace(brandName);
+        if (brandRepository.findByBrandName(brandName).isPresent()) {
+            log.info("skip");
+            return null;
+        }
+
+        return brandRepository.save(Brand.builder().brandName(brandName).consonant(num).englishName(brandEnglishName).build());
+    }
+
     public Brand findById(Long brandId) {
         return brandRepository.findById(brandId)
                 .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
@@ -37,5 +48,10 @@ public class BrandService {
     @Transactional(readOnly = true)
     public List<Brand> getAllBrands() {
         return brandRepository.findAll();
+    }
+
+    private String removeSpace(String str) {
+        String result = str.replaceAll(" ", "");
+        return result;
     }
 }
