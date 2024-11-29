@@ -1,6 +1,6 @@
 INSERT INTO NoteSynonym (noteName)
 VALUES
-    ('라임 만다린'),
+    ('라임바질 앤 만다린'),
     ('베르가못'),
     ('비터오렌지'),
     ('자몽'),
