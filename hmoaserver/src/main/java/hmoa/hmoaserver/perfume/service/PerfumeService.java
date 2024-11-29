@@ -5,6 +5,7 @@ import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
+import hmoa.hmoaserver.perfume.dto.PerfumeNewSaveRequestDto;
 import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
 import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
@@ -43,6 +44,47 @@ public class PerfumeService {
                         .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
 
         return perfumeRepository.save(requestDto.toEntity(brand));
+    }
+
+    public Perfume newSave(PerfumeNewSaveRequestDto dto) {
+        log.info("{}", dto.getKoreanName());
+        dto.setVolumeAndPrice(removeSpace(dto.getVolumeAndPrice()));
+        dto.setNotePhotos(removeSpace(dto.getNotePhotos()));
+        Brand brand = brandRepository.findByBrandName(removeSpace(dto.getBrandName()))
+                .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
+
+        int sortType = 0;
+        List<Integer> notePhoto = new ArrayList<>();
+
+        log.info("{}", dto.getNotePhotos());
+
+        if (!(dto.getNotePhotos() == null || dto.getNotePhotos().equals(""))) {
+            String[] notePhotos = dto.getNotePhotos().split(",");
+            log.info("{}", Arrays.toString(notePhotos));
+            sortType = notePhotos.length;
+            notePhoto = Arrays.stream(notePhotos).map(Integer::parseInt).toList();
+        }
+
+        log.info("{}", dto.getVolumeAndPrice());
+        if (dto.getVolumeAndPrice() == null || dto.getVolumeAndPrice().equals("")) {
+            return perfumeRepository.save(dto.toEntity(brand, sortType, 0, new ArrayList<>(), notePhoto, 1));
+        }
+
+        String[] priceAndVolume = dto.getVolumeAndPrice().split(",");
+        int price = 0;
+
+        if (priceAndVolume[0].split("/").length == 2) {
+            price = Integer.parseInt(priceAndVolume[0].split("/")[1]);
+        }
+
+        int priceVolume = 1;
+
+        List<Integer> volumes = new ArrayList<>();
+        for (String s : priceAndVolume) {
+            volumes.add(Integer.parseInt(s.split("/")[0]));
+        }
+
+        return perfumeRepository.save(dto.toEntity(brand, sortType, price, volumes, notePhoto, priceVolume));
     }
 
     public Perfume newSave(PerfumeNewRequestDto dto) {
@@ -227,5 +269,11 @@ public class PerfumeService {
     private static boolean containsExactMatch(String notes, String searchNote) {
         List<String> values = Arrays.asList(notes.trim().split(",\\s*"));
         return values.contains(searchNote);
+    }
+
+    // 공백 지우기
+    private String removeSpace(String str) {
+        String result = str.replaceAll(" ", "");
+        return result;
     }
 }
