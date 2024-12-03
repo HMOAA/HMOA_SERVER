@@ -31,7 +31,6 @@ public class AppleLoginService {
     private final AppleProperties appleProperties;
 
     public AppleOAuth2UserInfo get(String token) {
-        log.info("{}", appleProperties.getTeamId());
         String idToken = appleAuthClient.getIdToken(
                 appleProperties.getClientId(),
                 generateClientSecret(),
