@@ -42,7 +42,7 @@ public class PerfumeNewSaveRequestDto {
                     .koreanName(koreanName)
                     .englishName(englishName)
                     .volume(volumes)
-                    .topNote(topNote)
+                    .topNote(singleNote)
                     .priceVolume(priceVolume)
                     .price(price)
                     .sortType(sortType)

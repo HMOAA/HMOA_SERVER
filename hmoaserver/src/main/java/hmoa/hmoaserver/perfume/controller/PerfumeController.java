@@ -134,6 +134,17 @@ public class PerfumeController {
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 
+    @ApiOperation("향수 노트 업데이트")
+    @PostMapping("/update-note")
+    public ResponseEntity<ResultDto<Object>> updatePerfumeNote(@RequestBody List<PerfumeNoteUpdateDto> dtos) {
+
+        for (PerfumeNoteUpdateDto dto : dtos) {
+            perfumeService.updateNote(dto);
+        }
+
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
     @ApiOperation("향수 사진 저장 (New)")
     @PostMapping(value = "/newImage", consumes = "multipart/form-data")
     public ResponseEntity<ResultDto<Object>> savePerfumeImages(@RequestPart(value = "image") List<MultipartFile> files) {
@@ -316,7 +327,7 @@ public class PerfumeController {
     @PostMapping("/{perfumeId}/relase")
     public ResponseEntity<ResultDto<Object>> saveRelase(@PathVariable Long perfumeId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate relase) {
         Perfume perfume = perfumeService.findById(perfumeId);
-        perfumeService.saveRelase(perfume, relase);
+        perfumeService.saveRelease(perfume, relase);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 

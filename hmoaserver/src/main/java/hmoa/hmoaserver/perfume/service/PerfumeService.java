@@ -4,10 +4,7 @@ import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.brand.repository.BrandRepository;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.perfume.domain.Perfume;
-import hmoa.hmoaserver.perfume.dto.PerfumeNewRequestDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeNewSaveRequestDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeRecommendation;
-import hmoa.hmoaserver.perfume.dto.PerfumeSaveRequestDto;
+import hmoa.hmoaserver.perfume.dto.*;
 import hmoa.hmoaserver.perfume.repository.PerfumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +41,11 @@ public class PerfumeService {
                         .orElseThrow(() -> new CustomException(null, BRAND_NOT_FOUND));
 
         return perfumeRepository.save(requestDto.toEntity(brand));
+    }
+
+    public void updateNote(PerfumeNoteUpdateDto dto) {
+        Perfume perfume = findPerfumeName(dto.getPerfumeName());
+        perfume.updateSingleNote(dto.getSingleNote());
     }
 
     public Perfume newSave(PerfumeNewSaveRequestDto dto) {
@@ -186,8 +188,8 @@ public class PerfumeService {
         return perfumeRepository.findByBrandIdAndKoreanName(brand.getId(), dto.getBKoreanName()).isPresent();
     }
 
-    public void saveRelase(Perfume perfume, LocalDate localDate) {
-        perfume.setRelaseDate(localDate);
+    public void saveRelease(Perfume perfume, LocalDate localDate) {
+        perfume.setReleaseDate(localDate);
     }
 
     public Page<Perfume> findRecentPerfumes() {

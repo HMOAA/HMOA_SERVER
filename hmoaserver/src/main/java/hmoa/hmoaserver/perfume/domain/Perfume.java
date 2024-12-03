@@ -1,18 +1,13 @@
 package hmoa.hmoaserver.perfume.domain;
 
-import hmoa.hmoaserver.homemenu.domain.HomeMenu;
 import hmoa.hmoaserver.brand.domain.Brand;
 import hmoa.hmoaserver.common.BaseEntity;
-import hmoa.hmoaserver.homemenu.domain.PerfumeHomeMenu;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeAge;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeGender;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeReview;
 import hmoa.hmoaserver.perfume.review.domain.PerfumeWeather;
 import hmoa.hmoaserver.photo.domain.PerfumePhoto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -31,6 +26,7 @@ public class Perfume extends BaseEntity {
 
     @OneToMany(mappedBy = "perfume", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PerfumePhoto> perfumePhotos = new ArrayList<>();
+    @Setter
     private LocalDate releaseDate;
 
     private String koreanName;
@@ -121,7 +117,7 @@ public class Perfume extends BaseEntity {
         this.heartCount -= 1;
     }
 
-    public void setRelaseDate(LocalDate localDate) {
-        this.releaseDate = localDate;
+    public void updateSingleNote(String singleNote) {
+        this.topNote = singleNote;
     }
 }
