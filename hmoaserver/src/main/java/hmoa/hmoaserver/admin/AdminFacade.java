@@ -6,6 +6,8 @@ import hmoa.hmoaserver.admin.dto.constant.TrackingQuery;
 import hmoa.hmoaserver.admin.dto.constant.TrackingStatus;
 import hmoa.hmoaserver.admin.service.TestTokenProvider;
 import hmoa.hmoaserver.common.DateUtils;
+import hmoa.hmoaserver.community.domain.Community;
+import hmoa.hmoaserver.community.service.CommunityService;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
@@ -38,6 +40,7 @@ public class AdminFacade {
     private final MemberInfoService memberInfoService;
     private final MemberService memberService;
     private final TestTokenProvider testTokenProvider;
+    private final CommunityService communityService;
 
     @Value("${tracking.access}")
     private String trackingAccess;
@@ -50,7 +53,7 @@ public class AdminFacade {
     private final OrderService orderService;
     private final ObjectMapper objectMapper;
 
-    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService, MemberService memberService, TestTokenProvider testTokenProvider) {
+    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService, MemberService memberService, TestTokenProvider testTokenProvider, CommunityService communityService) {
         this.webClient = webClientBuilder.baseUrl("https://apis.tracker.delivery").build();
         this.orderService = orderService;
         this.objectMapper = objectMapper;
@@ -58,6 +61,7 @@ public class AdminFacade {
         this.memberInfoService = memberInfoService;
         this.memberService = memberService;
         this.testTokenProvider = testTokenProvider;
+        this.communityService = communityService;
     }
 
     // 운송장 등록
@@ -112,6 +116,12 @@ public class AdminFacade {
         return webPost(request)
                 .map(response -> "성공")
                 .onErrorReturn("실패");
+    }
+
+    public void deleteCommunity(Long communityId) {
+        Community community = communityService.getCommunityById(communityId);
+        Member member = community.getMember();
+        communityService.deleteCommunity(member, communityId);
     }
 
     /**

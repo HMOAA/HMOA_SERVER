@@ -131,4 +131,11 @@ public class AdminController {
     public ResponseEntity<List<OrderDeliveryListResponseDto>> getDeliveryOrders(@RequestHeader("X-AUTH-TOKEN") String token) {
         return ResponseEntity.ok(adminFacade.deliveryOrderList());
     }
+
+    @ApiOperation("커뮤니티 삭제")
+    @DeleteMapping("/communities/{communityId}")
+    public ResponseEntity<ResultDto<Object>> deleteCommunity(@PathVariable Long communityId) {
+        adminFacade.deleteCommunity(communityId);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
 }
