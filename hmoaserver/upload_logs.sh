@@ -58,7 +58,8 @@ fi
 echo "S3 업로드 완료: s3://${S3_LOG_BUCKET}/${ACTIVE_ENV}/${CURRENT_TIME}.log"
 
 # Docker 로그 초기화
-sudo : > "$CONTAINER_LOG_FILE"
+echo "Docker 로그 초기화 중..."
+docker logs --tail 0 $ACTIVE_CONTAINER > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
   echo "Docker 로그 초기화에 실패했습니다. 종료합니다."
   exit 1
