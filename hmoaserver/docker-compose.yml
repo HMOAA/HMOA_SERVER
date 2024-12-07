@@ -38,6 +38,11 @@ services:
       TRACKING_ACCESS: ${TRACKING_ACCESS}
       TRACKING_SECRET: ${TRACKING_SECRET}
       TRACKING_CALLBACK_URL: ${TRACKING_CALLBACK_URL}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
 
   blue:
     container_name: hmoa_blue
@@ -78,3 +83,8 @@ services:
       TRACKING_ACCESS: ${TRACKING_ACCESS}
       TRACKING_SECRET: ${TRACKING_SECRET}
       TRACKING_CALLBACK_URL: ${TRACKING_CALLBACK_URL}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
