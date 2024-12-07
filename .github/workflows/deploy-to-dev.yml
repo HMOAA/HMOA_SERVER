@@ -71,6 +71,7 @@ jobs:
           chmod 600 private_key.pem
           scp -o StrictHostKeyChecking=no -i private_key.pem ./docker-compose.yml $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/docker
           scp -o StrictHostKeyChecking=no -i private_key.pem ./deploy.sh $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/deploy
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./upload_logs.sh $SERVER_USER_NAME@$SERVER_HOST:/home/$SERVER_USER_NAME/deploy
           rm private_key.pem
 
       - name: check docker pull
@@ -126,6 +127,7 @@ jobs:
             echo "export S3_SURVEY_FIRST=${{ secrets.S3_SURVEY_FIRST }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_SURVEY_SECOND=${{ secrets.S3_SURVEY_SECOND }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export S3_ORDER_DESCRIPTION=${{ secrets.S3_ORDER_DESCRIPTION }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
+            echo "export S3_LOG_BUCKET=${{ secrets.S3_LOG_BUCKET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             
             echo "export TRACKING_ACCESS=${{ secrets.TRACKING_ACCESS }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
             echo "export TRACKING_SECRET=${{ secrets.TRACKING_SECRET }}" >> /home/${{ secrets.SERVER_USERNAME }}/deploy/env_vars.sh
