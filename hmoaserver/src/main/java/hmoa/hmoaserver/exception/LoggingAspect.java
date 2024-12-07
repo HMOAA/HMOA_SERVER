@@ -13,7 +13,7 @@ public class LoggingAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Before("execution(* hmoa.hmoaserver..*(..))")
+    @Before("execution(* hmoa.hmoaserver..*Controller.*(..))")
     public void logCall(final JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getTarget().getClass().getName();

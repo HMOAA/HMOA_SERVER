@@ -192,6 +192,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        log.info("{}, {}", getClass(), o.getClass());
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
         return Objects.equals(this.id, member.getId());
