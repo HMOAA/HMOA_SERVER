@@ -27,6 +27,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -193,6 +194,6 @@ public class Member extends BaseEntity implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
-        return id.equals(member.getId());
+        return Objects.equals(this.id, member.getId());
     }
 }
