@@ -5,7 +5,7 @@ GREEN_CONTAINER=$(docker ps -qf "name=green")
 BLUE_CONTAINER=$(docker ps -qf "name=blue")
 
 LOG_DIR="/var/lib/docker/containers"
-source ./env_vars.sh  # 환경 변수 로드
+source /home/ec2-user/deploy/env_vars.sh  # 환경 변수 로드
 
 # 활성 컨테이너 선택
 if [[ $(docker inspect -f '{{.State.Running}}' $GREEN_CONTAINER) == "true" ]]; then
