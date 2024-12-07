@@ -120,7 +120,7 @@ public class AdminFacade {
 
     public void deleteCommunity(Long communityId) {
         Community community = communityService.getCommunityById(communityId);
-        Member member = community.getMember();
+        Member member = memberService.findById(community.getMember().getId()).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
         communityService.deleteCommunity(member, communityId);
     }
 
