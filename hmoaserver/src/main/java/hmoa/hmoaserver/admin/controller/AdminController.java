@@ -134,7 +134,7 @@ public class AdminController {
 
     @ApiOperation("커뮤니티 삭제")
     @DeleteMapping("/communities/{communityId}")
-    public ResponseEntity<ResultDto<Object>> deleteCommunity(@PathVariable Long communityId) {
+    public ResponseEntity<ResultDto<Object>> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
         adminFacade.deleteCommunity(communityId);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
