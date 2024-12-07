@@ -47,6 +47,6 @@ public class MemberInfoService {
     }
 
     public boolean isExistMemberInfo(Long memberId) {
-        return memberInfoRepository.findByMemberId(memberId).isEmpty();
+        return !memberInfoRepository.findByMemberId(memberId).isEmpty();
     }
 }
