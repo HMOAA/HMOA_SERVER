@@ -35,6 +35,10 @@ services:
     restart: on-failure
     networks:
       - backend
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
 networks:
   backend:

@@ -98,9 +98,3 @@ tracking:
   access: ${TRACKING_ACCESS}
   secret: ${TRACKING_SECRET}
   callback-url: ${TRACKING_CALLBACK_URL}
-
-logging:
-  file:
-    name: /var/log/springboot/hmoa.log
-  level:
-    root: info
