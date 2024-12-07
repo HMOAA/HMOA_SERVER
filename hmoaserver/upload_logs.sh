@@ -33,7 +33,7 @@ else
 fi
 
 # 시간 설정 및 백업 파일 경로 정의
-CURRENT_TIME=$(date +%Y-%m-%d)
+CURRENT_TIME=$(date +%Y-%m-%d-%H-%M-%S)
 BACKUP_FILE="/tmp/${ACTIVE_ENV}-${CURRENT_TIME}.log"
 
 # 로그 파일 백업
@@ -58,12 +58,10 @@ fi
 echo "S3 업로드 완료: s3://${S3_LOG_BUCKET}/${ACTIVE_ENV}/${CURRENT_TIME}.log"
 
 # Docker 로그 초기화
-echo "Docker 로그 초기화 중..."
-docker logs --tail 0 $ACTIVE_CONTAINER > /dev/null 2>&1
+echo "Docker 로그 파일을 초기화합니다..."
+sudo truncate -s 0 "$CONTAINER_LOG_FILE"
 if [[ $? -ne 0 ]]; then
-  echo "Docker 로그 초기화에 실패했습니다. 종료합니다."
+  echo "로그 파일 초기화에 실패했습니다. 종료합니다."
   exit 1
 fi
-echo "Docker 로그 초기화 완료: $CONTAINER_LOG_FILE"
-
-echo "작업이 성공적으로 완료되었습니다."
+echo "Docker 로그 파일 초기화 완료: $CONTAINER_LOG_FILE"
