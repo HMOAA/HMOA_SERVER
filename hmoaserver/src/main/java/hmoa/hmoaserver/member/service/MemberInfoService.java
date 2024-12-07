@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -36,10 +38,15 @@ public class MemberInfoService {
     }
 
     public MemberInfo findByMemberId(Long memberId) {
-        return memberInfoRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_INFO_NOT_FOUND));
+        if (!isExistMemberInfo(memberId)) {
+            throw new CustomException(null, Code.MEMBER_INFO_NOT_FOUND);
+        }
+
+        List<MemberInfo> memberInfos = memberInfoRepository.findByMemberId(memberId);
+        return memberInfos.get(memberInfos.size() - 1);
     }
 
     public boolean isExistMemberInfo(Long memberId) {
-        return memberInfoRepository.findByMemberId(memberId).isPresent();
+        return memberInfoRepository.findByMemberId(memberId).isEmpty();
     }
 }

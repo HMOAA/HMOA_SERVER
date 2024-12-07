@@ -175,10 +175,6 @@ public class MemberFacade {
     public void saveOrderInfo(String token, MemberInfoRequestDto dto) {
         Member member = memberService.findByMember(token);
 
-        if (memberInfoService.isExistMemberInfo(member.getId())) {
-            memberInfoService.delete(memberInfoService.findByMemberId(member.getId()));
-        }
-
         memberInfoService.save(dto.toEntity(member.getId()));
     }
 
