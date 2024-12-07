@@ -18,6 +18,8 @@ import hmoa.hmoaserver.recommend.survey.domain.MemberAnswer;
 import hmoa.hmoaserver.recommend.survey.domain.NoteRecommend;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -191,12 +193,11 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Override
     public boolean equals(Object o) {
-        log.info("{}, {}", this, o);
         if (this == o) return true;
-        log.info("{}", o instanceof Member);
-        if (!(o instanceof Member)) return false;
-        Member other = (Member) o;
-        log.info("{}, {}", this.id, other.id);
-        return this.id != null && this.id.equals(other.id);
+        if (o == null || !(o instanceof Member)) return false;
+        Member other = (o instanceof HibernateProxy)
+                ? (Member) Hibernate.unproxy(o) // 프록시 초기화
+                : (Member) o;
+        return Objects.equals(this.id, other.id);
     }
 }
