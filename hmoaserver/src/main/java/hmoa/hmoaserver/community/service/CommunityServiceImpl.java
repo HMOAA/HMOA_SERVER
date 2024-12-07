@@ -13,6 +13,7 @@ import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.photo.domain.CommunityPhoto;
 import hmoa.hmoaserver.photo.service.CommunityPhotoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -108,6 +110,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public String deleteCommunity(Member member, Long communityId) {
         Community community = getCommunityById(communityId);
+        log.info("{}, {}", member.getId(), community.getMember().getId());
         if (!community.isWrited(member)){
             throw new CustomException(null, Code.FORBIDDEN_AUTHORIZATION);
         }
