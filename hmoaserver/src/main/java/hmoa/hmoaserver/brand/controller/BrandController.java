@@ -15,9 +15,6 @@ import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.dto.PerfumeByBrandResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeDefaultResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeDetailResponseDto;
-import hmoa.hmoaserver.perfume.dto.PerfumeSimilarResponseDto;
 import hmoa.hmoaserver.perfume.service.PerfumeLikedMemberService;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
 import hmoa.hmoaserver.photo.service.BrandPhotoService;
@@ -104,7 +101,7 @@ public class BrandController {
             @PathVariable Long brandId, @RequestHeader("X-AUTH-TOKEN") String token
     ) {
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
 
         Brand brand = brandService.findById(brandId);
 
@@ -125,7 +122,7 @@ public class BrandController {
             @PathVariable Long brandId, @RequestHeader("X-AUTH-TOKEN") String token
     ) {
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
         Brand brand = brandService.findById(brandId);
 
         BrandLikedMember brandLikedMember = brandLikedMemberService.findOneByBrandAndMember(brand, member);
@@ -158,7 +155,7 @@ public class BrandController {
                     );
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         List<PerfumeByBrandResponseDto> response = perfumes.stream()
                 .map(perfume -> {
@@ -194,7 +191,7 @@ public class BrandController {
                     );
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         List<PerfumeByBrandResponseDto> response = perfumes.stream()
                 .map(perfume -> {
@@ -229,7 +226,7 @@ public class BrandController {
                     );
         }
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
 
         List<PerfumeByBrandResponseDto> response = perfumes.stream()
                 .map(perfume -> {

@@ -66,7 +66,7 @@ public class PerfumeCommentService {
 
     public String saveLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
-        Member findMember = memberService.findByEmail(email);
+        Member findMember = memberService.findByMemberByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
 
@@ -86,7 +86,7 @@ public class PerfumeCommentService {
 
     public String deleteLike(String token, Long commentId) {
         String email = jwtService.getEmail(token);
-        Member findMember = memberService.findByEmail(email);
+        Member findMember = memberService.findByMemberByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
         PerfumeCommentLiked perfumeCommentLiked = commentHeartRepository.findByPerfumeCommentAndMember(findComment,findMember)
@@ -102,7 +102,7 @@ public class PerfumeCommentService {
 
     public PerfumeComment modifyComment(String token, Long commentId,String content) {
         String email = jwtService.getEmail(token);
-        Member findMember = memberService.findByEmail(email);
+        Member findMember = memberService.findByMemberByEmail(email);
         PerfumeComment findComment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new CustomException(null, COMMENT_NOT_FOUND));
         if (findComment.getMember().getId() != findMember.getId()) {

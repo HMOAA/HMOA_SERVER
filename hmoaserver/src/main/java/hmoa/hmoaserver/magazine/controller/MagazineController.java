@@ -112,7 +112,7 @@ public class MagazineController {
             return ResponseEntity.ok(new MagazineResponseDto(magazine));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         boolean isLiked = magazineLikedMemberService.isMagazineLikedMember(magazine,member);
 
         return ResponseEntity.ok(new MagazineResponseDto(magazine, isLiked));
@@ -122,7 +122,7 @@ public class MagazineController {
     @PutMapping("/{magazineId}/like")
     public ResponseEntity<ResultDto> saveMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
         log.info("{}", memberService);
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Magazine magazine = magazineService.findById(magazineId);
 
         magazineLikedMemberService.save(magazine, member);
@@ -133,7 +133,7 @@ public class MagazineController {
     @ApiOperation("매거진 좋아요 취소")
     @DeleteMapping("/{magazineId}/like")
     public ResponseEntity<ResultDto> deleteMagazineLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long magazineId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Magazine magazine = magazineService.findById(magazineId);
 
         magazineLikedMemberService.delete(magazine, member);

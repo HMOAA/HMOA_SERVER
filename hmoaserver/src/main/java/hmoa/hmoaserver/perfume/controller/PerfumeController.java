@@ -185,7 +185,7 @@ public class PerfumeController {
 
         } else {
             String email = jwtService.getEmail(token);
-            Member member = memberService.findByEmail(email);
+            Member member = memberService.findByMemberByEmail(email);
 
             boolean memberLikedPerfume = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
             responseDto = new PerfumeDetailResponseDto(perfume, memberLikedPerfume, perfumeReviewService.getReview(perfumeId,member));
@@ -198,7 +198,7 @@ public class PerfumeController {
     @PutMapping("/{perfumeId}/like")
     public ResponseEntity<ResultDto<Object>> savePerfumeLikes(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
 
         Perfume perfume = perfumeService.findById(perfumeId);
 
@@ -218,7 +218,7 @@ public class PerfumeController {
             @PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token
     ) {
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
 
         PerfumeLikedMember perfumeLikedMember = perfumeLikedMemberService.findOneByPerfumeAndMember(perfume, member);
@@ -235,7 +235,7 @@ public class PerfumeController {
     @GetMapping("/like")
     public ResponseEntity<ResultDto<Object>> findLikedPerfumesByMember(@RequestHeader("X-AUTH-TOKEN") String token) {
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
 
         List<Long> foundPerfumeIds = perfumeLikedMemberService.findLikedPerfumeIdsByMemberId(member.getId());
 
@@ -268,7 +268,7 @@ public class PerfumeController {
     @ApiOperation(value = "향수 계절감 초기화")
     @DeleteMapping("/{perfumeId}/weather")
     public ResponseEntity<PerfumeWeatherResponseDto> deletePerfumeWeather(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Perfume perfume = perfumeService.findById(perfumeId);
         return ResponseEntity.ok(perfumeWeatherService.delete(member,perfume));
     }
@@ -285,7 +285,7 @@ public class PerfumeController {
     @ApiOperation(value = "향수 성별 초기화")
     @DeleteMapping("/{perfumeId}/gender")
     public ResponseEntity<PerfumeGenderResponseDto> deletePerfumeGender(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Perfume perfume = perfumeService.findById(perfumeId);
         return ResponseEntity.ok(perfumeGenderService.delete(member,perfume));
     }
@@ -302,7 +302,7 @@ public class PerfumeController {
     @ApiOperation(value = "향수 연령대 초기화")
     @DeleteMapping("/{perfumeId}/age")
     public ResponseEntity<PerfumeAgeResponseDto> deletePerfumeAge(@PathVariable Long perfumeId, @RequestHeader("X-AUTH-TOKEN") String token){
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Perfume perfume = perfumeService.findById(perfumeId);
         return ResponseEntity.ok(perfumeAgeService.deletePerfumeAge(member, perfume));
     }
@@ -318,7 +318,7 @@ public class PerfumeController {
             result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId, 0, 3), similarDto);
             return ResponseEntity.ok(result);
         }
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         result = new PerfumeDetailSecondResponseDto(perfumeCommentService.findTopCommentsByPerfume(perfumeId,0,3,member),similarDto);
         return ResponseEntity.ok(result);
     }

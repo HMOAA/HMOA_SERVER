@@ -46,7 +46,7 @@ public class PerfumeAgeService {
 
     public PerfumeAgeResponseDto save(String token, Long perfumeId, PerfumeAgeRequestDto dto){
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeAge(member,perfume)){
             perfumeReviewService.initialSaveReview(perfume);

@@ -84,7 +84,7 @@ public class HomeMenuFacade {
         if (memberService.isTokenNullOrEmpty(token)) {
             return perfumes.stream().map(HomeMenuAllResponseDto::new).collect(Collectors.toList());
         }
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         return getResultForMember(perfumes, member);
     }
 

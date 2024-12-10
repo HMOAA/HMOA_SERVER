@@ -3,7 +3,6 @@ package hmoa.hmoaserver.hshop.controller;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.exception.Code;
 import hmoa.hmoaserver.exception.CustomException;
-import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.dto.BootpayCancelRequstDto;
 import hmoa.hmoaserver.hshop.dto.BootpayConfirmRequestDto;
@@ -45,7 +44,7 @@ public class BootpayController {
     @ApiOperation(value = "주문 취소 (receiptId로, 사용 X)")
     @PostMapping("/cancel")
     public ResponseEntity<ResultDto<Object>> cancel(@RequestHeader("X-AUTH-TOKEN") String token, @Valid @RequestBody BootpayCancelRequstDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HashMap res = bootpayService.cancelPayment(dto.getReceiptId(), dto.getCancelReason(), member);
 
         return ResponseEntity.ok(ResultDto.builder()
@@ -56,7 +55,7 @@ public class BootpayController {
     @ApiOperation(value = "주문 취소 (orderId로)")
     @DeleteMapping("/{orderId}/cancel")
     public ResponseEntity<ResultDto<Object>> cancel(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable("orderId") Long orderId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         OrderEntity order = orderService.findById(orderId);
 
         if (!member.getId().equals(order.getMemberId())) {

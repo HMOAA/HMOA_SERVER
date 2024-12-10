@@ -77,7 +77,7 @@ public class HShopFacade {
 
     // 상품 조회
     public List<NoteProductResponseDto> getNoteProducts(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         List<NoteProduct> noteProducts = noteProductService.getAllNoteProducts();
         NoteRecommend recommendNotes = member.getNoteRecommend();
@@ -97,7 +97,7 @@ public class HShopFacade {
 
     // 구매할 향료 입력
     public NoteProductsResponseDto selectNoteProducts(String token, NoteProductSelectRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Optional<Cart> cart = cartService.findOneCartByMemberId(member.getId());
         NoteProductsResponseDto result = noteProductService.getNoteProducts(dto.getProductIds());
 
@@ -114,7 +114,7 @@ public class HShopFacade {
 
     //향료 주문 요청
     public OrderResponseDto orderNotes(String token, NoteProductSelectRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         NoteProductsResponseDto noteProducts = noteProductService.getNoteProducts(dto.getProductIds());
         String orderTitle = noteProducts.getNoteProducts().get(0).getProductName();
@@ -131,7 +131,7 @@ public class HShopFacade {
 
     // 향료 주문 정보 조회
     public OrderInfoResponseDto getOrderInfos(String token, Long orderId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         OrderEntity order = orderService.findById(orderId);
 
         memberService.checkAuthorization(member.getId(), order.getMemberId());
@@ -143,7 +143,7 @@ public class HShopFacade {
 
     // 결제 전 주문 상품 제거
     public OrderInfoResponseDto deleteProduct(String token, Long orderId, Long productId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         OrderEntity order = orderService.findById(orderId);
         NoteProduct product = noteProductService.getNoteProduct(productId);
 
@@ -167,7 +167,7 @@ public class HShopFacade {
 
     // 장바구니 조회
     public NoteProductsResponseDto getCartInfos(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         Cart cart = cartService.findOneCartByMemberId(member.getId()).orElseThrow(() -> new CustomException(null, Code.CART_NOT_FOUND));
 
@@ -176,7 +176,7 @@ public class HShopFacade {
 
     // order내역 지우기
     public void deleteOrders(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<OrderEntity> orders = orderService.findByMemberId(member.getId());
         orderService.deleteOrders(orders);
     }
@@ -189,7 +189,7 @@ public class HShopFacade {
 
     // 후기 작성 가능한 주문 조회
     public List<OrderSelectResponseDto> getReviewableOrders(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<OrderEntity> orders = orderService.findByMemberId(member.getId());
         List<OrderEntity> filteredOrders = orders.stream()
                 .filter(order -> !hbtiReviewService.isPresentHbtiReviewByMember(order.getId(), member.getId()))
@@ -201,7 +201,7 @@ public class HShopFacade {
 
     // 향비티아이 후기 저장
     public HbtiReviewResponseDto saveHbtiReview(String token, Long orderId, List<MultipartFile> files, HbtiReviewSaveRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         OrderEntity order = orderService.findById(orderId);
 
         HbtiReview hbtiReview = hbtiReviewService.save(dto.toEntity(member.getId(), order.getId()));
@@ -218,7 +218,7 @@ public class HShopFacade {
 
     // 후기 수정
     public HbtiReviewResponseDto modifyHbtiReview(String token, Long reviewId, List<MultipartFile> files, HbtiReviewModifyRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HbtiReview review = hbtiReviewService.getReview(reviewId);
         OrderEntity order = orderService.findById(review.getOrderId());
 
@@ -240,7 +240,7 @@ public class HShopFacade {
 
     // 후기 목록 조회
     public PagingDto<Object> getHbtiReviews(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<HbtiReview> hbtiReviews = hbtiReviewService.getHbtiReviewsByPage(page);
         List<HbtiReviewResponseDto> res = createReviewResponseDtos(hbtiReviews, member);
         boolean isLastPage = PageUtil.isLastPage(hbtiReviews);
@@ -253,7 +253,7 @@ public class HShopFacade {
 
     // 후기 좋아요
     public void saveHbtiReviewHeart(String token, Long reviewId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         hbtiReviewService.saveHeart(review.getId(), member.getId());
@@ -263,7 +263,7 @@ public class HShopFacade {
 
     // 후기 좋아요 취소
     public void deleteHbtiReviewHeart(String token, Long reviewId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         hbtiReviewService.deleteHeart(review.getId(), member.getId());
@@ -272,7 +272,7 @@ public class HShopFacade {
 
     // 내가 작성한 후기 목록
     public PagingDto<Object> getMyReviews(String token, Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
         Page<HbtiReview> reviews = hbtiReviewService.getHbtiReviewsByMemberAndCursor(member.getId(), cursor);
         List<HbtiReviewResponseDto> res = createReviewResponseDtos(reviews, member);
@@ -286,7 +286,7 @@ public class HShopFacade {
 
     // 후기 삭제
     public void deleteReview(String token, Long reviewId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         validateOwner(member, review);
@@ -299,12 +299,12 @@ public class HShopFacade {
 
     // 후기 단 건 조회
     public HbtiReviewResponseDto getReview(String token, Long reviewId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         HbtiReview review = hbtiReviewService.getReview(reviewId);
 
         boolean isWrited = review.getMemberId().equals(member.getId());
         boolean isLiked = hbtiReviewService.isPresentReviewHeart(reviewId, member.getId());
-        Member author = memberService.findById(review.getMemberId()).get();
+        Member author = memberService.findByMemberById(review.getMemberId()).get();
         OrderEntity order = orderService.findById(review.getOrderId());
         return new HbtiReviewResponseDto(review, order.getTitle(), author, isWrited, isLiked);
     }
@@ -326,7 +326,7 @@ public class HShopFacade {
         return reviews.stream().map(review -> {
             boolean isWrited = review.getMemberId().equals(member.getId());
             boolean isLiked = hbtiReviewService.isPresentReviewHeart(review.getId(), member.getId());
-            Optional<Member> optionalAuthor = memberService.findById(review.getMemberId());
+            Optional<Member> optionalAuthor = memberService.findByMemberById(review.getMemberId());
 
             if (optionalAuthor.isEmpty()) {
                 return null;

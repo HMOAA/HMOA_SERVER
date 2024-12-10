@@ -63,7 +63,7 @@ public class SearchController {
             return ResponseEntity.ok(perfumes);
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<PerfumeSearchResponseDto> perfumes = perfumePage.stream().map(perfume -> {
             boolean isLiked = perfumeLikedMemberService.isMemberLikedPerfume(member, perfume);
             return new PerfumeSearchResponseDto(perfume, isLiked);

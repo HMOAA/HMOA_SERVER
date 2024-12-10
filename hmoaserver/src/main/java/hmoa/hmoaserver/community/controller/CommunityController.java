@@ -49,7 +49,7 @@ public class CommunityController {
     @ApiOperation("게시글 저장")
     @PostMapping(value = "/save", consumes = "multipart/form-data")
     public ResponseEntity<CommunityDefaultResponseDto> saveCommunity(HttpServletRequest request, @RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, CommunityDefaultRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Community community = communityService.saveCommunity(member, dto);
         if (files == null) {
             files = Collections.emptyList();
@@ -75,7 +75,7 @@ public class CommunityController {
             return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<CommunityByCategoryResponseDto> result = communities
                 .stream()
                 .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
@@ -94,7 +94,7 @@ public class CommunityController {
             return ResponseEntity.ok(new CommunityListResponseDto(isLastPage, communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList())));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<CommunityByCategoryResponseDto> result = communities
                 .stream()
                 .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
@@ -106,7 +106,7 @@ public class CommunityController {
     @ApiOperation(value = "내가 쓴 게시글 조회 (커서 페이징)")
     @GetMapping("/me")
     public ResponseEntity<PagingDto<Object>> findAllCommunitiesByMember(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if(PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
         Page<Community> communities = communityService.getCommunityByMemberAndCursor(member, cursor);
         boolean isLastPage = PageUtil.isLastPage(communities);
@@ -124,7 +124,7 @@ public class CommunityController {
     @ApiOperation(value = "내가 좋아요 한 게시글 조회 (커서 페이징)")
     @GetMapping("/like")
     public ResponseEntity<PagingDto<Object>> findAllCommunitiesByLiked(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if(PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
         Page<CommunityLikedMember> clms = communityLikedMemberService.findAllByMember(member, cursor);
         boolean isLastPage = PageUtil.isLastPage(clms);
@@ -147,7 +147,7 @@ public class CommunityController {
             return ResponseEntity.ok(communities.stream().map(CommunityByCategoryResponseDto::new).collect(Collectors.toList()));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<CommunityByCategoryResponseDto> result = communities
                 .stream()
                 .map(community -> new CommunityByCategoryResponseDto(community, communityLikedMemberService.isCommunityLikedMember(member, community)))
@@ -165,7 +165,7 @@ public class CommunityController {
             return ResponseEntity.ok(new CommunityDefaultResponseDto(community));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         CommunityDefaultResponseDto result = new CommunityDefaultResponseDto(community, community.isWrited(member), communityLikedMemberService.isCommunityLikedMember(member, community));
         result.setMyProfileImgUrl(member.getMemberPhoto().getPhotoUrl());
 
@@ -175,7 +175,7 @@ public class CommunityController {
     @ApiOperation("커뮤니티 내용 수정")
     @PostMapping(value = "/{communityId}", consumes = "multipart/form-data")
     public ResponseEntity<CommunityDefaultResponseDto> modifyCommunity(@RequestPart(value="image", required = false) List<MultipartFile> files, @RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId, CommunityModifyRequestDto dto){
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Community community = communityService.getCommunityById(communityId);
 
         if (files == null) {
@@ -210,7 +210,7 @@ public class CommunityController {
     @ApiOperation("커뮤니티 게시글 삭제")
     @DeleteMapping("/{communityId}")
     public ResponseEntity<ResultDto> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         return ResponseEntity.ok(ResultDto
                 .builder()
@@ -221,7 +221,7 @@ public class CommunityController {
     @ApiOperation("커뮤니티 좋아요")
     @PutMapping("/{communityId}/like")
     public ResponseEntity<ResultDto> saveCommunityLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Community community = communityService.getCommunityById(communityId);
 
         communityLikedMemberService.save(member, community);
@@ -233,7 +233,7 @@ public class CommunityController {
     @ApiOperation("커뮤니티 좋아요 취소")
     @DeleteMapping("/{communityId}/like")
     public ResponseEntity<ResultDto> deleteCommunityLike(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Community community = communityService.getCommunityById(communityId);
 
         communityLikedMemberService.delete(member, community);
@@ -244,7 +244,7 @@ public class CommunityController {
     @ApiOperation("(사용 X) 시향기 -> 향BTI_시향기로 바꾸기")
     @PutMapping("/change")
     public ResponseEntity<?> changeCategory(@RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         communityService.changeCategory();
 
         return ResponseEntity.ok(ResultDto.builder().build());

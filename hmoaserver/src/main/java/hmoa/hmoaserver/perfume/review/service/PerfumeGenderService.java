@@ -36,7 +36,7 @@ public class PerfumeGenderService {
     }
     public PerfumeGenderResponseDto save(String token, Long perfumeId, PerfumeGenderRequestDto dto){
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeGender(member,perfume)){
             perfumeReviewService.initialSaveReview(perfume);

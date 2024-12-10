@@ -31,7 +31,7 @@ public class FCMController {
     @ApiOperation(value = "푸쉬 알림 목록 조회")
     @GetMapping("/list")
     public ResponseEntity<ResultDto<Object>> findPushAlarms(@RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<PushAlarm> pushAlarms = fcmNotificationService.findPushAlarms(member);
         List<PushAlarmResponseDto> result = pushAlarms.stream().map(PushAlarmResponseDto::new).collect(Collectors.toList());
 
@@ -59,7 +59,7 @@ public class FCMController {
     @ApiOperation(value = "푸쉬 알림 읽음 표시")
     @PutMapping("/read/{alarmId}")
     public ResponseEntity<ResultDto<Object>> readPushAlarm(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long alarmId) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         PushAlarm pushAlarm = fcmNotificationService.findById(alarmId);
 
         if (!member.isSameMember(pushAlarm.getMember())) {
@@ -74,7 +74,7 @@ public class FCMController {
     @ApiOperation(value = "fcm 토큰 저장")
     @PostMapping("/save")
     public ResponseEntity<ResultDto<Object>> saveFcmToken(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody FCMTokenSaveRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         log.info("{}", dto.getFCMToken());
         memberService.updateFCMToken(member, dto.getFCMToken());
         return ResponseEntity.ok(ResultDto.builder().build());
@@ -83,7 +83,7 @@ public class FCMController {
     @ApiOperation(value = "fcm 토큰 제거")
     @DeleteMapping("/delete")
     public ResponseEntity<ResultDto<Object>> deleteFcmToken(@RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         memberService.deleteFCMToken(member);
         return ResponseEntity.ok(ResultDto.builder().build());
     }

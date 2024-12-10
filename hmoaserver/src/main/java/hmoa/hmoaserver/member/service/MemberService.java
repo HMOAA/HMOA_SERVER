@@ -41,18 +41,16 @@ public class MemberService {
     }
 
     @Transactional
-    public String delete(Member member){
+    public void delete(Member member){
         try {
             memberRepository.delete(member);
-            return "회원 탈퇴 성공";
         }catch (RuntimeException e){
-            throw new CustomException(null,SERVER_ERROR);
+            throw new CustomException(null, SERVER_ERROR);
         }
     }
 
     @Transactional
-    public Token reIssue(String rememberedToken){
-        log.info("{}", rememberedToken);
+    public Token reissueTokens(String rememberedToken){
         if (!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)) {
             throw new CustomException(null, WRONG_TYPE_TOKEN);
         }
@@ -68,6 +66,10 @@ public class MemberService {
         }
     }
 
+    /**
+     * 권한 업데이트
+     * @param member
+     */
     @Transactional
     public void updateRole(Member member){
         member.authorizeUser();
@@ -77,19 +79,22 @@ public class MemberService {
     /**
      * 닉네임 중복 검사
      */
-    public boolean isExistingNickname(String nickname){
+    public boolean isDuplicateNickname(String nickname){
         Boolean exisitingNickname = false;
+
         try{
-            exisitingNickname=memberRepository.existsByNickname(nickname);
+            exisitingNickname = memberRepository.existsByNickname(nickname);
         }catch (RuntimeException e){
-            throw new CustomException(e,SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
+
         return exisitingNickname;
     }
+
     /**
      * 회원 하나 조회
      */
-    public Member findByEmail(String email){
+    public Member findByMemberByEmail(String email){
         return memberRepository.findByEmail(email)
                 .orElseThrow(()-> new CustomException(null, MEMBER_NOT_FOUND));
     }
@@ -97,15 +102,16 @@ public class MemberService {
     /**
      * 토큰으로 회원 조회
      */
-    public Member findByMember(String token){
+    public Member findByMemberByToken(String token){
         String email = jwtService.getEmail(token);
-        return findByEmail(email);
+        return findByMemberByEmail(email);
     }
+
     /**
-     * 첫 로그인시 회원 업데이트
+     * 첫 로그인시 회원 업데이트 (회원 가입)
      */
     @Transactional
-    public void joinMember(Member member, int age,boolean sex,String nickname){
+    public void joinMember(Member member, int age, boolean sex, String nickname){
         try{
             member.updateAge(age);
             member.updateSex(sex);
@@ -121,7 +127,7 @@ public class MemberService {
      */
     @Transactional
     public void updateNickname(Member member, String nickname){
-        isExistingNickname(nickname);
+        isDuplicateNickname(nickname);
         member.updateNickname(nickname);
         save(member);
     }
@@ -150,13 +156,13 @@ public class MemberService {
     @Transactional
     public MemberLoginResponseDto loginMember(String accessToken, ProviderType provider){
         OAuth2UserDto profile = providerService.getProfile(accessToken,provider);
-        Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(),provider);
+        Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(), provider);
         if (findMember.isPresent()){
             Member member = findMember.get();
             String xAuthToken = jwtService.createAccessToken(member.getEmail(), member.getRole());
             String rememberedToken = jwtService.createRefreshToken(member.getEmail(), member.getRole());
             jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
-            if (findMember.get().getRole()!=Role.GUEST) {
+            if (findMember.get().getRole() != Role.GUEST) {
                 return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),true);
             } else {
                 return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
@@ -171,8 +177,7 @@ public class MemberService {
             member = save(member);
             String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
             String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
-            jwtService.updateRefreshToken(member.getEmail(),rememberedToken);
-            log.info("1");
+            jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
             memberPhotoService.saveDefaultImage(member);
             return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
         }
@@ -180,9 +185,9 @@ public class MemberService {
 
     @Transactional
     public void saveMemberPhoto(Member member, MultipartFile file) {
-        if (member.getMemberPhoto() != null)
+        if (member.getMemberPhoto() != null) {
             memberPhotoService.delete(member.getMemberPhoto());
-
+        }
         memberPhotoService.saveMemberPhotos(member, file);
     }
 
@@ -202,14 +207,11 @@ public class MemberService {
         }
     }
 
-    public Optional<Member> findById(Long id) {
+    public Optional<Member> findByMemberById(Long id) {
         return memberRepository.findById(id);
     }
 
     public boolean isTokenNullOrEmpty(String token){
-        if(token == null || token == ""){
-            return true;
-        }
-        return false;
+        return token == null || token.isEmpty();
     }
 }

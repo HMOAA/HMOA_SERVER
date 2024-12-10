@@ -4,10 +4,7 @@ import hmoa.hmoaserver.common.PageSize;
 import hmoa.hmoaserver.common.PageUtil;
 import hmoa.hmoaserver.common.PagingDto;
 import hmoa.hmoaserver.common.ResultDto;
-import hmoa.hmoaserver.community.dto.CommunityCommentByMemberResponseDto;
 import hmoa.hmoaserver.exception.ExceptionResponseDto;
-import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
-import hmoa.hmoaserver.fcm.service.FCMNotificationService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.PerfumeComment;
@@ -70,7 +67,7 @@ public class PerfumeCommentController {
     })
     @PostMapping("/{perfumeId}/comments")
     public ResponseEntity<PerfumeCommentResponseDto> commentSave(@PathVariable Long perfumeId, @RequestBody PerfumeCommentRequestDto dto, @RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         PerfumeComment perfumeComment = commentService.commentSave(member, perfumeId, dto);
         return ResponseEntity.ok(new PerfumeCommentResponseDto(perfumeComment, false, member));
     }
@@ -82,7 +79,7 @@ public class PerfumeCommentController {
         if (memberService.isTokenNullOrEmpty(token)) {
             return ResponseEntity.ok(new PerfumeCommentResponseDto(comment));
         }
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, commentService.isPerfumeCommentLiked(comment, member), member));
     }
 
@@ -119,7 +116,7 @@ public class PerfumeCommentController {
             PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId, page);
             return ResponseEntity.ok(result);
         }
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         PerfumeCommentGetResponseDto result = commentService.findCommentsByPerfume(perfumeId, page, member);
         return ResponseEntity.ok(result);
     }
@@ -136,7 +133,7 @@ public class PerfumeCommentController {
             return ResponseEntity.ok(new PerfumeCommentGetResponseDto(count, isLastPage, dtos));
         }
 
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<PerfumeCommentResponseDto> dtos = comments.stream().map(comment ->
                 new PerfumeCommentResponseDto(comment, commentService.isPerfumeCommentLiked(comment, member), member))
                 .collect(Collectors.toList());
@@ -177,7 +174,7 @@ public class PerfumeCommentController {
             PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId, page,10);
             return ResponseEntity.ok(result);
         }
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         PerfumeCommentGetResponseDto result = commentService.findTopCommentsByPerfume(perfumeId, page,10, member);
         return ResponseEntity.ok(result);
     }
@@ -265,7 +262,7 @@ public class PerfumeCommentController {
     @ApiOperation(value = "내가 쓴 향수 댓글 조회 (커서 페이징)")
     @GetMapping("comments/me")
     public ResponseEntity<PagingDto<Object>> findAllByMember(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if (cursor == 0) cursor = (long) PageSize.DEFAULT_CURSOR.getSize();
         Page<PerfumeComment> comments = commentService.findPerfumeCommentByMemberAndCursor(member, cursor);
         boolean isLastPage = PageUtil.isLastPage(comments);
@@ -283,7 +280,7 @@ public class PerfumeCommentController {
     @ApiOperation(value = "내가 좋아요한 향수 댓글 조회 (커서 페이징)")
     @GetMapping("comments/like")
     public ResponseEntity<PagingDto<Object>> findAllByLiked(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if (cursor == 0) cursor = (long) PageSize.DEFAULT_CURSOR.getSize();
         Page<PerfumeCommentLiked> commentLikeds = commentLikedMemberService.findAllByMemberAndCursor(member, cursor);
         boolean isLastPage = PageUtil.isLastPage(commentLikeds);
@@ -301,7 +298,7 @@ public class PerfumeCommentController {
     @ApiOperation(value = "향수 댓글 수정")
     @PutMapping("comments/{commentId}/modify")
     public ResponseEntity<PerfumeCommentResponseDto> modifyComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token, @RequestBody PerfumeCommentModifyRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         PerfumeComment comment = commentService.modifyComment(token, commentId, dto.getContent());
         return ResponseEntity.ok(new PerfumeCommentResponseDto(comment, commentLikedMemberService.isMemberLikedPerfumeComment(member, comment), member));
 
@@ -310,7 +307,7 @@ public class PerfumeCommentController {
     @ApiOperation(value = "향수 댓글 삭제")
     @DeleteMapping("/comments/{commentId}/delete")
     public ResponseEntity<ResultDto<Object>> deleteComment(@PathVariable Long commentId, @RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         commentService.deleteComment(member, commentId);
         return ResponseEntity.ok(ResultDto.builder().build());
     }

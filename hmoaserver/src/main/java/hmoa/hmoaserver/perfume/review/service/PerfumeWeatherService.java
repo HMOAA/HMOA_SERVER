@@ -37,7 +37,7 @@ public class PerfumeWeatherService {
 
     public PerfumeWeatherResponseDto save(String token, Long perfumeId, PerfumeWeatherRequestDto dto){
         String email = jwtService.getEmail(token);
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByMemberByEmail(email);
         Perfume perfume = perfumeService.findById(perfumeId);
         if(!isPresentPerfumeWeather(member,perfume)){
             perfumeReviewService.initialSaveReview(perfume);

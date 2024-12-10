@@ -19,10 +19,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class AdminController {
     @ApiOperation("홈 메뉴 타이틀 추가")
     @PostMapping("/homePerfume")
     public ResponseEntity<ResultDto> saveHomePerfume(@RequestHeader("X-AUTH-TOKEN") String token , @RequestBody HomeMenuSaveRequestDto dto){
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         homeMenuService.save(dto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }

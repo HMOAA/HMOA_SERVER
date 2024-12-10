@@ -100,7 +100,7 @@ public class AdminFacade {
     }
   
     public String getMemberToken(Long memberId) {
-        Member member = memberService.findById(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
+        Member member = memberService.findByMemberById(memberId).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
         return testTokenProvider.getMemberToken(member);
     }
 
@@ -120,7 +120,7 @@ public class AdminFacade {
 
     public void deleteCommunity(Long communityId) {
         Community community = communityService.getCommunityById(communityId);
-        Member member = memberService.findById(community.getMember().getId()).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
+        Member member = memberService.findByMemberById(community.getMember().getId()).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
         communityService.deleteCommunity(member, communityId);
     }
 

@@ -111,7 +111,7 @@ public class SurveyController {
     @ApiOperation(value = "향bti 홈 이미지, 향수 추천 서비스 가능 여부")
     @GetMapping("/home")
     public ResponseEntity<SurveyHomeResponseDto> getHomeSurvey(@RequestHeader("X-AUTH-TOKEN") String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         List<OrderEntity> orders = orderService.findByMemberIdAndStatuses(member.getId(), OrderStatus.getPossiblePerfumeSurveyStatus());
 
         return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
@@ -129,7 +129,7 @@ public class SurveyController {
     @ApiOperation(value = "향수 추천 API")
     @PostMapping("/perfume/respond")
     public ResponseEntity<PerfumeRecommendsResponseDto> respondPerfumeRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestParam RecommendType recommendType, @RequestBody PerfumeRecommendRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         List<PerfumeRecommendation> perfumeRecommendations;
 
@@ -147,7 +147,7 @@ public class SurveyController {
     @ApiOperation(value = "향료 추천 응답 API")
     @PostMapping("/note/respond")
     public ResponseEntity<NoteRecommendResponseDto> respondNoteRecommendSurvey(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberAnswerRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         //이미 응답이 존재하면 지우기
         if (memberAnswerService.isExistingMemberAnswer(member)) {
             for (MemberAnswer memberAnswer : memberAnswerService.findByMember(member)) {

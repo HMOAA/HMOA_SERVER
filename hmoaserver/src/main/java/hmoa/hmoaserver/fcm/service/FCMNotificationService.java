@@ -12,10 +12,8 @@ import hmoa.hmoaserver.fcm.domain.PushAlarm;
 import hmoa.hmoaserver.fcm.dto.FCMNotificationRequestDto;
 import hmoa.hmoaserver.fcm.dto.FCMTestRequestDto;
 import hmoa.hmoaserver.fcm.repository.PushAlarmRepository;
-import hmoa.hmoaserver.fcm.service.constant.NotificationConstants;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessage;
 import hmoa.hmoaserver.fcm.service.constant.NotificationMessageFactory;
-import hmoa.hmoaserver.fcm.service.constant.NotificationType;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +38,8 @@ public class FCMNotificationService {
 
     public void sendNotification(FCMNotificationRequestDto requestDto) {
         log.info("알림 보내기");
-        Optional<Member> member = memberService.findById(requestDto.getReceiverId());
-        Optional<Member> sender = memberService.findById(requestDto.getSenderId());
+        Optional<Member> member = memberService.findByMemberById(requestDto.getReceiverId());
+        Optional<Member> sender = memberService.findByMemberById(requestDto.getSenderId());
 
         if (!isValidNotification(requestDto, member)) {
             return;
@@ -58,7 +56,7 @@ public class FCMNotificationService {
 
     public PushAlarm testNotification(FCMTestRequestDto requestDto) {
         log.info("테스트 알림");
-        Member testMember = memberService.findById(0l).get();
+        Member testMember = memberService.findByMemberById(0l).get();
 
         NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
         PushAlarm pushAlarm = savePushAlarm(notificationMessage, testMember, testMember, 40l);
@@ -70,8 +68,8 @@ public class FCMNotificationService {
 
     public PushAlarm testNotification(FCMTestRequestDto requestDto, String token) {
         log.info("테스트 알림 (저장까지)");
-        Member receiver = memberService.findByMember(token);
-        Member testMember = memberService.findById(0l).get();
+        Member receiver = memberService.findByMemberByToken(token);
+        Member testMember = memberService.findByMemberById(0l).get();
 
         NotificationMessage notificationMessage = NotificationMessageFactory.getMessage(requestDto.getType());
         PushAlarm pushAlarm = savePushAlarm(notificationMessage, receiver, testMember, requestDto.getTargetId());

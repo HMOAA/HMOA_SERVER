@@ -63,7 +63,7 @@ public class MemberFacade {
     private static final int SHIPPING_FEE = 3000;
 
     public MemberResponseDto getOneMember(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         if (member.getRole() == Role.GUEST) {
             throw new CustomException(null, Code.MEMBER_NOT_FOUND);
@@ -73,7 +73,7 @@ public class MemberFacade {
     }
 
     public MemberResponseDto joinMember(String token, JoinUpdateRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberService.joinMember(member, dto.getAge(), dto.isSex(), dto.getNickname());
 
@@ -81,29 +81,29 @@ public class MemberFacade {
     }
 
     public void updateNickname(String token, NicknameRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberService.updateNickname(member, dto.getNickname());
     }
 
     public boolean checkNicknameDuplicate(NicknameRequestDto dto) {
-        return memberService.isExistingNickname(dto.getNickname());
+        return memberService.isDuplicateNickname(dto.getNickname());
     }
 
     public void updateAge(String token, AgeRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberService.updateAge(member, dto.getAge());
     }
 
     public void updateSex(String token, SexRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberService.updateSex(member, dto.isSex());
     }
 
     public List<PerfumeCommentByMemberResponseDto> getMyPerfumeComments(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<PerfumeComment> comments = perfumeCommentService.findPerfumeCommentByMember(member, page);
 
         return comments.stream()
@@ -112,7 +112,7 @@ public class MemberFacade {
     }
 
     public List<CommunityCommentByMemberResponseDto> getMyCommunityComments(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<CommunityComment> comments = communityCommentService.findAllCommunityCommentByMember(member, page);
 
         return comments.stream()
@@ -121,7 +121,7 @@ public class MemberFacade {
     }
 
     public List<PerfumeCommentByMemberResponseDto> getMyPerfumeCommentsByHearts(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<PerfumeCommentLiked> commentLikeds = perfumeCommentLikedMemberService.findAllByMember(member, page);
 
         return commentLikeds.stream()
@@ -130,7 +130,7 @@ public class MemberFacade {
     }
 
     public List<CommunityCommentByMemberResponseDto> getMyCommunityCommentsByHearts(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<CommunityCommentLikedMember> commentLikeds = commentLikedMemberService.findAllByMember(member, page);
 
         return commentLikeds.stream()
@@ -139,7 +139,7 @@ public class MemberFacade {
     }
 
     public List<CommunityByCategoryResponseDto> getMyCommunities(String token, int page) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         Page<Community> communities = communityService.getCommunityByMember(member, page);
         return communities.stream()
                 .map(CommunityByCategoryResponseDto::new)
@@ -147,51 +147,51 @@ public class MemberFacade {
     }
 
     public void saveMemberPhoto(String token, MultipartFile file) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         photoService.validateFileExistence(file);
         memberService.saveMemberPhoto(member, file);
     }
 
     public void deleteMemberPhoto(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberPhotoService.validateMemberPhotoIsExistence(member);
         memberPhotoService.delete(member.getMemberPhoto());
     }
 
     public void deleteMember(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         hbtiReviewService.deleteHbtiReviewsByMember(member.getId());
         memberService.delete(member);
     }
 
     public void saveMemberAddress(String token, MemberAddressSaveRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberAddressService.save(dto.toEntity(member.getId()));
     }
 
     public void saveOrderInfo(String token, MemberInfoRequestDto dto) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         memberInfoService.save(dto.toEntity(member.getId()));
     }
 
     public MemberInfoResponseDto getOrderInfo(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         return new MemberInfoResponseDto(memberInfoService.findByMemberId(member.getId()));
     }
 
     public MemberAddressResponseDto getAddress(String token) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
 
         return new MemberAddressResponseDto(memberAddressService.findByMemberId(member.getId()));
     }
 
     public PagingDto<Object> getMemberOrders(String token, Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
         Page<OrderEntity> orders = orderService.findByMemberId(member.getId(), cursor, PageSize.FIVE_SIZE.getSize());
@@ -203,7 +203,7 @@ public class MemberFacade {
     }
 
     public PagingDto<Object> getMemberCancelOrders(String token, Long cursor) {
-        Member member = memberService.findByMember(token);
+        Member member = memberService.findByMemberByToken(token);
         if (PageUtil.isFistCursor(cursor)) cursor = PageUtil.convertFirstCursor(cursor);
 
         Page<OrderEntity> orders = orderService.findCancelByMemberId(member.getId(), cursor);

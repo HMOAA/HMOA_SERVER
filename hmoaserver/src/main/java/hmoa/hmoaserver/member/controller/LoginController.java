@@ -60,7 +60,7 @@ public class LoginController {
     @PostMapping("/login/remembered")
     public ResponseEntity<TokenResponseDto> rememberedLogin(@RequestBody RememberedLoginRequestDto dto) {
         if (!dto.getRememberedToken().isEmpty()) {
-            Token token = memberService.reIssue(dto.getRememberedToken());
+            Token token = memberService.reissueTokens(dto.getRememberedToken());
             TokenResponseDto responseDto = new TokenResponseDto(token);
             return ResponseEntity.ok(responseDto);
         } else {
