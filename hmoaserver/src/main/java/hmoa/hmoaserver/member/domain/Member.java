@@ -116,6 +116,7 @@ public class Member extends BaseEntity implements UserDetails {
     public void authorizeUser(){
         this.role = Role.USER;
     }
+
     public void updateRefreshToken(String updateRefreshToken){
         this.refreshToken = updateRefreshToken;
     }
@@ -123,9 +124,11 @@ public class Member extends BaseEntity implements UserDetails {
     public void updateNickname(String updateNickname){
         this.nickname=updateNickname;
     }
+
     public void updateSex(boolean updateSex){
         this.sex=updateSex;
     }
+
     public void updateAge(int age){
         this.age=age;
     }

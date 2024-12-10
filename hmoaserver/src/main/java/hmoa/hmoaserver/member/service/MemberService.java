@@ -1,10 +1,5 @@
 package hmoa.hmoaserver.member.service;
 
-import hmoa.hmoaserver.common.PageSize;
-import hmoa.hmoaserver.common.PageUtil;
-import hmoa.hmoaserver.community.domain.Community;
-import hmoa.hmoaserver.community.domain.CommunityComment;
-import hmoa.hmoaserver.community.repository.CommunityCommentRepository;
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.*;
 import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
@@ -14,25 +9,14 @@ import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.service.ProviderService;
 import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
-import hmoa.hmoaserver.perfume.domain.PerfumeComment;
-import hmoa.hmoaserver.perfume.domain.PerfumeCommentLiked;
-import hmoa.hmoaserver.perfume.repository.PerfumeCommentLikedRepository;
-import hmoa.hmoaserver.perfume.repository.PerfumeCommentRepository;
 import hmoa.hmoaserver.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static hmoa.hmoaserver.exception.Code.*;
 
@@ -41,7 +25,6 @@ import static hmoa.hmoaserver.exception.Code.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
-    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(PageSize.ZERO_PAGE.getSize(), PageSize.TEN_SIZE.getSize());
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
