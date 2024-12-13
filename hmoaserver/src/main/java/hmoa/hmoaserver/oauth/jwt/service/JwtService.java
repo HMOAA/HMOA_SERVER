@@ -44,13 +44,6 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
-    /**
-     * subject와 claim으로 email
-     */
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String EMAIL_CLAIM = "email";
-
     private final MemberRepository memberRepository;
 
     private final UserDetailsService userDetailsService;
@@ -72,13 +65,11 @@ public class JwtService {
     //refreshToken 생성
     public String createRefreshToken(String email, Role roles) {
         Date now = new Date();
-        String refreshToken = Jwts.builder()
+        return Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(SignatureAlgorithm.HS256,secretKey)
                 .compact();
-        log.info("{}", refreshToken);
-        return refreshToken;
     }
 
     public Authentication getAuthentication(String token){
@@ -88,19 +79,6 @@ public class JwtService {
 
     public String getEmail(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-
-    //access+refresh json 형태로 보내기
-    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
-        log.info("sendAccessAndRefreshToken");
-        Token token = new Token(accessToken,refreshToken);
-        String result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(token);
-        log.info("{}",result);
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write(result);
     }
 
     /**
