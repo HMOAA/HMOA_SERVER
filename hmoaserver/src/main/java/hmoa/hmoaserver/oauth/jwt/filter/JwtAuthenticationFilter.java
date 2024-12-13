@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("필터");
 
+        // jwt 에러 시 401 또는 404를, 이외의 예외는 서버 에러로 간주한다 (서버 에러 사항은 로그를 확인해볼것)
         try {
             if (jwtService.extractAccessToken(request).isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -71,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.info("SERVER_ERROR 발생 확인 바람.");
             errorResult(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
