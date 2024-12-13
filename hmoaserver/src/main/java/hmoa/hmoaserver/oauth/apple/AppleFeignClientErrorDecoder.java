@@ -30,10 +30,9 @@ public class AppleFeignClientErrorDecoder implements ErrorDecoder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (response != null && response.body() != null) {
+
+        if (response.body() != null) {
             try {
-                log.info("{}", response.body());
-                log.info("{}", response);
                 body = objectMapper.readValue(response.body().toString(), Object.class);
             } catch (IOException e) {
                 log.error("Error decoding response body", e);

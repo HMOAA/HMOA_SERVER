@@ -156,7 +156,7 @@ public class MemberService {
     @Transactional
     public MemberLoginResponseDto loginMember(String accessToken, ProviderType provider){
         OAuth2UserDto profile = providerService.getProfile(accessToken,provider);
-        Optional<Member> findMember = memberRepository.findByemailAndProviderType(profile.getEmail(), provider);
+        Optional<Member> findMember = memberRepository.findByEmailAndProviderType(profile.getEmail(), provider);
         if (findMember.isPresent()){
             Member member = findMember.get();
             String xAuthToken = jwtService.createAccessToken(member.getEmail(), member.getRole());

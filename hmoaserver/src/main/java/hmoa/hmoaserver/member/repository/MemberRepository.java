@@ -18,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
 
     Optional<Member> findByRefreshToken(String refreshToken);
 
-    Optional<Member> findByemailAndProviderType(String email,ProviderType providerType);
+    Optional<Member> findByEmailAndProviderType(String email, ProviderType providerType);
 
     @Modifying
     @Query("UPDATE Member m " +

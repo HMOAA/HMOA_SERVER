@@ -57,9 +57,6 @@ public class MemberFacade {
     private final NoteProductService noteProductService;
     private final HbtiReviewService hbtiReviewService;
 
-    @Value("${default.profile}")
-    private String DEFAULT_PROFILE;
-
     private static final int SHIPPING_FEE = 3000;
 
     public MemberResponseDto getOneMember(String token) {

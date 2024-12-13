@@ -101,5 +101,4 @@ public class LoginController {
         MemberLoginResponseDto responseDto = memberService.loginMember(accessToken.getToken(), provider);
         return ResponseEntity.ok(responseDto);
     }
-
 }
