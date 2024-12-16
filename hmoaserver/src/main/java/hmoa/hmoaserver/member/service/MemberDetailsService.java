@@ -16,6 +16,6 @@ public class MemberDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws RuntimeException {
         return memberRepository.findByEmail(username)
-                .orElseThrow(()-> new CustomException(null, Code.MEMBER_NOT_FOUND));
+                .orElseThrow(()-> new CustomException(UsernameNotFoundException, Code.MEMBER_NOT_FOUND));
     }
 }
