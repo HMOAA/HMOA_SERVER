@@ -94,7 +94,7 @@ public class AdminFacade {
         return orders.stream().map(order -> {
             log.info("{}", order.getId());
             MemberAddressResponseDto address = new MemberAddressResponseDto(memberAddressService.findByMemberId(order.getMemberId()));
-            MemberInfoResponseDto info = new MemberInfoResponseDto(memberInfoService.findByMemberId(order.getMemberId()));
+            MemberInfoResponseDto info = new MemberInfoResponseDto(memberInfoService.findByMemberIdByAdmin(order.getMemberId()));
             return new OrderDeliveryListResponseDto(order, address, info);
         }).toList();
     }
