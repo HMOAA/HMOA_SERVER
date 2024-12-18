@@ -46,6 +46,15 @@ public class MemberInfoService {
         return memberInfos.get(memberInfos.size() - 1);
     }
 
+    public MemberInfo findByMemberIdByAdmin(Long memberId) {
+        if (!isExistMemberInfo(memberId)) {
+            return MemberInfo.builder().name("주문자 정보 없음").phoneNumber("x").build();
+        }
+
+        List<MemberInfo> memberInfos = memberInfoRepository.findByMemberId(memberId);
+        return memberInfos.get(memberInfos.size() - 1);
+    }
+
     public boolean isExistMemberInfo(Long memberId) {
         return !memberInfoRepository.findByMemberId(memberId).isEmpty();
     }
