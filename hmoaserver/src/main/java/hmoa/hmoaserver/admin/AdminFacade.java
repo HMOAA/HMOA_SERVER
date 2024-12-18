@@ -130,8 +130,8 @@ public class AdminFacade {
 
     public void saveMember(MemberInfoRequestDto memberInfoRequestDto) {
         Member member = Member.builder().email(memberInfoRequestDto.getName()).nickname(memberInfoRequestDto.getName()).build();
-        memberPhotoService.saveDefaultImage(member);
         memberService.save(member);
+        memberPhotoService.saveDefaultImage(member);
     }
 
     /**
