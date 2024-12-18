@@ -11,6 +11,7 @@ import hmoa.hmoaserver.homemenu.service.HomeMenuService;
 import hmoa.hmoaserver.common.ResultDto;
 import hmoa.hmoaserver.homemenu.service.PerfumeHomeMenuService;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.dto.MemberInfoRequestDto;
 import hmoa.hmoaserver.member.service.MemberService;
 import hmoa.hmoaserver.perfume.domain.Perfume;
 import hmoa.hmoaserver.perfume.service.PerfumeService;
@@ -19,10 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -136,6 +135,13 @@ public class AdminController {
     @DeleteMapping("/communities/{communityId}")
     public ResponseEntity<ResultDto<Object>> deleteCommunity(@RequestHeader("X-AUTH-TOKEN") String token, @PathVariable Long communityId) {
         adminFacade.deleteCommunity(communityId);
+        return ResponseEntity.ok(ResultDto.builder().build());
+    }
+
+    @ApiOperation("유령 계정 만들기")
+    @PostMapping("/member")
+    public ResponseEntity<ResultDto<Object>> saveMember(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody MemberInfoRequestDto memberInfoRequestDto) {
+        adminFacade.saveMember(memberInfoRequestDto);
         return ResponseEntity.ok(ResultDto.builder().build());
     }
 }

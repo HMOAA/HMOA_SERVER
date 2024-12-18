@@ -14,12 +14,14 @@ import hmoa.hmoaserver.hshop.domain.OrderEntity;
 import hmoa.hmoaserver.hshop.domain.OrderStatus;
 import hmoa.hmoaserver.hshop.service.OrderService;
 import hmoa.hmoaserver.member.dto.MemberAddressResponseDto;
+import hmoa.hmoaserver.member.dto.MemberInfoRequestDto;
 import hmoa.hmoaserver.member.dto.MemberInfoResponseDto;
 import hmoa.hmoaserver.member.service.MemberAddressService;
 import hmoa.hmoaserver.member.service.MemberInfoService;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.service.MemberService;
 
+import hmoa.hmoaserver.photo.service.MemberPhotoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +43,7 @@ public class AdminFacade {
     private final MemberService memberService;
     private final TestTokenProvider testTokenProvider;
     private final CommunityService communityService;
+    private final MemberPhotoService memberPhotoService;
 
     @Value("${tracking.access}")
     private String trackingAccess;
@@ -53,7 +56,7 @@ public class AdminFacade {
     private final OrderService orderService;
     private final ObjectMapper objectMapper;
 
-    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService, MemberService memberService, TestTokenProvider testTokenProvider, CommunityService communityService) {
+    public AdminFacade(WebClient.Builder webClientBuilder, OrderService orderService, ObjectMapper objectMapper, MemberAddressService memberAddressService, MemberInfoService memberInfoService, MemberService memberService, TestTokenProvider testTokenProvider, CommunityService communityService, MemberPhotoService memberPhotoService) {
         this.webClient = webClientBuilder.baseUrl("https://apis.tracker.delivery").build();
         this.orderService = orderService;
         this.objectMapper = objectMapper;
@@ -62,6 +65,7 @@ public class AdminFacade {
         this.memberService = memberService;
         this.testTokenProvider = testTokenProvider;
         this.communityService = communityService;
+        this.memberPhotoService = memberPhotoService;
     }
 
     // 운송장 등록
@@ -122,6 +126,12 @@ public class AdminFacade {
         Community community = communityService.getCommunityById(communityId);
         Member member = memberService.findById(community.getMember().getId()).orElseThrow(() -> new CustomException(null, Code.MEMBER_NOT_FOUND));
         communityService.deleteCommunity(member, communityId);
+    }
+
+    public void saveMember(MemberInfoRequestDto memberInfoRequestDto) {
+        Member member = Member.builder().email(memberInfoRequestDto.getName()).nickname(memberInfoRequestDto.getName()).build();
+        memberPhotoService.saveDefaultImage(member);
+        memberService.save(member);
     }
 
     /**
