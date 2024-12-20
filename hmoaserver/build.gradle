@@ -95,3 +95,18 @@ task localDeploy(type: Exec) {
 	// Windows에서 cmd를 사용하여 docker-compose 실행
 	commandLine 'cmd', '/c', 'docker-compose -f docker-compose-local.yml up --build -d'
 }
+
+task localDeployForMac(type: Exec) {
+	group = 'Docker'
+	description = 'Builds the project and starts docker-compose'
+
+	// BootJar 태스크를 실행하여 Spring Boot 애플리케이션을 빌드
+	dependsOn 'bootJar'
+
+	// 작업 디렉토리를 명시적으로 설정
+	workingDir "$projectDir"
+
+	// Mac/Linux에서 docker-compose 실행
+	commandLine 'sh', '-c', 'docker-compose -f docker-compose-local.yml up --build -d'
+}
+
