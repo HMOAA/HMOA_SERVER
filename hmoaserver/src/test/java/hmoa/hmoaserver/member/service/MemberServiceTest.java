@@ -1,5 +1,6 @@
 package hmoa.hmoaserver.member.service;
 
+import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
 import hmoa.hmoaserver.member.domain.Role;
 import hmoa.hmoaserver.member.repository.MemberRepository;
@@ -57,6 +58,22 @@ class MemberServiceTest {
         assertEquals("NEW_ACCESS_TOKEN", token.getAuthToken());
         assertEquals("NEW_REFRESH_TOKEN", token.getRememberedToken());
         verify(jwtService).updateRefreshToken(member.getEmail(), "NEW_REFRESH_TOKEN");
+    }
+
+    @Test
+    @DisplayName("잘못된_토큰이_들어오면_401_에러를_반환한다.")
+    void reissue_invalidRefreshToken() {
+        //given
+        String invalidRefreshToken = "INVALID_REFRESH_TOKEN";
+        when(jwtService.isTokenValid(invalidRefreshToken)).thenReturn(JwtResultType.INVALID_JWT);
+
+        // when, then
+        CustomException exception = assertThrows(CustomException.class, () -> memberService.reissueTokens(invalidRefreshToken));
+        assertEquals("변조된 토큰입니다.", exception.getCode().getMessage());
+
+        //verify
+        verify(jwtService).isTokenValid(invalidRefreshToken);
+        verifyNoInteractions(memberRepository);
     }
 
     private Member createMember() {
