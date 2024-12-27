@@ -137,6 +137,10 @@ public class Member extends BaseEntity implements UserDetails {
         this.firebaseToken = token;
     }
 
+    public boolean isJoined() {
+        return this.role != Role.GUEST;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();

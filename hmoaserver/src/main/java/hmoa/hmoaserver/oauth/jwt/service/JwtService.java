@@ -3,6 +3,7 @@ package hmoa.hmoaserver.oauth.jwt.service;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Role;
+import hmoa.hmoaserver.oauth.jwt.Token;
 import io.jsonwebtoken.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hmoa.hmoaserver.member.repository.MemberRepository;
@@ -55,18 +56,22 @@ public class JwtService {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .signWith(SignatureAlgorithm.HS256,secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     //refreshToken 생성
-    public String createRefreshToken(String email, Role roles) {
+    public String createRefreshToken() {
         Date now = new Date();
         return Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .signWith(SignatureAlgorithm.HS256,secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public Token createAccessAndRefreshToken(String email, Role roles) {
+        return new Token(createAccessToken(email, roles), createRefreshToken());
     }
 
     public Authentication getAuthentication(String token){

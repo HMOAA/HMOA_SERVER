@@ -51,16 +51,15 @@ public class MemberService {
 
     @Transactional
     public Token reissueTokens(String rememberedToken){
-        if (!(jwtService.isTokenValid(rememberedToken)== JwtResultType.VALID_JWT)) {
+        if (jwtService.isTokenValid(rememberedToken) != JwtResultType.VALID_JWT) {
             throw new CustomException(null, WRONG_TYPE_TOKEN);
         }
 
         if (memberRepository.findByRefreshToken(rememberedToken).isPresent()) {
             Member member=memberRepository.findByRefreshToken(rememberedToken).get();
-            String accessToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
-            String refreshToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
-            jwtService.updateRefreshToken(member.getEmail(),refreshToken);
-            return new Token(accessToken,refreshToken);
+            Token token = jwtService.createAccessAndRefreshToken(member.getEmail(), member.getRole());
+            jwtService.updateRefreshToken(member.getEmail(), token.getRememberedToken());
+            return token;
         } else {
             throw new CustomException(null, MEMBER_NOT_FOUND);
         }
@@ -152,35 +151,44 @@ public class MemberService {
 
     /**
      * 소셜 로그인
-     */
+     * 1. 데이터베이스에 정보가 있을 경우, 조회해서 받아온 것으로 사용한다
+     *    받아온 멤버가 회원가입을 진행 했는 지 여부를 담아서 return 한다.
+     * 2. 첫 로그인의 경우 Member profile로 Member를 생성한다
+     *    생성한 멤버로 토큰을 전송하고, 회원가입 여부를 false로 담아 반환.
+     **/
     @Transactional
     public MemberLoginResponseDto loginMember(String accessToken, ProviderType provider){
         OAuth2UserDto profile = providerService.getProfile(accessToken,provider);
         Optional<Member> findMember = memberRepository.findByEmailAndProviderType(profile.getEmail(), provider);
+        Token token;
+
         if (findMember.isPresent()){
             Member member = findMember.get();
-            String xAuthToken = jwtService.createAccessToken(member.getEmail(), member.getRole());
-            String rememberedToken = jwtService.createRefreshToken(member.getEmail(), member.getRole());
-            jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
-            if (findMember.get().getRole() != Role.GUEST) {
-                return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),true);
+            token = jwtService.createAccessAndRefreshToken(member.getEmail(),member.getRole());
+            jwtService.updateRefreshToken(member.getEmail(), token.getRememberedToken());
+            if (member.isJoined()) {
+                return new MemberLoginResponseDto(token,true);
             } else {
-                return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
+                return new MemberLoginResponseDto(token,false);
             }
-        } else {
-            Member member = Member.builder()
-                    .email(profile.getEmail())
-                    .nickname(profile.getName())
-                    .providerType(provider)
-                    .role(Role.GUEST)
-                    .build();
-            member = save(member);
-            String xAuthToken=jwtService.createAccessToken(member.getEmail(),member.getRole());
-            String rememberedToken=jwtService.createRefreshToken(member.getEmail(),member.getRole());
-            jwtService.updateRefreshToken(member.getEmail(), rememberedToken);
-            memberPhotoService.saveDefaultImage(member);
-            return new MemberLoginResponseDto(new Token(xAuthToken,rememberedToken),false);
         }
+
+        Member member = firstLogin(profile, provider);
+        memberPhotoService.saveDefaultImage(member);
+        token = jwtService.createAccessAndRefreshToken(member.getEmail(),member.getRole());
+        jwtService.updateRefreshToken(member.getEmail(), token.getRememberedToken());
+        return new MemberLoginResponseDto(token,false);
+    }
+
+    @Transactional
+    public Member firstLogin(OAuth2UserDto profile, ProviderType provider){
+        Member member = Member.builder()
+                .email(profile.getEmail())
+                .nickname(profile.getName())
+                .providerType(provider)
+                .role(Role.GUEST)
+                .build();
+        return save(member);
     }
 
     @Transactional

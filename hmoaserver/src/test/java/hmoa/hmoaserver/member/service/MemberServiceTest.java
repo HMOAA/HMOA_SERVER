@@ -43,12 +43,12 @@ class MemberServiceTest {
     @DisplayName("올바른_리프레쉬_토큰이_들어오면_재생성하고_멤버에_업데이트한다.")
     void reissue_validToken() {
         //given
-        String refreshToken = jwtService.createRefreshToken("TEST", Role.USER);
+        String refreshToken = jwtService.createRefreshToken();
         Member member = createMember();
         when(jwtService.isTokenValid(refreshToken)).thenReturn(JwtResultType.VALID_JWT);
         when(memberRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.of(member));
         when(jwtService.createAccessToken(member.getEmail(), member.getRole())).thenReturn("NEW_ACCESS_TOKEN");
-        when(jwtService.createRefreshToken(member.getEmail(), member.getRole())).thenReturn("NEW_REFRESH_TOKEN");
+        when(jwtService.createRefreshToken()).thenReturn("NEW_REFRESH_TOKEN");
 
         //when
         Token token = memberService.reissueTokens(refreshToken);
