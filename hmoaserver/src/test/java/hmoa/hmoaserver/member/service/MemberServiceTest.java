@@ -76,9 +76,45 @@ class MemberServiceTest {
         verifyNoInteractions(memberRepository);
     }
 
+    @Test
+    @DisplayName("중복_되지_않은_닉네임이_들어오면_false를_반환한다.")
+    void nonExistingNickname_returnFalse() {
+        // given
+        String nickname = "unique_nickname";
+        when(memberRepository.existsByNickname(nickname)).thenReturn(false);
+
+        // when
+        boolean result = memberService.isDuplicateNickname(nickname);
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("중복된_닉네임이_들어오면_true를_반환한다.")
+    void duplicateNickname_returnTrue() {
+        //given
+        String nickname = "duplicate_nickname";
+        when(memberRepository.existsByNickname(nickname)).thenReturn(true);
+
+        // when
+        boolean result = memberService.isDuplicateNickname(nickname);
+
+        // then
+        assertTrue(result);
+    }
+
     private Member createMember() {
         return Member.builder()
                 .email("TEST")
+                .role(Role.USER)
+                .build();
+    }
+
+    private Member createMember(String nickname) {
+        return Member.builder()
+                .email("TEST")
+                .nickname(nickname)
                 .role(Role.USER)
                 .build();
     }
