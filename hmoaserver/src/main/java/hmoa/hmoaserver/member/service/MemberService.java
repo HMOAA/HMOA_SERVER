@@ -167,17 +167,16 @@ public class MemberService {
             token = jwtService.createAccessAndRefreshToken(member.getEmail(),member.getRole());
             jwtService.updateRefreshToken(member.getEmail(), token.getRememberedToken());
             if (member.isJoined()) {
-                return new MemberLoginResponseDto(token,true);
-            } else {
-                return new MemberLoginResponseDto(token,false);
+                return new MemberLoginResponseDto(token, true);
             }
+            return new MemberLoginResponseDto(token, false);
         }
 
         Member member = firstLogin(profile, provider);
         memberPhotoService.saveDefaultImage(member);
         token = jwtService.createAccessAndRefreshToken(member.getEmail(),member.getRole());
         jwtService.updateRefreshToken(member.getEmail(), token.getRememberedToken());
-        return new MemberLoginResponseDto(token,false);
+        return new MemberLoginResponseDto(token, false);
     }
 
     @Transactional

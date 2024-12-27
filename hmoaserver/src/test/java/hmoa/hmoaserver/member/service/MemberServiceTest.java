@@ -2,12 +2,15 @@ package hmoa.hmoaserver.member.service;
 
 import hmoa.hmoaserver.exception.CustomException;
 import hmoa.hmoaserver.member.domain.Member;
+import hmoa.hmoaserver.member.domain.ProviderType;
 import hmoa.hmoaserver.member.domain.Role;
+import hmoa.hmoaserver.member.dto.MemberLoginResponseDto;
 import hmoa.hmoaserver.member.repository.MemberRepository;
 import hmoa.hmoaserver.oauth.jwt.Token;
 import hmoa.hmoaserver.oauth.jwt.service.JwtResultType;
 import hmoa.hmoaserver.oauth.jwt.service.JwtService;
 import hmoa.hmoaserver.oauth.service.ProviderService;
+import hmoa.hmoaserver.oauth.userinfo.OAuth2UserDto;
 import hmoa.hmoaserver.photo.service.MemberPhotoService;
 
 import org.junit.jupiter.api.DisplayName;
@@ -47,8 +50,7 @@ class MemberServiceTest {
         Member member = createMember();
         when(jwtService.isTokenValid(refreshToken)).thenReturn(JwtResultType.VALID_JWT);
         when(memberRepository.findByRefreshToken(refreshToken)).thenReturn(Optional.of(member));
-        when(jwtService.createAccessToken(member.getEmail(), member.getRole())).thenReturn("NEW_ACCESS_TOKEN");
-        when(jwtService.createRefreshToken()).thenReturn("NEW_REFRESH_TOKEN");
+        when(jwtService.createAccessAndRefreshToken(member.getEmail(), member.getRole())).thenReturn(new Token("NEW_ACCESS_TOKEN", "NEW_REFRESH_TOKEN"));
 
         //when
         Token token = memberService.reissueTokens(refreshToken);
@@ -104,6 +106,84 @@ class MemberServiceTest {
         assertTrue(result);
     }
 
+    @Test
+    @DisplayName("회원이 이미 존재하고 GUEST 권한이 아닌 경우 로그인에 성공한다.")
+    void loginMember_existingAndNonGuest() {
+        // given
+        String accessToken = "accessToken";
+        ProviderType provider = ProviderType.GOOGLE;
+        OAuth2UserDto profile = new OAuth2UserDto("member@test.com", "test");
+        Member existingMember = createMember("member@test.com", "test", Role.USER);
+        Token token = new Token("xAuthToken", "refreshToken");
+
+        when(providerService.getProfile(accessToken, provider)).thenReturn(profile);
+        when(jwtService.createAccessAndRefreshToken(existingMember.getEmail(), existingMember.getRole())).thenReturn(token);
+        when(memberRepository.findByEmailAndProviderType(existingMember.getEmail(), provider)).thenReturn(Optional.of(existingMember));
+
+        // when
+        MemberLoginResponseDto result = memberService.loginMember(accessToken, provider);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.getExistedMember());
+        assertEquals(token.getAuthToken(), result.getAuthToken());
+        assertEquals(token.getRememberedToken(), result.getRememberedToken());
+        verify(jwtService).updateRefreshToken(existingMember.getEmail(), "refreshToken");
+        verify(memberPhotoService, never()).saveDefaultImage(any());
+    }
+
+    @Test
+    @DisplayName("회원이 이미 존재하지만 GUEST 권한인 경우 회원가입이 필요하다는 것을 반환한다.")
+    void loginMember_existingAndGuest() {
+        //given
+        String accessToken = "accessToken";
+        ProviderType provider = ProviderType.GOOGLE;
+        OAuth2UserDto profile = new OAuth2UserDto("member@test.com", "test");
+        Member existingMember = createMember("member@test.com", "test", Role.GUEST);
+        Token token = new Token("xAuthToken", "refreshToken");
+
+        when(providerService.getProfile(accessToken, provider)).thenReturn(profile);
+        when(memberRepository.findByEmailAndProviderType(existingMember.getEmail(), provider)).thenReturn(Optional.of(existingMember));
+        when(jwtService.createAccessAndRefreshToken(existingMember.getEmail(), existingMember.getRole())).thenReturn(token);
+
+        // when
+        MemberLoginResponseDto result = memberService.loginMember(accessToken, provider);
+
+        // then
+        assertNotNull(result);
+        assertFalse(result.getExistedMember());
+        assertEquals(token.getAuthToken(), result.getAuthToken());
+        assertEquals(token.getRememberedToken(), result.getRememberedToken());
+        verify(jwtService).updateRefreshToken(existingMember.getEmail(), "refreshToken");
+        verify(memberPhotoService, never()).saveDefaultImage(any());
+    }
+
+    @Test
+    @DisplayName("회원이 존재하지 않을 경우 새 회원을 생성하고 토큰을 반환한다.")
+    void loginMember_newMember() {
+        // given
+        String accessToken = "accessToken";
+        ProviderType provider = ProviderType.GOOGLE;
+        Token token = new Token("xAuthToken", "refreshToken");
+        OAuth2UserDto profile = new OAuth2UserDto("member@test.com", "test");
+        Member newMember = createMember(profile.getEmail(), "test", Role.GUEST);
+
+        when(providerService.getProfile(accessToken, provider)).thenReturn(profile);
+        when(jwtService.createAccessAndRefreshToken(newMember.getEmail(), newMember.getRole())).thenReturn(token);
+        when(memberRepository.save(newMember)).thenReturn(newMember);
+
+        // when
+        MemberLoginResponseDto result = memberService.loginMember(accessToken, provider);
+
+        //then
+        assertNotNull(result);
+        assertFalse(result.getExistedMember());
+        assertEquals(token.getAuthToken(), result.getAuthToken());
+        assertEquals(token.getRememberedToken(), result.getRememberedToken());
+        verify(memberRepository).save(newMember);
+        verify(memberPhotoService).saveDefaultImage(newMember);
+    }
+
     private Member createMember() {
         return Member.builder()
                 .email("TEST")
@@ -111,11 +191,11 @@ class MemberServiceTest {
                 .build();
     }
 
-    private Member createMember(String nickname) {
+    private Member createMember(String email, String nickname, Role role) {
         return Member.builder()
-                .email("TEST")
+                .email(email)
                 .nickname(nickname)
-                .role(Role.USER)
+                .role(role)
                 .build();
     }
 }
