@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class WebhookInput {
-    private String carrierId = "kr.epost";
+    private String carrierId = "kr.logen";
     private String trackingNumber;
     private String callbackUrl;
     private String expirationTime;
