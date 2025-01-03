@@ -114,7 +114,8 @@ public class SurveyController {
         Member member = memberService.findByMember(token);
         List<OrderEntity> orders = orderService.findByMemberIdAndStatuses(member.getId(), OrderStatus.getPossiblePerfumeSurveyStatus());
 
-        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
+        //return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, !orders.isEmpty()));
+        return ResponseEntity.ok(new SurveyHomeResponseDto(backgroundImgUrl, firstImgUrl, secondImgUrl, true));
     }
 
     @ApiOperation(value = "향수 추천 설문 조회")
